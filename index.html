@@ -2,206 +2,376 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-<title>Gigabit Beeline</title>
-
-<meta name="theme-color" content="#FFD400">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Gigabit Beeline — Интернет-пакеты до 3 раз дешевле</title>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-body{
-
-font-family:"Inter",sans-serif;
-
-background:#FAFAFA;
-
-color:#111;
-
-min-height:100vh;
-
-overflow-x:hidden;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-padding:24px;
-
-position:relative;
-
-}
-
-body::before{
-
-content:"";
-
-position:fixed;
-
-width:430px;
-height:430px;
-
-background:#FFD400;
-
-filter:blur(140px);
-
-border-radius:50%;
-
-opacity:.22;
-
-top:-170px;
-right:-170px;
-
-z-index:-2;
-
-}
-
-body::after{
-
-content:"";
-
-position:fixed;
-
-width:360px;
-height:360px;
-
-background:#FFD400;
-
-filter:blur(130px);
-
-border-radius:50%;
-
-opacity:.18;
-
-bottom:-160px;
-left:-160px;
-
-z-index:-2;
-
-}
-
-.container{
-
-width:100%;
-max-width:430px;
-
-}
-
-.card{
-
-background:rgba(255,255,255,.72);
-
-backdrop-filter:blur(24px);
--webkit-backdrop-filter:blur(24px);
-
-border:1px solid rgba(255,255,255,.7);
-
-border-radius:34px;
-
-padding:42px 30px;
-
-box-shadow:
-
-0 25px 60px rgba(0,0,0,.08),
-
-0 8px 20px rgba(0,0,0,.05);
-
-text-align:center;
-
-}
-
-.logo{
-
-width:88px;
-height:88px;
-
-margin:auto;
-
-border-radius:50%;
-
-background:#FFD400;
-
-display:flex;
-
-align-items:center;
-justify-content:center;
-
-font-size:34px;
-font-weight:800;
-
-color:#111;
-
-box-shadow:
-
-0 10px 30px rgba(255,212,0,.45);
-
-margin-bottom:26px;
-
-}
-
-h1{
-
-font-size:34px;
-
-font-weight:800;
-
-margin-bottom:12px;
-
-letter-spacing:-1px;
-
-}
-
-.subtitle{
-
-font-size:20px;
-
-font-weight:600;
-
-line-height:1.35;
-
-color:#333;
-
-}
-
+  :root{
+    --bg: #FAF8F4;
+    --bg-2: #F3F0E9;
+    --ink: #17160F;
+    --ink-soft: #6B6656;
+    --ink-faint: #A39E8C;
+    --glow-a: #FFD84D;
+    --glow-b: #FFC220;
+    --line: rgba(23,22,15,0.08);
+    --glass: rgba(255,255,255,0.55);
+    --glass-border: rgba(255,255,255,0.9);
+    --wa: #1FAF5C;
+    --wa-dark: #17924C;
+    --shadow-soft: 0 1px 2px rgba(23,22,15,0.04), 0 8px 24px rgba(23,22,15,0.06);
+    --shadow-deep: 0 20px 60px rgba(23,22,15,0.10), 0 4px 16px rgba(23,22,15,0.06);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+  html{ background: var(--bg); }
+
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100svh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    position: relative;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ---------- Ambient light field ---------- */
+  .field{
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .glow{
+    position: absolute; border-radius: 50%;
+    filter: blur(38px);
+    opacity: 0.7;
+    will-change: transform;
+  }
+  .glow.g1{
+    width: 480px; height: 480px; top: -210px; left: -170px;
+    background: radial-gradient(circle at 35% 35%, var(--glow-a) 0%, var(--glow-a) 28%, transparent 68%);
+    animation: drift1 22s ease-in-out infinite;
+  }
+  .glow.g2{
+    width: 420px; height: 420px; bottom: -190px; right: -170px;
+    background: radial-gradient(circle at 60% 60%, var(--glow-b) 0%, var(--glow-b) 26%, transparent 66%);
+    animation: drift2 26s ease-in-out infinite;
+  }
+  .glow.g3{
+    width: 280px; height: 280px; top: 38%; left: 50%; transform: translateX(-50%);
+    background: radial-gradient(circle, var(--glow-a) 0%, var(--glow-a) 20%, transparent 70%);
+    opacity: 0.4;
+    animation: pulse3 8s ease-in-out infinite;
+  }
+  @keyframes drift1{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(30px, 40px) scale(1.08); }
+  }
+  @keyframes drift2{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(-25px,-30px) scale(1.06); }
+  }
+  @keyframes pulse3{
+    0%,100%{ opacity: 0.28; }
+    50%{ opacity: 0.42; }
+  }
+  .grain{
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    opacity: 0.045; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap{
+    position: relative; z-index: 2;
+    min-height: 100svh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 64px 22px 40px;
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* ---------- Signal emblem ---------- */
+  .emblem-stage{
+    position: relative;
+    width: 156px; height: 156px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  .ring{
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(23,22,15,0.18);
+  }
+  .ring.r1{ width: 156px; height: 156px; animation: pulseRing 5.5s ease-out infinite; }
+  .ring.r2{ width: 156px; height: 156px; animation: pulseRing 5.5s ease-out infinite; animation-delay: 1.8s; }
+  .ring.r3{ width: 156px; height: 156px; animation: pulseRing 5.5s ease-out infinite; animation-delay: 3.6s; }
+  @keyframes pulseRing{
+    0%{ transform: scale(0.6); opacity: 0; }
+    15%{ opacity: 0.85; }
+    100%{ transform: scale(1.5); opacity: 0; }
+  }
+  .emblem{
+    position: relative;
+    width: 118px; height: 118px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    isolation: auto;
+    background: repeating-linear-gradient(
+      128deg,
+      #FFC220 0px, #FFC220 22px,
+      #14130D 22px, #14130D 44px
+    );
+    background-size: 300% 300%;
+    animation: stripeShift 5s linear infinite;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.5) inset,
+      0 18px 40px rgba(23,22,15,0.22),
+      0 6px 14px rgba(23,22,15,0.12);
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  @keyframes stripeShift{
+    0%{ background-position: 0% 0%; }
+    100%{ background-position: 130% 130%; }
+  }
+  .emblem span{
+    position: relative;
+    font-size: 32px; font-weight: 900; letter-spacing: 0.5px;
+    color: #FFC220;
+    mix-blend-mode: difference;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Type ---------- */
+  h1{
+    font-size: 46px;
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: 0.08s;
+  }
+  h1 em{
+    font-style: normal;
+    background: linear-gradient(100deg, #B98900 0%, #E8AC00 40%, #17160F 40%, #17160F 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .subtitle{
+    margin-top: 16px;
+    font-size: 19px;
+    line-height: 1.42;
+    font-weight: 460;
+    color: var(--ink-soft);
+    max-width: 340px;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: 0.16s;
+  }
+  .subtitle b{
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ---------- Features ---------- */
+  .features{
+    margin-top: 32px;
+    display: flex; flex-direction: column; gap: 10px;
+    width: 100%; max-width: 360px;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: 0.36s;
+  }
+  .feature{
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: var(--shadow-soft);
+    text-align: left;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  .feature:active{ transform: scale(0.98); }
+  .check{
+    flex: 0 0 auto;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(155deg, #FFF3CC, #FFCF3D);
+    box-shadow: 0 3px 8px rgba(255,193,30,0.35);
+  }
+  .check svg{ width: 13px; height: 13px; }
+  .feature p{
+    font-size: 15.5px; font-weight: 560; letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-zone{
+    margin-top: 30px;
+    width: 100%; max-width: 360px;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: 0.26s;
+    position: relative;
+  }
+  .cta-glow{
+    position: absolute; inset: -18px;
+    background: radial-gradient(ellipse at center, rgba(31,175,92,0.35), transparent 70%);
+    filter: blur(18px);
+    animation: ctaPulse 2.6s ease-in-out infinite;
+    z-index: -1;
+  }
+  @keyframes ctaPulse{
+    0%,100%{ opacity: 0.55; transform: scale(1); }
+    50%{ opacity: 0.9; transform: scale(1.06); }
+  }
+  .cta{
+    position: relative;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%;
+    padding: 20px 28px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(160deg, #27C766 0%, var(--wa) 55%, var(--wa-dark) 100%);
+    color: #fff;
+    font-size: 19px;
+    font-weight: 720;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.4) inset,
+      0 -10px 20px rgba(0,0,0,0.14) inset,
+      0 18px 40px rgba(31,175,92,0.38),
+      0 6px 14px rgba(23,22,15,0.10);
+    transition: transform 0.35s cubic-bezier(.16,1,.3,1), box-shadow 0.35s cubic-bezier(.16,1,.3,1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cta:hover{
+    transform: translateY(-3px) scale(1.015);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.45) inset,
+      0 -10px 20px rgba(0,0,0,0.14) inset,
+      0 24px 50px rgba(31,175,92,0.44),
+      0 8px 18px rgba(23,22,15,0.12);
+  }
+  .cta:active{ transform: translateY(0) scale(0.985); }
+  .cta svg{ width: 24px; height: 24px; flex: 0 0 auto; }
+
+  .status{
+    margin-top: 18px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13.5px; font-weight: 560; color: var(--ink-faint);
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay: 0.46s;
+  }
+  .status .dot{
+    width: 7px; height: 7px; border-radius: 50%; background: var(--wa);
+    box-shadow: 0 0 0 0 rgba(31,175,92,0.5);
+    animation: liveDot 2s ease-in-out infinite;
+  }
+  @keyframes liveDot{
+    0%{ box-shadow: 0 0 0 0 rgba(31,175,92,0.5); }
+    70%{ box-shadow: 0 0 0 7px rgba(31,175,92,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(31,175,92,0); }
+  }
+
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(18px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  :focus-visible{
+    outline: 2px solid var(--wa-dark);
+    outline-offset: 3px;
+    border-radius: 12px;
+  }
+
+  /* ---------- Desktop refinement ---------- */
+  @media (min-width: 720px){
+    .wrap{ padding: 90px 24px 70px; max-width: 620px; }
+    h1{ font-size: 60px; }
+    .subtitle{ font-size: 21px; max-width: 400px; }
+    .features{ max-width: 400px; }
+    .cta-zone{ max-width: 400px; }
+    .cta{ padding: 22px 32px; font-size: 20px; }
+    .emblem-stage{ width: 180px; height: 180px; margin-bottom: 38px; }
+    .ring.r1, .ring.r2, .ring.r3{ width: 180px; height: 180px; }
+    .emblem{ width: 136px; height: 136px; }
+    .emblem span{ font-size: 37px; }
+  }
+
+  @media (min-height: 780px) and (min-width: 720px){
+    .wrap{ min-height: 100svh; }
+  }
 </style>
-
 </head>
-
 <body>
 
-<div class="container">
+  <div class="field">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+  </div>
+  <div class="grain"></div>
 
-<div class="card">
+  <main class="wrap">
 
-<div class="logo">
-GB
-</div>
+    <div class="emblem-stage">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="emblem">
+        <span>GB</span>
+      </div>
+    </div>
 
-<h1>Gigabit Beeline</h1>
+    <h1>Gigabit <em>Beeline</em></h1>
 
-<div class="subtitle">
-Интернет-пакеты<br>
-до 3 раз дешевле
-</div>
+    <p class="subtitle">Интернет-пакеты <b>до 3 раз дешевле</b> — без переплат и скрытых условий</p>
 
-</div>
+    <div class="cta-zone">
+      <div class="cta-glow"></div>
+      <a class="cta" href="https://wa.me/77775949300" target="_blank" rel="noopener">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16.001 3C9.11 3 3.5 8.61 3.5 15.5C3.5 17.79 4.12 19.94 5.21 21.8L3.5 29L10.86 27.32C12.63 28.3 14.26 28.5 16.001 28.5C22.89 28.5 28.5 22.89 28.5 16C28.5 9.11 22.89 3 16.001 3Z" fill="white" fill-opacity="0.001"/><path d="M23.34 19.63C22.99 20.6 21.53 21.42 20.44 21.65C19.7 21.8 18.73 21.92 15.47 20.58C11.31 18.87 8.63 14.64 8.42 14.36C8.22 14.08 6.75 12.11 6.75 10.08C6.75 8.04 7.8 7.05 8.22 6.62C8.57 6.26 9.15 6.1 9.7 6.1C9.88 6.1 10.04 6.11 10.19 6.11C10.61 6.13 10.82 6.15 11.1 6.82C11.45 7.66 12.31 9.69 12.41 9.9C12.52 10.11 12.63 10.4 12.49 10.68C12.36 10.97 12.24 11.1 12.03 11.34C11.82 11.58 11.62 11.76 11.41 12.02C11.22 12.24 11 12.48 11.24 12.9C11.48 13.31 12.31 14.66 13.54 15.75C15.12 17.15 16.4 17.6 16.86 17.79C17.2 17.93 17.61 17.9 17.86 17.63C18.18 17.28 18.57 16.7 18.97 16.13C19.25 15.72 19.61 15.67 19.98 15.81C20.36 15.94 22.38 16.94 22.79 17.15C23.2 17.36 23.47 17.46 23.57 17.63C23.67 17.8 23.67 18.6 23.34 19.63Z" fill="white"/></svg>
+        Написать в WhatsApp
+      </a>
+    </div>
 
-</div>
+    <div class="features">
+      <div class="feature">
+        <span class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#17160F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <p>Быстрое подключение</p>
+      </div>
+      <div class="feature">
+        <span class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#17160F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <p>Интернет-пакеты на 30 дней</p>
+      </div>
+      <div class="feature">
+        <span class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#17160F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <p>Поддержка через WhatsApp</p>
+      </div>
+    </div>
+
+    <div class="status">
+      <span class="dot"></span>
+      Работаем ежедневно
+    </div>
+
+  </main>
 
 </body>
 </html>
