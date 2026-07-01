@@ -41,13 +41,11 @@ display:flex;
 justify-content:center;
 align-items:center;
 
-position:relative;
-
 padding:24px;
 
-}
+position:relative;
 
-/* Жёлтые размытые фигуры */
+}
 
 body::before{
 
@@ -55,19 +53,19 @@ content:"";
 
 position:fixed;
 
-width:420px;
-height:420px;
+width:430px;
+height:430px;
 
 background:#FFD400;
 
-border-radius:50%;
+filter:blur(140px);
 
-filter:blur(130px);
+border-radius:50%;
 
 opacity:.22;
 
-top:-140px;
-right:-160px;
+top:-170px;
+right:-170px;
 
 z-index:-2;
 
@@ -84,14 +82,14 @@ height:360px;
 
 background:#FFD400;
 
-border-radius:50%;
+filter:blur(130px);
 
-filter:blur(120px);
+border-radius:50%;
 
 opacity:.18;
 
-bottom:-170px;
-left:-170px;
+bottom:-160px;
+left:-160px;
 
 z-index:-2;
 
@@ -100,7 +98,83 @@ z-index:-2;
 .container{
 
 width:100%;
-max-width:420px;
+max-width:430px;
+
+}
+
+.card{
+
+background:rgba(255,255,255,.72);
+
+backdrop-filter:blur(24px);
+-webkit-backdrop-filter:blur(24px);
+
+border:1px solid rgba(255,255,255,.7);
+
+border-radius:34px;
+
+padding:42px 30px;
+
+box-shadow:
+
+0 25px 60px rgba(0,0,0,.08),
+
+0 8px 20px rgba(0,0,0,.05);
+
+text-align:center;
+
+}
+
+.logo{
+
+width:88px;
+height:88px;
+
+margin:auto;
+
+border-radius:50%;
+
+background:#FFD400;
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+font-size:34px;
+font-weight:800;
+
+color:#111;
+
+box-shadow:
+
+0 10px 30px rgba(255,212,0,.45);
+
+margin-bottom:26px;
+
+}
+
+h1{
+
+font-size:34px;
+
+font-weight:800;
+
+margin-bottom:12px;
+
+letter-spacing:-1px;
+
+}
+
+.subtitle{
+
+font-size:20px;
+
+font-weight:600;
+
+line-height:1.35;
+
+color:#333;
 
 }
 
@@ -112,8 +186,22 @@ max-width:420px;
 
 <div class="container">
 
+<div class="card">
+
+<div class="logo">
+GB
+</div>
+
+<h1>Gigabit Beeline</h1>
+
+<div class="subtitle">
+Интернет-пакеты<br>
+до 3 раз дешевле
+</div>
+
+</div>
+
 </div>
 
 </body>
-
 </html>
