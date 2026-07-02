@@ -2,389 +2,697 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Gigabit Beeline — Интернет-пакеты до 3 раз дешевле</title>
-<style>
-  :root{
-    --bg: #FAF8F4;
-    --bg-2: #F3F0E9;
-    --ink: #17160F;
-    --ink-soft: #6B6656;
-    --ink-faint: #A39E8C;
-    --glow-a: #FFD84D;
-    --glow-b: #FFC220;
-    --line: rgba(23,22,15,0.08);
-    --glass: rgba(255,255,255,0.55);
-    --glass-border: rgba(255,255,255,0.9);
-    --wa: #1FAF5C;
-    --wa-dark: #17924C;
-    --shadow-soft: 0 1px 2px rgba(23,22,15,0.04), 0 8px 24px rgba(23,22,15,0.06);
-    --shadow-deep: 0 20px 60px rgba(23,22,15,0.10), 0 4px 16px rgba(23,22,15,0.06);
-  }
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gigabit Beeline — 5 ГБ бесплатно при первой активации</title>
+<meta name="description" content="Первая активация — 5 ГБ интернета бесплатно от Beeline. Быстрое подключение, без смены тарифа, без скрытых платежей. Напишите в WhatsApp и получите бонус уже сегодня.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://example.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gigabit Beeline — 5 ГБ бесплатно">
+<meta property="og:description" content="Первая активация 5 ГБ — бесплатно. Успей забрать бонус уже сегодня.">
+<meta property="og:image" content="https://example.com/og-cover.jpg">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23FFD400'/%3E%3Ctext x='50' y='64' font-family='Arial Black, sans-serif' font-size='38' font-weight='900' text-anchor='middle' fill='%23111'%3EGB%3C/text%3E%3C/svg%3E" type="image/svg+xml">
 
-  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-
-  html{ background: var(--bg); }
-
-  body{
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100svh;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    position: relative;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-  }
-
-  /* ---------- Ambient light field ---------- */
-  .field{
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-  }
-  .glow{
-    position: absolute; border-radius: 50%;
-    filter: blur(38px);
-    opacity: 0.7;
-    will-change: transform;
-  }
-  .glow.g1{
-    width: 480px; height: 480px; top: -210px; left: -170px;
-    background: radial-gradient(circle at 35% 35%, var(--glow-a) 0%, var(--glow-a) 28%, transparent 68%);
-    animation: drift1 22s ease-in-out infinite;
-  }
-  .glow.g2{
-    width: 420px; height: 420px; bottom: -190px; right: -170px;
-    background: radial-gradient(circle at 60% 60%, var(--glow-b) 0%, var(--glow-b) 26%, transparent 66%);
-    animation: drift2 26s ease-in-out infinite;
-  }
-  .glow.g3{
-    width: 280px; height: 280px; top: 38%; left: 50%; transform: translateX(-50%);
-    background: radial-gradient(circle, var(--glow-a) 0%, var(--glow-a) 20%, transparent 70%);
-    opacity: 0.4;
-    animation: pulse3 8s ease-in-out infinite;
-  }
-  @keyframes drift1{
-    0%,100%{ transform: translate(0,0) scale(1); }
-    50%{ transform: translate(30px, 40px) scale(1.08); }
-  }
-  @keyframes drift2{
-    0%,100%{ transform: translate(0,0) scale(1); }
-    50%{ transform: translate(-25px,-30px) scale(1.06); }
-  }
-  @keyframes pulse3{
-    0%,100%{ opacity: 0.28; }
-    50%{ opacity: 0.42; }
-  }
-  .grain{
-    position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    opacity: 0.045; mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  }
-
-  /* ---------- Layout ---------- */
-  .wrap{
-    position: relative; z-index: 2;
-    min-height: 100svh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 64px 22px 40px;
-    max-width: 560px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  /* ---------- Signal emblem ---------- */
-  .emblem-stage{
-    position: relative;
-    width: 156px; height: 156px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 30px;
-    opacity: 0;
-    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
-  }
-  .ring{
-    position: absolute; border-radius: 50%;
-    border: 1px solid rgba(23,22,15,0.18);
-  }
-  .ring.r1{ width: 156px; height: 156px; animation: pulseRing 5.5s ease-out infinite; }
-  .ring.r2{ width: 156px; height: 156px; animation: pulseRing 5.5s ease-out infinite; animation-delay: 1.8s; }
-  .ring.r3{ width: 156px; height: 156px; animation: pulseRing 5.5s ease-out infinite; animation-delay: 3.6s; }
-  @keyframes pulseRing{
-    0%{ transform: scale(0.6); opacity: 0; }
-    15%{ opacity: 0.85; }
-    100%{ transform: scale(1.5); opacity: 0; }
-  }
-  .emblem{
-    position: relative;
-    width: 118px; height: 118px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    isolation: auto;
-    background: repeating-linear-gradient(
-      128deg,
-      #FFC220 0px, #FFC220 22px,
-      #14130D 22px, #14130D 44px
-    );
-    background-size: 300% 300%;
-    animation: stripeShift 5s linear infinite;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.5) inset,
-      0 18px 40px rgba(23,22,15,0.22),
-      0 6px 14px rgba(23,22,15,0.12);
-    border: 1px solid rgba(255,255,255,0.6);
-  }
-  @keyframes stripeShift{
-    0%{ background-position: 0% 0%; }
-    100%{ background-position: 130% 130%; }
-  }
-  .emblem span{
-    position: relative;
-    font-size: 32px; font-weight: 900; letter-spacing: 0.5px;
-    color: #FFC220;
-    mix-blend-mode: difference;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* ---------- Type ---------- */
-  h1{
-    font-size: 46px;
-    line-height: 1.04;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-    opacity: 0;
-    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay: 0.08s;
-  }
-  h1 em{
-    font-style: normal;
-    background: linear-gradient(100deg, #B98900 0%, #E8AC00 40%, #17160F 40%, #17160F 100%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-
-  .subtitle{
-    margin-top: 16px;
-    font-size: 19px;
-    line-height: 1.42;
-    font-weight: 460;
-    color: var(--ink-soft);
-    max-width: 340px;
-    opacity: 0;
-    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay: 0.16s;
-  }
-  .subtitle b{
-    color: var(--ink);
-    font-weight: 700;
-  }
-
-  /* ---------- Features ---------- */
-  .features{
-    margin-top: 32px;
-    display: flex; flex-direction: column; gap: 10px;
-    width: 100%; max-width: 360px;
-    opacity: 0;
-    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay: 0.36s;
-  }
-  .feature{
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 16px;
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    box-shadow: var(--shadow-soft);
-    text-align: left;
-    transition: transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s cubic-bezier(.16,1,.3,1);
-  }
-  .feature:active{ transform: scale(0.98); }
-  .check{
-    flex: 0 0 auto;
-    width: 26px; height: 26px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(155deg, #FFF3CC, #FFCF3D);
-    box-shadow: 0 3px 8px rgba(255,193,30,0.35);
-  }
-  .check svg{ width: 13px; height: 13px; }
-  .feature p{
-    font-size: 15.5px; font-weight: 560; letter-spacing: -0.01em;
-    color: var(--ink);
-  }
-
-  /* ---------- CTA ---------- */
-  .cta-zone{
-    margin-top: 30px;
-    width: 100%; max-width: 360px;
-    opacity: 0;
-    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay: 0.26s;
-    position: relative;
-  }
-  .cta-glow{
-    position: absolute; inset: -18px;
-    background: radial-gradient(ellipse at center, rgba(31,175,92,0.35), transparent 70%);
-    filter: blur(18px);
-    animation: ctaPulse 2.6s ease-in-out infinite;
-    z-index: -1;
-  }
-  @keyframes ctaPulse{
-    0%,100%{ opacity: 0.55; transform: scale(1); }
-    50%{ opacity: 0.9; transform: scale(1.06); }
-  }
-  .cta{
-    position: relative;
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    width: 100%;
-    padding: 20px 28px;
-    border-radius: 20px;
-    border: none;
-    background: linear-gradient(160deg, #27C766 0%, var(--wa) 55%, var(--wa-dark) 100%);
-    color: #fff;
-    font-size: 19px;
-    font-weight: 720;
-    letter-spacing: -0.01em;
-    cursor: pointer;
-    text-decoration: none;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.4) inset,
-      0 -10px 20px rgba(0,0,0,0.14) inset,
-      0 18px 40px rgba(31,175,92,0.38),
-      0 6px 14px rgba(23,22,15,0.10);
-    transition: transform 0.35s cubic-bezier(.16,1,.3,1), box-shadow 0.35s cubic-bezier(.16,1,.3,1);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .cta:hover{
-    transform: translateY(-3px) scale(1.015);
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.45) inset,
-      0 -10px 20px rgba(0,0,0,0.14) inset,
-      0 24px 50px rgba(31,175,92,0.44),
-      0 8px 18px rgba(23,22,15,0.12);
-  }
-  .cta:active{ transform: translateY(0) scale(0.985); }
-  .cta svg{ width: 24px; height: 24px; flex: 0 0 auto; }
-
-  .status{
-    margin-top: 18px;
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 13.5px; font-weight: 560; color: var(--ink-faint);
-    opacity: 0;
-    animation: rise 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay: 0.46s;
-  }
-  .status .dot{
-    width: 7px; height: 7px; border-radius: 50%; background: var(--wa);
-    box-shadow: 0 0 0 0 rgba(31,175,92,0.5);
-    animation: liveDot 2s ease-in-out infinite;
-  }
-  @keyframes liveDot{
-    0%{ box-shadow: 0 0 0 0 rgba(31,175,92,0.5); }
-    70%{ box-shadow: 0 0 0 7px rgba(31,175,92,0); }
-    100%{ box-shadow: 0 0 0 0 rgba(31,175,92,0); }
-  }
-
-  @keyframes rise{
-    from{ opacity: 0; transform: translateY(18px); }
-    to{ opacity: 1; transform: translateY(0); }
-  }
-
-  :focus-visible{
-    outline: 2px solid var(--wa-dark);
-    outline-offset: 3px;
-    border-radius: 12px;
-  }
-
-  /* ---------- Desktop refinement ---------- */
-  @media (min-width: 720px){
-    .wrap{ padding: 90px 24px 70px; max-width: 620px; }
-    h1{ font-size: 60px; }
-    .subtitle{ font-size: 21px; max-width: 400px; }
-    .features{ max-width: 400px; }
-    .cta-zone{ max-width: 400px; }
-    .cta{ padding: 22px 32px; font-size: 20px; }
-    .emblem-stage{ width: 180px; height: 180px; margin-bottom: 38px; }
-    .ring.r1, .ring.r2, .ring.r3{ width: 180px; height: 180px; }
-    .emblem{ width: 136px; height: 136px; }
-    .emblem span{ font-size: 37px; }
-  }
-
-  @media (min-height: 780px) and (min-width: 720px){
-    .wrap{ min-height: 100svh; }
-  }
-</style>
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9N30Z9Q2WD"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-9N30Z9Q2WD');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config','G-9N30Z9Q2WD');
 </script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Golos+Text:wght@600;700;800;900&display=swap" rel="stylesheet">
+
 <!-- Cloudflare Web Analytics -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"87a788ff475941c484337e42e20ca4a8"}'></script>
-<!-- End Cloudflare Web Analytics -->  
+<!-- End Cloudflare Web Analytics -->
+
+<style>
+  :root{
+    --yellow:#FFD400;
+    --yellow-deep:#F4C300;
+    --ink:#0A0A0A;
+    --ink-soft:#1c1c1c;
+    --paper:#ffffff;
+    --grey:#6b6b6f;
+    --grey-light:#f2f2f4;
+    --shadow-sm: 0 2px 10px rgba(10,10,10,0.06);
+    --shadow-md: 0 10px 30px rgba(10,10,10,0.08);
+    --shadow-yellow: 0 14px 34px rgba(255,212,0,0.35);
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --radius-sm: 14px;
+    --ease: cubic-bezier(0.16,1,0.3,1);
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3, .display{
+    font-family:'Golos Text', 'Manrope', sans-serif;
+    letter-spacing:-0.02em;
+    margin:0;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit;}
+
+  .wrap{
+    max-width:520px;
+    margin:0 auto;
+    padding:0 22px;
+  }
+
+  /* ===== Ambient background ===== */
+  .bg-orb{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(60px);
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+  .bg-orb.o1{ width:280px; height:280px; background:var(--yellow); top:-100px; right:-80px; }
+  .bg-orb.o2{ width:220px; height:220px; background:var(--yellow); bottom:10%; left:-100px; opacity:0.2;}
+
+  main{position:relative; z-index:1;}
+
+  /* ===== Hero ===== */
+  .hero{
+    padding:56px 0 8px;
+    text-align:center;
+  }
+
+  .logo-mark{
+    position:relative;
+    width:96px;
+    height:96px;
+    margin:0 auto 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .logo-mark .ring{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:var(--yellow);
+    box-shadow: var(--shadow-yellow);
+    animation: breathe 4.5s var(--ease) infinite;
+  }
+  .logo-mark .gb{
+    position:relative;
+    font-family:'Golos Text', sans-serif;
+    font-weight:900;
+    font-size:30px;
+    color:var(--ink);
+    letter-spacing:-0.03em;
+  }
+  .logo-mark .beam{
+    position:absolute;
+    top:50%;
+    width:34px;
+    height:3px;
+    border-radius:3px;
+    background:linear-gradient(90deg, transparent, var(--yellow));
+    opacity:0.9;
+  }
+  .logo-mark .beam.left{ left:-46px; transform:translateY(-50%) scaleX(-1);}
+  .logo-mark .beam.right{ right:-46px; transform:translateY(-50%);}
+  .logo-mark .beam::before, .logo-mark .beam::after{
+    content:'';
+    position:absolute;
+    right:0; top:-8px;
+    width:22px; height:3px;
+    border-radius:3px;
+    background:inherit;
+  }
+  .logo-mark .beam::after{ top:8px; }
+
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.06); }
+  }
+
+  .brand{
+    font-size:26px;
+    font-weight:800;
+    margin-bottom:30px;
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    opacity:0;
+    animation: fadeUp 0.8s var(--ease) 0.15s forwards;
+  }
+  .brand .accent{ color:var(--ink); position:relative; }
+  .brand .accent::after{
+    content:'';
+    position:absolute;
+    left:0; right:0; bottom:2px;
+    height:9px;
+    background:var(--yellow);
+    z-index:-1;
+    border-radius:3px;
+    opacity:0.55;
+  }
+
+  .headline{
+    font-weight:800;
+    font-size:26px;
+    line-height:1.25;
+    letter-spacing:-0.01em;
+    margin-bottom:6px;
+    opacity:0;
+    animation: fadeUp 0.8s var(--ease) 0.3s forwards;
+  }
+  .headline .num{ white-space:nowrap; }
+
+  .hero-free{
+    position:relative;
+    margin:14px auto 8px;
+    opacity:0;
+    animation: fadeUp 0.9s var(--ease) 0.5s forwards;
+  }
+  .hero-free .tag{
+    display:inline-block;
+    background:linear-gradient(180deg, var(--yellow) 0%, var(--yellow-deep) 100%);
+    color:var(--ink);
+    font-family:'Golos Text', sans-serif;
+    font-weight:900;
+    font-size:42px;
+    letter-spacing:-0.02em;
+    padding:16px 8px;
+    border-radius:var(--radius-md);
+    box-shadow: var(--shadow-yellow);
+    transform:rotate(-2deg);
+    width:100%;
+    line-height:1.05;
+  }
+
+  .subtext{
+    margin-top:22px;
+    font-size:15px;
+    color:var(--grey);
+    font-weight:500;
+    line-height:1.5;
+    opacity:0;
+    animation: fadeUp 0.8s var(--ease) 0.65s forwards;
+  }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(16px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ===== CTA ===== */
+  .cta-block{
+    padding:30px 0 6px;
+    text-align:center;
+  }
+  .cta-btn{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    width:100%;
+    padding:20px 24px;
+    background:var(--ink);
+    color:var(--yellow);
+    border:none;
+    border-radius:999px;
+    font-size:17px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+    cursor:pointer;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.22);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+    -webkit-appearance:none;
+    animation: floatBtn 3.4s ease-in-out infinite;
+  }
+  .cta-btn svg{ width:24px; height:24px; flex-shrink:0; }
+  .cta-btn:hover{
+    transform:translateY(-3px) scale(1.015);
+    box-shadow: 0 22px 44px rgba(0,0,0,0.28);
+  }
+  .cta-btn:active{
+    transform:translateY(0) scale(0.98);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+  }
+  .cta-btn:focus-visible{
+    outline:3px solid var(--yellow);
+    outline-offset:4px;
+  }
+  @keyframes floatBtn{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-5px); }
+  }
+
+  .bonus-note{
+    margin-top:18px;
+    font-size:14px;
+    font-weight:700;
+    color:var(--ink-soft);
+  }
+  .bonus-note .hl{ color:var(--ink); border-bottom:3px solid var(--yellow); padding-bottom:1px; }
+
+  /* ===== Countdown ===== */
+  .timer-card{
+    margin:34px 0 6px;
+    background:var(--paper);
+    border:1px solid rgba(10,10,10,0.06);
+    border-radius:var(--radius-lg);
+    padding:26px 22px 24px;
+    box-shadow: var(--shadow-md);
+    opacity:0;
+    transform:translateY(24px);
+  }
+  .timer-card.in-view{
+    animation: fadeUp 0.8s var(--ease) forwards;
+  }
+  .timer-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  .timer-icon{
+    width:42px; height:42px;
+    border-radius:50%;
+    background:var(--grey-light);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .timer-icon svg{ width:22px; height:22px; }
+  .timer-title{ font-size:15px; font-weight:800; line-height:1.35; }
+  .timer-title .em{ color:var(--yellow-deep); }
+
+  .timer-grid{
+    display:grid;
+    grid-template-columns:1fr auto 1fr auto 1fr;
+    align-items:center;
+    gap:6px;
+  }
+  .timer-unit{ text-align:center; }
+  .timer-digits{
+    position:relative;
+    background:var(--ink);
+    border-radius:16px;
+    padding:14px 0;
+    overflow:hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+  }
+  .timer-digits span{
+    display:inline-block;
+    font-family:'Golos Text', sans-serif;
+    font-weight:900;
+    font-size:30px;
+    color:#fff;
+    min-width:20px;
+    transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  }
+  .timer-digits.tick span{ animation: digitPop 0.4s var(--ease); }
+  @keyframes digitPop{
+    0%{ transform:translateY(-10px); opacity:0.3; }
+    100%{ transform:translateY(0); opacity:1; }
+  }
+  .timer-label{
+    margin-top:8px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    color:var(--grey);
+    text-transform:uppercase;
+  }
+  .timer-colon{
+    font-weight:900;
+    font-size:22px;
+    color:var(--yellow-deep);
+    padding-bottom:22px;
+  }
+
+  /* ===== Features ===== */
+  .features{
+    padding:44px 0 10px;
+  }
+  .feature-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:20px;
+    background:var(--paper);
+    border-radius:var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border:1px solid rgba(10,10,10,0.05);
+    margin-bottom:14px;
+    opacity:0;
+    transform:translateY(24px) scale(0.98);
+  }
+  .feature-card.in-view{
+    animation: cardIn 0.7s var(--ease) forwards;
+  }
+  @keyframes cardIn{
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .feature-icon{
+    width:52px; height:52px;
+    border-radius:16px;
+    background:var(--yellow);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .feature-icon svg{ width:26px; height:26px; }
+  .feature-text{ font-size:15px; font-weight:700; line-height:1.4; }
+
+  /* ===== Trust row ===== */
+  .trust{
+    padding:20px 0 60px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    text-align:center;
+  }
+  .trust-item{
+    opacity:0;
+    transform:translateY(16px);
+  }
+  .trust-item.in-view{ animation: fadeUp 0.7s var(--ease) forwards; }
+  .trust-icon{
+    width:46px; height:46px;
+    border-radius:50%;
+    background:rgba(255,212,0,0.16);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 10px;
+  }
+  .trust-icon svg{ width:22px; height:22px; }
+  .trust-text{ font-size:11.5px; font-weight:700; line-height:1.35; color:var(--ink-soft); }
+
+  /* ===== Sticky CTA ===== */
+  .sticky-cta{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    z-index:50;
+    padding:12px 22px calc(14px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,0.82);
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    border-top:1px solid rgba(10,10,10,0.06);
+    transform:translateY(120%);
+    transition:transform 0.5s var(--ease);
+  }
+  .sticky-cta.show{ transform:translateY(0); }
+  .sticky-cta .cta-btn{ animation:none; padding:16px 20px; font-size:15.5px; }
+
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:#b5b5b8;
+    padding:0 22px 110px;
+    font-weight:600;
+  }
+
+  @media (min-width:600px){
+    .wrap{ max-width:560px; }
+    .headline{ font-size:30px; }
+    .hero-free .tag{ font-size:48px; }
+  }
+</style>
 </head>
 <body>
 
-  <div class="field">
-    <div class="glow g1"></div>
-    <div class="glow g2"></div>
-    <div class="glow g3"></div>
-  </div>
-  <div class="grain"></div>
+<div class="bg-orb o1" aria-hidden="true"></div>
+<div class="bg-orb o2" aria-hidden="true"></div>
 
-  <main class="wrap">
-
-    <div class="emblem-stage">
-      <div class="ring r1"></div>
-      <div class="ring r2"></div>
-      <div class="ring r3"></div>
-      <div class="emblem">
-        <span>GB</span>
-      </div>
+<main>
+  <section class="hero wrap" aria-label="Главное предложение">
+    <div class="logo-mark" aria-hidden="true">
+      <span class="beam left"></span>
+      <span class="ring"></span>
+      <span class="gb">GB</span>
+      <span class="beam right"></span>
     </div>
 
-    <h1>Gigabit <em>Beeline</em></h1>
+    <p class="brand"><span class="accent">Gigabit</span> <span>Beeline</span></p>
 
-    <p class="subtitle">Интернет-пакеты <b>до 3 раз дешевле</b> — без переплат и скрытых условий</p>
+    <h1 class="headline">Первая активация <span class="num">5 ГБ</span> —</h1>
 
-    <div class="cta-zone">
-      <div class="cta-glow"></div>
-      <a class="cta" href="https://wa.me/77775949300" target="_blank" rel="noopener"
-onclick="gtag('event','whatsapp_click',{event_category:'engagement',event_label:'WhatsApp Button'});">
-        <svg viewBox="0 0 32 32" fill="none"><path d="M16.001 3C9.11 3 3.5 8.61 3.5 15.5C3.5 17.79 4.12 19.94 5.21 21.8L3.5 29L10.86 27.32C12.63 28.3 14.26 28.5 16.001 28.5C22.89 28.5 28.5 22.89 28.5 16C28.5 9.11 22.89 3 16.001 3Z" fill="white" fill-opacity="0.001"/><path d="M23.34 19.63C22.99 20.6 21.53 21.42 20.44 21.65C19.7 21.8 18.73 21.92 15.47 20.58C11.31 18.87 8.63 14.64 8.42 14.36C8.22 14.08 6.75 12.11 6.75 10.08C6.75 8.04 7.8 7.05 8.22 6.62C8.57 6.26 9.15 6.1 9.7 6.1C9.88 6.1 10.04 6.11 10.19 6.11C10.61 6.13 10.82 6.15 11.1 6.82C11.45 7.66 12.31 9.69 12.41 9.9C12.52 10.11 12.63 10.4 12.49 10.68C12.36 10.97 12.24 11.1 12.03 11.34C11.82 11.58 11.62 11.76 11.41 12.02C11.22 12.24 11 12.48 11.24 12.9C11.48 13.31 12.31 14.66 13.54 15.75C15.12 17.15 16.4 17.6 16.86 17.79C17.2 17.93 17.61 17.9 17.86 17.63C18.18 17.28 18.57 16.7 18.97 16.13C19.25 15.72 19.61 15.67 19.98 15.81C20.36 15.94 22.38 16.94 22.79 17.15C23.2 17.36 23.47 17.46 23.57 17.63C23.67 17.8 23.67 18.6 23.34 19.63Z" fill="white"/></svg>
-        Написать в WhatsApp
-      </a>
+    <div class="hero-free">
+      <span class="tag">БЕСПЛАТНО!</span>
     </div>
 
-    <div class="features">
-      <div class="feature">
-        <span class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#17160F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <p>Быстрое подключение</p>
+    <p class="subtext">Подключите интернет-пакет за секунду в WhatsApp — без визита в салон и без лишних действий.</p>
+  </section>
+
+  <section class="cta-block wrap" aria-label="Призыв к действию">
+    <button class="cta-btn" id="waBtnMain" aria-label="Написать в WhatsApp, получить 5 ГБ бесплатно">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.9 7.9 0 0 0-6.85 11.86L4 20l4.27-1.12a7.9 7.9 0 0 0 3.78.96h.01a7.9 7.9 0 0 0 7.9-7.9 7.85 7.85 0 0 0-2.36-5.62zm-5.55 12.15h-.01a6.56 6.56 0 0 1-3.34-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.56 6.56 0 0 1 5.57-10.1 6.5 6.5 0 0 1 4.63 1.92 6.5 6.5 0 0 1 1.92 4.63 6.57 6.57 0 0 1-6.55 6.64zm3.6-4.92c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.44.1-.13.2-.5.64-.62.78-.11.13-.23.15-.42.05-.2-.1-.83-.31-1.58-.98-.58-.52-.98-1.16-1.09-1.36-.11-.2-.01-.3.09-.4.09-.1.2-.23.3-.35.1-.12.13-.2.2-.33.07-.13.03-.25-.02-.35-.05-.1-.44-1.06-.6-1.45-.16-.38-.32-.33-.44-.33h-.37c-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66 0 .98.72 1.93.82 2.06.1.13 1.4 2.15 3.41 3.01.48.2.85.33 1.14.42.48.15.91.13 1.26.08.38-.06 1.17-.48 1.34-.94.16-.46.16-.86.11-.94-.05-.09-.18-.14-.38-.24z" fill="currentColor"/></svg>
+      Получить 5 ГБ бесплатно
+    </button>
+    <p class="bonus-note">Успей получить <span class="hl">бонус</span> уже сегодня.</p>
+  </section>
+
+  <section class="wrap" aria-label="Обратный отсчёт акции">
+    <div class="timer-card" id="timerCard">
+      <div class="timer-head">
+        <div class="timer-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#0A0A0A" stroke-width="2"/></svg>
+        </div>
+        <p class="timer-title">Акция закончится <span class="em">через:</span></p>
       </div>
-      <div class="feature">
-        <span class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#17160F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <p>Интернет-пакеты на 30 дней</p>
-      </div>
-      <div class="feature">
-        <span class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#17160F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <p>Поддержка через WhatsApp</p>
+      <div class="timer-grid" role="timer" aria-live="polite" aria-atomic="true">
+        <div class="timer-unit">
+          <div class="timer-digits" id="hoursBox"><span id="hoursVal">02</span></div>
+          <div class="timer-label">Часа</div>
+        </div>
+        <div class="timer-colon">:</div>
+        <div class="timer-unit">
+          <div class="timer-digits" id="minsBox"><span id="minsVal">43</span></div>
+          <div class="timer-label">Минуты</div>
+        </div>
+        <div class="timer-colon">:</div>
+        <div class="timer-unit">
+          <div class="timer-digits" id="secsBox"><span id="secsVal">17</span></div>
+          <div class="timer-label">Секунды</div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="status">
-      <span class="dot"></span>
-      Работаем ежедневно
+  <section class="features wrap" aria-label="Преимущества">
+    <div class="feature-card" data-anim>
+      <div class="feature-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" fill="#0A0A0A"/></svg>
+      </div>
+      <div class="feature-text">Быстрое подключение</div>
     </div>
+    <div class="feature-card" data-anim>
+      <div class="feature-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 18h2v-4H3v4zm4 0h2v-8H7v8zm4 0h2v-12h-2v12zm4 0h2v-6h-2v6zm4 0h2V6h-2v12z" fill="#0A0A0A"/></svg>
+      </div>
+      <div class="feature-text">Интернет-пакеты до 30 дней</div>
+    </div>
+    <div class="feature-card" data-anim>
+      <div class="feature-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3zm-1.2 13.6L7 11.8l1.4-1.4 2.4 2.4 4.8-4.8L17 9.4l-6.2 6.2z" fill="#0A0A0A"/></svg>
+      </div>
+      <div class="feature-text">Без смены тарифа</div>
+    </div>
+  </section>
 
-  </main>
+  <section class="trust wrap" aria-label="Доверие">
+    <div class="trust-item" data-anim>
+      <div class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" fill="#0A0A0A"/></svg></div>
+      <div class="trust-text">Быстрое<br>подключение</div>
+    </div>
+    <div class="trust-item" data-anim>
+      <div class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3zm-1.2 13.6L7 11.8l1.4-1.4 2.4 2.4 4.8-4.8L17 9.4l-6.2 6.2z" fill="#0A0A0A"/></svg></div>
+      <div class="trust-text">Без смены<br>тарифа</div>
+    </div>
+    <div class="trust-item" data-anim>
+      <div class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 10V8a6 6 0 1 1 12 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1zm2 0h8V8a4 4 0 1 0-8 0v2z" fill="#0A0A0A"/></svg></div>
+      <div class="trust-text">Без подписок<br>и скрытых платежей</div>
+    </div>
+  </section>
+</main>
+
+<div class="sticky-cta" id="stickyCta">
+  <button class="cta-btn" id="waBtnSticky" aria-label="Написать в WhatsApp, получить 5 ГБ бесплатно">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.9 7.9 0 0 0-6.85 11.86L4 20l4.27-1.12a7.9 7.9 0 0 0 3.78.96h.01a7.9 7.9 0 0 0 7.9-7.9 7.85 7.85 0 0 0-2.36-5.62zm-5.55 12.15h-.01a6.56 6.56 0 0 1-3.34-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.56 6.56 0 0 1 5.57-10.1 6.5 6.5 0 0 1 4.63 1.92 6.5 6.5 0 0 1 1.92 4.63 6.57 6.57 0 0 1-6.55 6.64zm3.6-4.92c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.44.1-.13.2-.5.64-.62.78-.11.13-.23.15-.42.05-.2-.1-.83-.31-1.58-.98-.58-.52-.98-1.16-1.09-1.36-.11-.2-.01-.3.09-.4.09-.1.2-.23.3-.35.1-.12.13-.2.2-.33.07-.13.03-.25-.02-.35-.05-.1-.44-1.06-.6-1.45-.16-.38-.32-.33-.44-.33h-.37c-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66 0 .98.72 1.93.82 2.06.1.13 1.4 2.15 3.41 3.01.48.2.85.33 1.14.42.48.15.91.13 1.26.08.38-.06 1.17-.48 1.34-.94.16-.46.16-.86.11-.94-.05-.09-.18-.14-.38-.24z" fill="currentColor"/></svg>
+    Получить 5 ГБ бесплатно
+  </button>
+</div>
+
+<footer>© 2026 Gigabit Beeline. Условия акции уточняйте у оператора.</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- UTM preservation ----------
+  function getQueryString(){
+    try{
+      var params = new URLSearchParams(window.location.search);
+      var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','gclid','fbclid','yclid'];
+      var out = new URLSearchParams();
+      utmKeys.forEach(function(k){
+        if(params.has(k)) out.set(k, params.get(k));
+      });
+      var qs = out.toString();
+      return qs ? ('?' + qs) : '';
+    }catch(e){ return ''; }
+  }
+
+  var WA_BASE = 'https://wa.me/77770604701';
+  var WA_TEXT = encodeURIComponent('Здравствуйте! Хочу получить 5 ГБ бесплатно по акции Gigabit Beeline.');
+
+  function buildWaUrl(){
+    return WA_BASE + '?text=' + WA_TEXT;
+  }
+
+  function openWhatsApp(){
+    var url = buildWaUrl();
+    var opened = false;
+    function go(){
+      if(opened) return;
+      opened = true;
+      window.location.href = url;
+    }
+    try{
+      if(typeof gtag === 'function'){
+        gtag('event','whatsapp_click', {
+          event_callback: go,
+          event_timeout: 800
+        });
+        // Fallback in case event_callback never fires (ad blockers etc.)
+        setTimeout(go, 800);
+      } else {
+        go();
+      }
+    }catch(e){
+      go();
+    }
+  }
+
+  var waMain = document.getElementById('waBtnMain');
+  var waSticky = document.getElementById('waBtnSticky');
+  [waMain, waSticky].forEach(function(btn){
+    if(!btn) return;
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      openWhatsApp();
+    });
+    btn.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openWhatsApp();
+      }
+    });
+  });
+
+  // ---------- Sticky CTA visibility ----------
+  var stickyCta = document.getElementById('stickyCta');
+  var mainCtaBtn = document.getElementById('waBtnMain');
+  if('IntersectionObserver' in window && stickyCta && mainCtaBtn){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          stickyCta.classList.remove('show');
+        } else {
+          stickyCta.classList.add('show');
+        }
+      });
+    }, { threshold: 0 });
+    io.observe(mainCtaBtn);
+  }
+
+  // ---------- Scroll reveal ----------
+  var revealTargets = document.querySelectorAll('[data-anim], #timerCard');
+  if('IntersectionObserver' in window){
+    var revealIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry, idx){
+        if(entry.isIntersecting){
+          var el = entry.target;
+          var delay = Array.prototype.indexOf.call(el.parentNode.children, el) * 90;
+          setTimeout(function(){ el.classList.add('in-view'); }, delay);
+          revealIo.unobserve(el);
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+    revealTargets.forEach(function(el){ revealIo.observe(el); });
+  } else {
+    revealTargets.forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  // ---------- Countdown timer ----------
+  var RESTART_HOURS = 2; // hours to restart from when timer hits zero
+  var endTime = Date.now() + ((2*3600 + 43*60 + 17) * 1000);
+
+  var hoursEl = document.getElementById('hoursVal');
+  var minsEl = document.getElementById('minsVal');
+  var secsEl = document.getElementById('secsVal');
+  var hoursBox = document.getElementById('hoursBox');
+  var minsBox = document.getElementById('minsBox');
+  var secsBox = document.getElementById('secsBox');
+
+  var lastVals = { h:null, m:null, s:null };
+
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+  function tickBox(box, changed){
+    if(!changed) return;
+    box.classList.remove('tick');
+    // force reflow to restart animation
+    void box.offsetWidth;
+    box.classList.add('tick');
+  }
+
+  function renderTimer(){
+    var now = Date.now();
+    var diff = endTime - now;
+
+    if(diff <= 0){
+      // restart automatically from RESTART_HOURS
+      endTime = now + (RESTART_HOURS * 3600 * 1000);
+      diff = endTime - now;
+    }
+
+    var totalSeconds = Math.floor(diff / 1000);
+    var h = Math.floor(totalSeconds / 3600);
+    var m = Math.floor((totalSeconds % 3600) / 60);
+    var s = totalSeconds % 60;
+
+    var hStr = pad(h), mStr = pad(m), sStr = pad(s);
+
+    if(hStr !== lastVals.h){ hoursEl.textContent = hStr; tickBox(hoursBox, true); lastVals.h = hStr; }
+    if(mStr !== lastVals.m){ minsEl.textContent = mStr; tickBox(minsBox, true); lastVals.m = mStr; }
+    if(sStr !== lastVals.s){ secsEl.textContent = sStr; tickBox(secsBox, true); lastVals.s = sStr; }
+  }
+
+  renderTimer();
+  setInterval(renderTimer, 1000);
+
+  // ---------- Preserve UTM on internal navigation (none needed, single page) ----------
+  // Kept for extensibility / analytics context
+  window.__qsUtm = getQueryString();
+
+})();
+</script>
 
 </body>
 </html>
