@@ -1,10 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=https://wa.me/77775949300?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B8%D1%82%D1%8C%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%BD%D0%B5%D1%82-%D0%BF%D0%B0%D0%BA%D0%B5%D1%82">
-<title>Geo Master</title>
-<script>location.replace("https://wa.me/77775949300?text=" + encodeURIComponent("Здравствуйте! Хочу подключить интернет-пакет"));</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Geo Master — WhatsApp</title>
+
+  <script>
+    const whatsappURL =
+      "https://wa.me/77775949300?text=" +
+      encodeURIComponent("Здравствуйте! Хочу подключить интернет-пакет");
+
+    // Один основной автоматический переход
+    window.location.replace(whatsappURL);
+  </script>
 </head>
-<body></body>
+
+<body>
+  <p>Открываем WhatsApp...</p>
+
+  <p>
+    Если WhatsApp не открылся автоматически,
+    <a id="whatsapp-link" href="#">нажмите здесь</a>.
+  </p>
+
+  <script>
+    document.getElementById("whatsapp-link").href = whatsappURL;
+  </script>
+</body>
 </html>
