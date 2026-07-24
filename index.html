@@ -1,31 +1,255 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Geo Master — интернет-пакеты</title>
+<meta name="description" content="Geo Master — мобильный интернет без привязки к номеру. Выберите пакет и подключите его прямо в WhatsApp.">
 
-  <title>Geo Master — WhatsApp</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9N30Z9Q2WD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9N30Z9Q2WD');
+</script>
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "87a788ff475941c484337e42e20ca4a8"}'></script>
+<!-- Microsoft Clarity -->
+<script>
+  (function(c,l,a,r,i,t,y){
+    c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+    t=l.createElement(r); t.async=1; t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "xi78k52juo");
+</script>
 
-  <script>
-    const whatsappURL =
-      "https://wa.me/77775949300?text=" +
-      encodeURIComponent("Здравствуйте! Хочу подключить интернет-пакет");
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    // Один основной автоматический переход
-    window.location.replace(whatsappURL);
-  </script>
+<style>
+  :root{
+    --bg:            #0A0D10;
+    --panel:         #12161B;
+    --panel-line:    #22282f;
+    --gold:          #FFC94A;
+    --gold-dim:      #8a6f2c;
+    --ink:           #F2F1EC;
+    --ink-dim:       #9AA0A6;
+    --wa:            #25D366;
+    --wa-deep:       #0F3D22;
+    --radius:        18px;
+    --display: "Space Grotesk", "Segoe UI", sans-serif;
+    --body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    min-height:100svh;
+    background:
+      radial-gradient(1100px 600px at 50% -12%, rgba(255,201,74,0.10), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    display:flex;
+    justify-content:center;
+    padding:56px 20px 40px;
+  }
+
+  .wrap{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:40px; }
+
+  /* ---------- Hero ---------- */
+  .hero{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; }
+
+  .mark{
+    width:64px; height:64px; border-radius:50%;
+    background:conic-gradient(from 220deg,#FFE066,#FFCC00 35%,#F2B800 55%,#FFCC00 75%,#FFE066 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.06), 0 12px 30px -10px rgba(255,201,74,0.55);
+    animation: rise .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .mark svg{ width:28px; height:28px; }
+
+  .eyebrow{
+    font-family:var(--display);
+    font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--gold);
+    animation: rise .6s .05s cubic-bezier(.2,.8,.2,1) both;
+  }
+  h1{
+    font-family:var(--display);
+    font-size:clamp(28px,7vw,36px);
+    font-weight:700; line-height:1.12; letter-spacing:-0.01em;
+    animation: rise .6s .1s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .sub{
+    color:var(--ink-dim); font-size:15px; line-height:1.55; max-width:340px;
+    animation: rise .6s .16s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- Signal signature ---------- */
+  .signal{ display:flex; align-items:flex-end; gap:5px; height:26px; animation: rise .6s .2s cubic-bezier(.2,.8,.2,1) both; }
+  .signal i{
+    display:block; width:5px; border-radius:2px;
+    background:linear-gradient(180deg, var(--gold), var(--gold-dim));
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  .signal i:nth-child(1){ height:8px;  animation-delay:0s; }
+  .signal i:nth-child(2){ height:14px; animation-delay:.15s; }
+  .signal i:nth-child(3){ height:20px; animation-delay:.3s; }
+  .signal i:nth-child(4){ height:26px; animation-delay:.45s; }
+  @keyframes pulse{ 0%,100%{ opacity:.45; } 50%{ opacity:1; } }
+
+  /* ---------- Plans ---------- */
+  .plans{ display:flex; flex-direction:column; gap:12px; }
+
+  .plan{
+    position:relative;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    background:var(--panel);
+    border:1px solid var(--panel-line);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    text-decoration:none; color:inherit;
+    overflow:hidden;
+    animation: rise .55s cubic-bezier(.2,.8,.2,1) both;
+    transition: border-color .18s ease, transform .18s ease, background .18s ease;
+  }
+  .plan:nth-of-type(1){ animation-delay:.24s; }
+  .plan:nth-of-type(2){ animation-delay:.30s; }
+  .plan:active{ transform:scale(.98); }
+  @media (hover:hover){
+    .plan:hover{ border-color:var(--gold-dim); background:#161b21; }
+  }
+
+  .plan .tag{
+    position:absolute; top:0; right:18px;
+    font-family:var(--display); font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--gold); color:#1a1400;
+    padding:4px 10px; border-radius:0 0 8px 8px;
+  }
+
+  .plan-data{ display:flex; flex-direction:column; gap:4px; }
+  .plan-data .gb{ font-family:var(--display); font-size:22px; font-weight:700; letter-spacing:-0.01em; }
+  .plan-data .note{ font-size:12.5px; color:var(--ink-dim); }
+
+  .plan-price{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .plan-price .amount{ font-family:var(--display); font-size:20px; font-weight:700; color:var(--gold); white-space:nowrap; }
+  .plan-price .arrow{
+    width:30px; height:30px; border-radius:50%;
+    background:var(--wa-deep); color:var(--wa);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px;
+    transition: background .18s ease;
+  }
+  .plan:hover .plan-price .arrow{ background:var(--wa); color:#04140b; }
+
+  /* ---------- Main CTA ---------- */
+  .cta{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:var(--wa); color:#04140b;
+    font-family:var(--display); font-weight:700; font-size:16px;
+    text-decoration:none;
+    padding:17px 24px; border-radius:16px;
+    box-shadow:0 14px 34px -12px rgba(37,211,102,0.55);
+    animation: rise .6s .38s cubic-bezier(.2,.8,.2,1) both, glow 2.6s ease-in-out .8s infinite;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .cta:active{ transform:scale(.98); }
+  @media (hover:hover){
+    .cta:hover{ box-shadow:0 16px 38px -10px rgba(37,211,102,0.7); }
+  }
+  @keyframes glow{
+    0%,100%{ box-shadow:0 14px 34px -12px rgba(37,211,102,0.55); }
+    50%{ box-shadow:0 14px 40px -8px rgba(37,211,102,0.8); }
+  }
+  .cta svg{ width:20px; height:20px; flex:none; }
+
+  .foot{
+    text-align:center; font-size:12.5px; color:var(--ink-dim);
+    animation: rise .6s .44s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .foot b{ color:var(--ink); font-weight:600; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
 </head>
-
 <body>
-  <p>Открываем WhatsApp...</p>
 
-  <p>
-    Если WhatsApp не открылся автоматически,
-    <a id="whatsapp-link" href="#">нажмите здесь</a>.
-  </p>
+<div class="wrap">
 
-  <script>
-    document.getElementById("whatsapp-link").href = whatsappURL;
-  </script>
+  <div class="hero">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none"><path d="M8 26 L20 10 L20 20 L32 14 L20 30 L20 20 Z" fill="#141400"/></svg>
+    </div>
+    <div class="eyebrow">Geo Master</div>
+    <h1>Интернет‑пакеты<br>без лишних шагов</h1>
+    <p class="sub">Выберите объём — и мы подключим пакет, как только вы напишете нам в WhatsApp.</p>
+    <div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <div class="plans">
+    <a class="plan" id="plan7" href="#" aria-label="Пакет 7 гигабайт за 500 тенге, написать в WhatsApp">
+      <div class="plan-data">
+        <div class="gb">7 ГБ</div>
+        <div class="note">на каждый день</div>
+      </div>
+      <div class="plan-price">
+        <div class="amount">500 ₸</div>
+        <div class="arrow">→</div>
+      </div>
+    </a>
+
+    <a class="plan" id="plan20" href="#" aria-label="Пакет 20 гигабайт за 1000 тенге, написать в WhatsApp">
+      <span class="tag">Выгоднее</span>
+      <div class="plan-data">
+        <div class="gb">20 ГБ</div>
+        <div class="note">для активного трафика</div>
+      </div>
+      <div class="plan-price">
+        <div class="amount">1000 ₸</div>
+        <div class="arrow">→</div>
+      </div>
+    </a>
+  </div>
+
+  <a class="cta" id="mainCta" href="#">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.01.79.8-2.93-.2-.3A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.99c-.24-.12-1.43-.7-1.65-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41-.14-.01-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.43-.58 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28z"/></svg>
+    Написать в WhatsApp
+  </a>
+
+  <p class="foot">Отвечаем обычно за <b>5–10 минут</b>. Оплата — при подключении.</p>
+
+</div>
+
+<script>
+  var phone = "77775949300";
+
+  function waLink(text){
+    return "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
+  }
+
+  var links = {
+    plan7:   { el: document.getElementById('plan7'),   text: "Здравствуйте! Хочу подключить пакет 7 ГБ за 500 ₸." },
+    plan20:  { el: document.getElementById('plan20'),  text: "Здравствуйте! Хочу подключить пакет 20 ГБ за 1000 ₸." },
+    mainCta: { el: document.getElementById('mainCta'), text: "Здравствуйте! Хочу подключить интернет-пакет." }
+  };
+
+  Object.keys(links).forEach(function(key){
+    var item = links[key];
+    item.el.href = waLink(item.text);
+    item.el.addEventListener('click', function(){
+      if (typeof gtag === 'function') gtag('event', 'whatsapp_click', { plan: key });
+    });
+  });
+</script>
+
 </body>
 </html>
