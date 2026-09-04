@@ -328,7 +328,13 @@ function supportBlock(){
   </div>
  </div>`;
 }
-function dailyLimitBanner(){ return `<div class="error-banner" style="margin-bottom:14px">⏳ <strong>${esc(t('daily_limit_title'))}</strong><br>${esc(t('daily_limit_desc'))}</div>`; }
+// Live-run UX fix (2026-09-04): a DAILY_PHONE_LIMIT rejection is a business rule, not a typo in the
+// number - the original one-line .error-banner (designed for a short "attempts left: N" line) read as
+// just another red-border validation blip and the owner reported the Continue button "doesn't work" on
+// their two already-exhausted test numbers. This is deliberately its own bigger, unmissable block
+// (own icon circle, bold title, plain-language deadline) and callers scroll it into view - the same
+// kind of block the OTP/phone screens already use for their real terminal states.
+function dailyLimitBanner(){ return `<div class="card center daily-limit-banner" id="dailyLimitBanner"><div class="icon-circle err">⏳</div><h2 class="title" style="font-size:17px">${esc(t('daily_limit_title'))}</h2><p class="desc">${esc(t('daily_limit_desc'))}</p></div>`; }
 function trustBlock(){
  return `<div class="trust"><div>🛡️<span>${esc(t('trust1'))}</span></div><div>⚡<span>${esc(t('trust2'))}</span></div><div>👍<span>${esc(t('trust3'))}</span></div></div>`;
 }
@@ -413,8 +419,16 @@ function renderPhone(el){
   const btn = document.getElementById('phoneContinue'); btn.disabled = true;
   try{ ctx = await api('/phone', {phone: '7'+digits}); render(); }
   catch(e){
-   btn.disabled=false; input.style.borderColor='var(--danger)';
-   if(e.code==='DAILY_PHONE_LIMIT') document.getElementById('phoneNotice').innerHTML = dailyLimitBanner();
+   btn.disabled=false;
+   // DAILY_PHONE_LIMIT isn't a bad number - reddening the field would wrongly suggest a typo, so it
+   // gets the big unmissable banner instead, scrolled into view (the button can be off-screen on a
+   // small phone). Every other rejection keeps the plain red-border cue as before.
+   if(e.code==='DAILY_PHONE_LIMIT'){
+    document.getElementById('phoneNotice').innerHTML = dailyLimitBanner();
+    document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
+   }else{
+    input.style.borderColor='var(--danger)';
+   }
   }
  });
 }
@@ -549,8 +563,13 @@ function renderOtp(el, wrong){
    pendingOtpAttempts = 3;
    render();
   }catch(e){
-   submitBtn.disabled=false; newPhoneInput.style.borderColor='var(--danger)';
-   if(e.code==='DAILY_PHONE_LIMIT') document.getElementById('changeNumberNotice').innerHTML = dailyLimitBanner();
+   submitBtn.disabled=false;
+   if(e.code==='DAILY_PHONE_LIMIT'){
+    document.getElementById('changeNumberNotice').innerHTML = dailyLimitBanner();
+    document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
+   }else{
+    newPhoneInput.style.borderColor='var(--danger)';
+   }
   }
  });
  otpBoxes = Array.from(el.querySelectorAll('#otpBoxes input'));
