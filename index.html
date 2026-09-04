@@ -154,9 +154,10 @@ const STR = {
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили 6-значный код подтверждения на номер', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
-  success_title:'Код подтверждён!', success_sub:'Спасибо! Код введён верно.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
+  success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
   activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
+  order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
   change_number:'Указали не тот номер?', change_number_link:'Изменить номер', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
   reward_title:'🎁 Пригласите друга', reward_desc:'Получите +5 ГБ бесплатно за каждого приглашённого друга.', reward_btn:'Хочу получить ссылку',
   fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
@@ -173,9 +174,10 @@ const STR = {
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Растау үшін 6 таңбалы кодты мына нөмірге жібердік', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
-  success_title:'Код расталды!', success_sub:'Рахмет! Код дұрыс енгізілді.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
+  success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
   activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
+  order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
   change_number:'Нөмірді қате көрсеттіңіз бе?', change_number_link:'Нөмірді өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
   reward_title:'🎁 Досыңызды шақырыңыз', reward_desc:'Әр шақырылған дос үшін +5 ГБ тегін алыңыз.', reward_btn:'Сілтеме алғым келеді',
   fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
@@ -351,6 +353,7 @@ function renderPackages(el){
  }).join('');
  el.innerHTML = `
   <p class="subtitle">${esc(t('choose_title'))}</p>
+  <div id="pkgNotice"></div>
   <div>${rows}</div>
   <div class="benefits">
    <h3>${esc(t('benefits_title'))}</h3>
@@ -360,9 +363,17 @@ function renderPackages(el){
   ${footBlock()}
  `;
  el.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click', async ()=>{
+  document.getElementById('pkgNotice').innerHTML = '';
   el.querySelectorAll('.pkg').forEach(b=>b.disabled=true);
   try{ ctx = await api('/package', {packageId: btn.dataset.id}); render(); }
-  catch(e){ el.querySelectorAll('.pkg').forEach(b=>b.disabled=false); }
+  catch(e){
+   el.querySelectorAll('.pkg').forEach(b=>b.disabled=false);
+   // A package can be picked from the "waiting ~5 minutes" screen too (2026-09-04), but the backend
+   // still correctly refuses a second order while the current one is TRAINING/PROVISIONING - explain
+   // that plainly instead of leaving the buttons silently reset with no feedback.
+   if(e.code==='INVALID_STATE_TRANSITION') document.getElementById('pkgNotice').innerHTML =
+    `<div class="error-banner" style="margin-bottom:14px">⏳ <strong>${esc(t('order_in_progress'))}</strong><br>${esc(t('order_in_progress_desc'))}</div>`;
+  }
  }));
 }
 
@@ -461,10 +472,20 @@ function renderActivating(el){
     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
    </div>
   </div>
+  <div class="card center">
+   <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
+   <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
+   <button class="btn btn-primary" id="buyAgainBtn">${esc(t('buy_again_btn'))} →</button>
+  </div>
   ${supportBlock()}
   ${footBlock()}
  `;
  bindSupport();
+ // A package selected here is only fully confirmed once THIS order reaches ACTIVE - selectPackage
+ // correctly rejects it (INVALID_STATE_TRANSITION) while still TRAINING/PROVISIONING; browsing/picking
+ // is still made available from this screen (2026-09-04 request), the friendly explanation lives in
+ // renderPackages's own catch handler right next to that call.
+ document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ showScreen('packages'); });
 }
 
 let otpBoxes = [];
