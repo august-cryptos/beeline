@@ -684,7 +684,12 @@ function renderOtp(el, wrong){
    pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
    otpBoxes.forEach(b=>b.classList.add('bad'));
    renderOtp(el, true);
-   if(pendingOtpAttempts<=0){ pendingOtpAttempts = 3; api('/otp-resend', {}).catch(()=>{}); }
+   // 2026-09-04: the backend itself already sends a fresh code and resets attempts once the 3rd wrong
+   // one lands (server-side WRONG_ATTEMPTS_EXHAUSTED handling) - calling /otp-resend here too used to
+   // be dead code (this catch never used to fire for a real wrong code, see the OTP_REJECTED fix on the
+   // backend), so fixing that would have started sending the customer a duplicate code. Just mirror the
+   // reset locally.
+   if(pendingOtpAttempts<=0){ pendingOtpAttempts = 3; }
   }
  });
  function bindResendBtn(btn){
