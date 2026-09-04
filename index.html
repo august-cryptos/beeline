@@ -154,7 +154,7 @@ const STR = {
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
-  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
+  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
   activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
@@ -176,7 +176,7 @@ const STR = {
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
-  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
+  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
   activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
@@ -654,11 +654,20 @@ function renderOtp(el, wrong){
  });
  confirmBtn.addEventListener('click', async ()=>{
   confirmBtn.disabled = true;
+  // Live-run fix (2026-09-04): the real Beeline OTP check can take a few seconds - with no feedback
+  // the button just looked stuck, which is exactly what led to a submit-again-while-waiting duplicate.
+  confirmBtn.textContent = t('otp_checking');
   try{
    ctx = await api('/otp', {code: currentCode()});
    pendingOtpAttempts = 3;
    render();
   }catch(e){
+   // OTP_NOT_EXPECTED means the job already moved past WAITING_OTP - almost always because an
+   // earlier submission (the slow real check above, or a duplicate click/resubmit while waiting)
+   // already succeeded. Showing "code incorrect" here would be flatly wrong - confirmed live: the
+   // code was entered correctly, training actually started, and the site still said it didn't match.
+   // Refresh and show whatever the real state now is instead of guessing it was a bad code.
+   if(e.code==='OTP_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
    otpBoxes.forEach(b=>b.classList.add('bad'));
    renderOtp(el, true);
