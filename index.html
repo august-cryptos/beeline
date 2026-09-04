@@ -387,6 +387,9 @@ function renderPackages(el){
 
 function renderPhone(el){
  const pkg = ctx.selectedPackage;
+ // Nothing has been submitted to the backend yet at this point (submitPhone only fires on Continue),
+ // so going back to packages is pure client-side navigation - no API call needed.
+ setBack(true, ()=>{ showScreen('packages'); });
  el.innerHTML = `
   <div class="card">
    <p class="subtitle" style="margin-bottom:16px">${esc(t('phone_title'))}</p>
@@ -435,6 +438,18 @@ function renderPhone(el){
 
 function renderReceipt(el){
  const pkg = ctx.selectedPackage;
+ // The order created on the phone screen is still unpaid at this point - back cancels it server-side
+ // (goBackToPhone) and returns to phone entry for the same package, so a resubmitted phone number
+ // starts a genuinely fresh order rather than colliding with the abandoned one. If a payment happens to
+ // land in the same instant (rare race), the backend refuses the cancel - refresh and show whatever
+ // the real state now is instead of leaving the screen stuck.
+ setBack(true, async ()=>{
+  const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
+  try{ ctx = await api('/back-to-phone', {}); }
+  catch(e){ await refreshContext().catch(()=>{}); }
+  backBtn.disabled = false;
+  render();
+ });
  el.innerHTML = `
   <div class="card">
    <p class="subtitle" style="margin-bottom:16px">${esc(t('receipt_title'))}</p>
