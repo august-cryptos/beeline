@@ -463,9 +463,15 @@ function renderPhone(el){
   if(digits.length<10){ input.style.borderColor='var(--danger)'; return; }
   document.getElementById('phoneNotice').innerHTML = '';
   const btn = document.getElementById('phoneContinue'); btn.disabled = true;
+  const originalLabel = btn.textContent; btn.textContent = t('otp_checking');
   try{ ctx = await api('/phone', {phone: '7'+digits}); render(); }
   catch(e){
-   btn.disabled=false;
+   btn.disabled=false; btn.textContent = originalLabel;
+   // Same class of bug as the OTP screen's fix (2026-09-04): PHONE_NOT_EXPECTED means an earlier
+   // submission of THIS SAME number already succeeded (a duplicate click, or a resubmit after the
+   // screen looked stuck) - the phone was never actually invalid, showing a red border here would be
+   // exactly as misleading as the OTP screen's old "code incorrect" was. Refresh and move on instead.
+   if(e.code==='PHONE_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    // DAILY_PHONE_LIMIT isn't a bad number - reddening the field would wrongly suggest a typo, so it
    // gets the big unmissable banner instead, scrolled into view (the button can be off-screen on a
    // small phone). Every other rejection keeps the plain red-border cue as before.
@@ -516,7 +522,13 @@ function renderReceipt(el){
    selectedMethod = res.method;
    if(res.paymentUrl) window.open(res.paymentUrl, '_blank');
    showScreen('checking');
-  }catch(e){ el.querySelectorAll('[data-method]').forEach(b=>b.disabled=false); }
+  }catch(e){
+   // Same class of bug as the phone/OTP screens (2026-09-04): PAYMENT_METHOD_NOT_EXPECTED means an
+   // earlier click already succeeded and moved past this screen - re-enabling these buttons would
+   // just leave the customer stuck retrying a step that's already done. Refresh and move on instead.
+   if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   el.querySelectorAll('[data-method]').forEach(b=>b.disabled=false);
+  }
  }));
 }
 
@@ -622,6 +634,7 @@ function renderOtp(el, wrong){
    render();
   }catch(e){
    submitBtn.disabled=false;
+   if(e.code==='PHONE_CORRECTION_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    if(e.code==='DAILY_PHONE_LIMIT'){
     document.getElementById('changeNumberNotice').innerHTML = dailyLimitBanner();
     document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
