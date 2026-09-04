@@ -155,9 +155,12 @@ const STR = {
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили 6-значный код подтверждения на номер', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   success_title:'Код подтверждён!', success_sub:'Спасибо! Код введён верно.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
+  activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
+  buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
+  change_number:'Указали не тот номер?', change_number_link:'Изменить номер', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
   reward_title:'🎁 Пригласите друга', reward_desc:'Получите +5 ГБ бесплатно за каждого приглашённого друга.', reward_btn:'Хочу получить ссылку',
-  fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки.',
-  need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам.', open_wa:'Написать в WhatsApp', support_sent:'Обращение передано в поддержку',
+  fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
+  need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'WhatsApp', open_tg:'Telegram', support_sent:'Обращение отправлено ✓',
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
   invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты'
  },
@@ -171,9 +174,12 @@ const STR = {
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Растау үшін 6 таңбалы кодты мына нөмірге жібердік', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   success_title:'Код расталды!', success_sub:'Рахмет! Код дұрыс енгізілді.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
+  activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
+  buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
+  change_number:'Нөмірді қате көрсеттіңіз бе?', change_number_link:'Нөмірді өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
   reward_title:'🎁 Досыңызды шақырыңыз', reward_desc:'Әр шақырылған дос үшін +5 ГБ тегін алыңыз.', reward_btn:'Сілтеме алғым келеді',
-  fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік.',
-  need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім қолдау қызметіне жіберілді',
+  fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
+  need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp', open_tg:'Telegram', support_sent:'Өтінім жіберілді ✓',
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
   invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз'
  }
@@ -187,6 +193,12 @@ let ctx = null;
 let stack = [];
 let pendingOtpAttempts = 3;
 let selectedMethod = null;
+// Live-run UX fix (2026-09-04): the site must work fully standalone, not only when opened via a
+// WhatsApp/Telegram link (see initSession). This flag is what lets the ACTIVE state mean two
+// different things correctly: "just finished an order in THIS page load" (show the success screen)
+// vs "returning later / a fresh load with an already-ACTIVE account" (go straight to packages, ready
+// to order again) - the backend alone can't tell these apart, clientState is ACTIVE either way.
+let engagedThisSession = false;
 
 function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -217,19 +229,27 @@ async function api(path, body, method){
 
 async function initSession(){
  const tg = window.Telegram && window.Telegram.WebApp;
- let body = null;
+ let body;
  if(tg && tg.initData){
   tg.ready(); tg.expand();
   body = {initData: tg.initData, language: lang};
  } else {
   const params = new URLSearchParams(location.search);
   const token = params.get('t');
-  if(token) body = {token, language: lang};
+  if(token){ body = {token, language: lang}; }
+  else{
+   // Live-run UX fix (2026-09-04): a bare visit (no WhatsApp/Telegram link at all) is now a fully
+   // supported, standalone entry point - not an error. First time, there's no stored webId yet, so
+   // the backend mints one and hands it back (see the res.webId branch below); every later visit from
+   // this same browser sends it back and resumes the same account.
+   const webId = localStorage.getItem('gm_web_id');
+   body = webId ? {webId, language: lang} : {language: lang};
+  }
  }
- if(!body){ showScreen('noEntry'); return; }
  try{
   const res = await api('/session', body);
   if(res.paused){ showScreen('paused', {message:res.message}); return; }
+  if(res.webId) localStorage.setItem('gm_web_id', res.webId);
   sessionToken = res.sessionToken; ctx = res.context;
   if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
   render();
@@ -249,13 +269,16 @@ function render(){
  if(!ctx) return;
  const state = ctx.clientState;
  if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
- if(state==='WAITING_PHONE') return showScreen('phone');
- if(state==='WAITING_PAYMENT') return showScreen('receipt');
- if(['PAYMENT_CONFIRMED'].includes(state)) return showScreen('checking');
- if(state==='WAITING_OTP') return showScreen('otp');
- if(['TRAINING','PROVISIONING'].includes(state)) return showScreen('activating');
- if(['ACTIVE','COMPLETED'].includes(state)) return showScreen('success');
- if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)) return showScreen('failed');
+ if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
+ if(state==='WAITING_PAYMENT'){ engagedThisSession=true; return showScreen('receipt'); }
+ if(state==='PAYMENT_CONFIRMED'){ engagedThisSession=true; return showScreen('checking'); }
+ if(state==='WAITING_OTP'){ engagedThisSession=true; return showScreen('otp'); }
+ if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('activating'); }
+ // ACTIVE/COMPLETED means "free to act, nothing pending" on the backend either way - engagedThisSession
+ // is what tells apart "I was just watching this order finish" (success screen) from "fresh page load,
+ // ready to order again" (packages screen) - see its own comment above.
+ if(['ACTIVE','COMPLETED'].includes(state)) return showScreen(engagedThisSession ? 'success' : 'packages');
+ if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)){ engagedThisSession=true; return showScreen('failed'); }
  return showScreen('packages');
 }
 
@@ -272,7 +295,7 @@ function showScreen(name, extra){
  stopPoll();
  setBack(false);
  const el = screensEl();
- if(name==='noEntry') el.innerHTML = tplMessage(t('fail_title'), lang==='kk' ? 'Сілтеме жарамсыз. Telegram немесе WhatsApp арқылы қайта өтіңіз.' : 'Ссылка недействительна. Пожалуйста, откройте её заново из Telegram или WhatsApp.', 'err', '⚠️');
+ if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
  else if(name==='packages') renderPackages(el);
  else if(name==='phone') renderPhone(el);
@@ -288,11 +311,18 @@ function tplMessage(title, desc, cls, emoji){
  return `<div class="card center"><div class="icon-circle ${cls==='err'?'err':'ok'}">${emoji}</div><h2 class="title">${esc(title)}</h2><p class="desc">${esc(desc)}</p></div>`;
 }
 
+// A support ticket is always created automatically (bindSupport() calls POST /support, which is
+// createSupportEscalation - the exact same mechanism WhatsApp already used, just reached from the
+// site now) - these two links are a direct, personal fallback contact method on top of that ticket,
+// not a replacement for it.
 function supportBlock(){
  return `<div class="support">
-  <div class="wa">📱</div>
-  <div class="txt"><strong>${esc(t('need_help'))}</strong><span>${esc(t('need_help_desc'))}</span></div>
-  <button class="support-btn" id="supportBtn">${esc(t('open_wa'))}</button>
+  <div class="wa">🆘</div>
+  <div class="txt" style="flex:1"><strong>${esc(t('need_help'))}</strong><span>${esc(t('need_help_desc'))}</span></div>
+  <div style="display:flex;gap:8px;flex:none">
+   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center" href="https://wa.me/77775949300" target="_blank" rel="noopener">${esc(t('open_wa'))}</a>
+   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center;background:var(--blue)" href="https://t.me/GeoMaster1_bot" target="_blank" rel="noopener">${esc(t('open_tg'))}</a>
+  </div>
  </div>`;
 }
 function trustBlock(){
@@ -420,7 +450,20 @@ function renderChecking(el){
 }
 
 function renderActivating(el){
- el.innerHTML = tplMessage(t('checking_title'), t('checking_desc'), 'ok', '⏳') + supportBlock() + footBlock();
+ const pkg = ctx.selectedPackage;
+ el.innerHTML = `
+  <div class="card center">
+   <div class="icon-circle ok">🎁</div>
+   <h2 class="title">${esc(t('activating_title'))}</h2>
+   <p class="desc">${esc(t('activating_desc'))}</p>
+   <div class="receipt" style="margin-top:16px">
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+   </div>
+  </div>
+  ${supportBlock()}
+  ${footBlock()}
+ `;
  bindSupport();
 }
 
@@ -438,11 +481,45 @@ function renderOtp(el, wrong){
    <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
    <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
    <div class="timer" id="resendWrap"><span id="resendCountdown">⏱ ${esc(t('resend_in'))} 01:00</span></div>
+   <div style="text-align:center;margin-top:2px">
+    <span style="color:var(--ink-dim);font:500 12.5px var(--body)">${esc(t('change_number'))} </span>
+    <button id="changeNumberLink" style="background:none;border:none;padding:0;font:700 12.5px var(--body);color:var(--blue);text-decoration:underline;cursor:pointer">${esc(t('change_number_link'))}</button>
+   </div>
+   <div id="changeNumberForm" hidden style="text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+    <label>${esc(t('change_number_title'))}</label>
+    <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('change_number_desc'))}</p>
+    <div class="phoneinput"><span>+7</span><input id="newPhoneInput" inputmode="numeric" maxlength="10" placeholder="___ ___ __ __" autocomplete="tel"></div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+     <button class="btn" id="changeNumberCancel" style="background:var(--line);color:var(--ink)">${esc(t('change_number_cancel'))}</button>
+     <button class="btn btn-primary" id="changeNumberSubmit">${esc(t('change_number_btn'))}</button>
+    </div>
+   </div>
   </div>
   ${supportBlock()}
   ${footBlock()}
  `;
  bindSupport();
+ document.getElementById('changeNumberLink').addEventListener('click', ()=>{
+  document.getElementById('changeNumberForm').hidden = false;
+  document.getElementById('changeNumberLink').parentElement.hidden = true;
+  document.getElementById('newPhoneInput').focus();
+ });
+ document.getElementById('changeNumberCancel').addEventListener('click', ()=>{
+  document.getElementById('changeNumberForm').hidden = true;
+  document.getElementById('changeNumberLink').parentElement.hidden = false;
+ });
+ const newPhoneInput = document.getElementById('newPhoneInput');
+ newPhoneInput.addEventListener('input', ()=>{ newPhoneInput.value = newPhoneInput.value.replace(/\D/g,'').slice(0,10); });
+ document.getElementById('changeNumberSubmit').addEventListener('click', async ()=>{
+  const digits = newPhoneInput.value.replace(/\D/g,'');
+  if(digits.length<10){ newPhoneInput.style.borderColor='var(--danger)'; return; }
+  const submitBtn = document.getElementById('changeNumberSubmit'); submitBtn.disabled = true;
+  try{
+   ctx = await api('/change-phone', {phone: '7'+digits});
+   pendingOtpAttempts = 3;
+   render();
+  }catch(e){ submitBtn.disabled=false; newPhoneInput.style.borderColor='var(--danger)'; }
+ });
  otpBoxes = Array.from(el.querySelectorAll('#otpBoxes input'));
  const confirmBtn = document.getElementById('otpConfirm');
  function currentCode(){ return otpBoxes.map(b=>b.value).join(''); }
@@ -520,6 +597,11 @@ function renderSuccess(el){
    <p>${esc(t('reward_desc'))}</p>
    <button class="btn btn-primary" id="referralBtn">${esc(t('reward_btn'))}</button>
   </div>
+  <div class="card center">
+   <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
+   <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
+   <button class="btn btn-primary" id="buyAgainBtn">${esc(t('buy_again_btn'))} →</button>
+  </div>
   ${supportBlock()}
   ${trustBlock()}
   ${footBlock()}
@@ -531,6 +613,11 @@ function renderSuccess(el){
   try{ const res = await api('/referral', {}); rbtn.textContent = res.link; rbtn.onclick=null; if(navigator.clipboard) navigator.clipboard.writeText(res.link).catch(()=>{}); }
   catch(e){ rbtn.disabled=false; }
  });
+ // "Buy another package" (2026-09-04): the account is already ACTIVE/free-to-act on the backend -
+ // selecting a new package from here is the exact same repeat-purchase path selectPackage always
+ // supported (see order-c2-repeat-purchase.test.js). Client-side we just need to stop treating this
+ // page load as "just finished" so render() shows packages instead of bouncing back to this screen.
+ document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ engagedThisSession = false; showScreen('packages'); });
 }
 
 function renderFailed(el){
