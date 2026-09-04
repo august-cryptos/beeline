@@ -136,6 +136,7 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
     <div class="geo">GEO <b>MASTER</b><u></u></div>
   </div>
   <button class="back" id="backBtn" hidden>← <span id="tBack">Назад</span></button>
+  <div id="reconnectBanner" hidden style="text-align:center;font:600 12.5px var(--body);color:var(--ink-dim);padding:6px 0"><span id="tReconnect"></span></div>
   <div id="screens"></div>
 </div>
 
@@ -164,7 +165,8 @@ const STR = {
   fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
   need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
-  invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты'
+  invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
+  reconnecting:'⏳ Восстанавливаем соединение…'
  },
  kk:{
   slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа',
@@ -185,7 +187,8 @@ const STR = {
   fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
   need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
-  invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз'
+  invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
+  reconnecting:'⏳ Байланыс қалпына келтірілуде…'
  }
 };
 STR.ru.b_all=[STR.ru.b1,STR.ru.b2,STR.ru.b3,STR.ru.b4];
@@ -232,6 +235,7 @@ function applyLang(){
  document.documentElement.lang = lang;
  document.getElementById('tSlogan').textContent = t('slogan');
  document.getElementById('tBack').textContent = t('back');
+ document.getElementById('tReconnect').textContent = t('reconnecting');
  document.querySelectorAll('#langToggle button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
 }
 document.getElementById('langToggle').addEventListener('click', e=>{
@@ -301,17 +305,36 @@ function render(){
  // ACTIVE/COMPLETED means "free to act, nothing pending" on the backend either way - engagedThisSession
  // is what tells apart "I was just watching this order finish" (success screen) from "fresh page load,
  // ready to order again" (packages screen) - see its own comment above.
- if(['ACTIVE','COMPLETED'].includes(state)) return showScreen(engagedThisSession ? 'success' : 'packages');
+ if(['ACTIVE','COMPLETED'].includes(state)){
+  if(!engagedThisSession) return showScreen('packages');
+  // Live-run forensic fix (2026-09-04): a real training failure moves the client TRAINING_FAILED->
+  // ACTIVE in one backend transaction (the client must never be left stuck) - so by the time this
+  // poll lands, clientState already reads ACTIVE exactly like a genuine success does. Confirmed live:
+  // a customer saw "всё круто" for an order support was paged about as failed, in the same instant.
+  // ctx.lastOrder (the client's most recent order, any status) is the real signal - never clientState
+  // alone - for which of the two screens below this actually was.
+  const FAILURE_STATUSES=['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW','CANCELLED'];
+  const failed = ctx.lastOrder && FAILURE_STATUSES.includes(ctx.lastOrder.status);
+  return showScreen(failed ? 'failed' : 'success');
+ }
  if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)){ engagedThisSession=true; return showScreen('failed'); }
  return showScreen('packages');
 }
 
 let pollTimer = null;
-function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
+function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } document.getElementById('reconnectBanner').hidden = true; }
+// Live-run resilience fix (2026-09-04): a poll failure used to be swallowed completely silently -
+// during a brief staging deploy restart (routine while iterating on backend fixes) the screen simply
+// froze with zero feedback until the customer manually refreshed. Three consecutive misses (~10s)
+// now shows a small "reconnecting" hint instead of nothing; it clears itself the moment a poll
+// succeeds again. This never touches which screen renders - only whether this hint is visible.
+let pollFailures = 0;
 function startPoll(){
  stopPoll();
+ pollFailures = 0;
  pollTimer = setInterval(async ()=>{
-  try{ await refreshContext(); render(); }catch(e){}
+  try{ await refreshContext(); pollFailures = 0; document.getElementById('reconnectBanner').hidden = true; render(); }
+  catch(e){ pollFailures++; if(pollFailures>=3) document.getElementById('reconnectBanner').hidden = false; }
  }, 3500);
 }
 
