@@ -443,7 +443,7 @@ function renderPhone(el){
    </div>` : ''}
    <label>${esc(t('phone_label'))}</label>
    <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('phone_hint'))}</p>
-   <div class="phoneinput"><span>+7-</span><input id="phoneInput" inputmode="numeric" maxlength="13" placeholder="XXX-XXX-XX-XX" autocomplete="tel"></div>
+   <div class="phoneinput"><span>+7-</span><input id="phoneInput" inputmode="numeric" maxlength="20" placeholder="XXX-XXX-XX-XX" autocomplete="tel"></div>
    <div class="hint">🛡️ ${esc(t('phone_secure'))}</div>
   </div>
   <div id="phoneNotice"></div>
@@ -599,7 +599,7 @@ function renderOtp(el, wrong){
    <div id="changeNumberForm" hidden style="text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
     <label>${esc(t('change_number_title'))}</label>
     <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('change_number_desc'))}</p>
-    <div class="phoneinput"><span>+7-</span><input id="newPhoneInput" inputmode="numeric" maxlength="13" placeholder="XXX-XXX-XX-XX" autocomplete="tel"></div>
+    <div class="phoneinput"><span>+7-</span><input id="newPhoneInput" inputmode="numeric" maxlength="20" placeholder="XXX-XXX-XX-XX" autocomplete="tel"></div>
     <div id="changeNumberNotice"></div>
     <div style="display:flex;gap:10px;margin-top:12px">
      <button class="btn" id="changeNumberCancel" style="background:var(--line);color:var(--ink)">${esc(t('change_number_cancel'))}</button>
