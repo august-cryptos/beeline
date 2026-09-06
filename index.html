@@ -164,8 +164,8 @@ const STR = {
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
-  success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
-  activating_title:'Пакет подключается…', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
+  gifting:'ГБ будут начислены на ваш номер',
+  connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
   bg_training:'подключается…', bg_done:'подключён ✓', bg_problem:'возникла проблема',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
@@ -187,8 +187,8 @@ const STR = {
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
-  success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
-  activating_title:'Пакет қосылуда…', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
+  gifting:'ГБ нөміріңізге есептеледі',
+  connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
   bg_training:'қосылуда…', bg_done:'қосылды ✓', bg_problem:'мәселе туындады',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
@@ -346,10 +346,10 @@ function render(){
  if(state==='WAITING_PAYMENT'){ engagedThisSession=true; return showScreen('receipt'); }
  if(state==='PAYMENT_CONFIRMED'){ engagedThisSession=true; return showScreen('checking'); }
  if(state==='WAITING_OTP'){ engagedThisSession=true; return showScreen('otp'); }
- if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('activating'); }
+ if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('connected'); }
  // ACTIVE/COMPLETED means "free to act, nothing pending" on the backend either way - engagedThisSession
- // is what tells apart "I was just watching this order finish" (success screen) from "fresh page load,
- // ready to order again" (packages screen) - see its own comment above.
+ // is what tells apart "I was just watching this order finish" (connected screen) from "fresh page
+ // load, ready to order again" (packages screen) - see its own comment above.
  if(['ACTIVE','COMPLETED'].includes(state)){
   // Parallel orders on different numbers (2026-09-07): client.state now reads ACTIVE the instant
   // training STARTS, not once it finishes (the client is freed early so a second, different-numbered
@@ -369,7 +369,7 @@ function render(){
   if(mineEntry){
    engagedThisSession = true;
    if(FAILURE_STATUSES.includes(mineEntry.orderStatus)){ forgetWatchedOrder(); return showScreen('failed'); }
-   return showScreen('activating');
+   return showScreen('connected');
   }
   if(!engagedThisSession) return showScreen('packages');
   // Live-run forensic fix (2026-09-04): a real training failure moves the client TRAINING_FAILED->
@@ -380,7 +380,7 @@ function render(){
   // alone - for which of the two screens below this actually was.
   const failed = ctx.lastOrder && FAILURE_STATUSES.includes(ctx.lastOrder.status);
   forgetWatchedOrder();
-  return showScreen(failed ? 'failed' : 'success');
+  return showScreen(failed ? 'failed' : 'connected');
  }
  if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)){ engagedThisSession=true; return showScreen('failed'); }
  return showScreen('packages');
@@ -407,9 +407,9 @@ function showScreen(name, extra){
  stopPoll();
  setBack(false);
  // Owner request (2026-09-06/09-07): the BEELINE/GEO MASTER brand block only makes sense on the first
- // (package choice) and final (success) screens - hidden everywhere in between (it just eats space on
- // a customer's active form-filling steps).
- document.querySelector('.brand').hidden = !['packages','success'].includes(name);
+ // (package choice) and final (connected) screens - hidden everywhere in between (it just eats space
+ // on a customer's active form-filling steps).
+ document.querySelector('.brand').hidden = !['packages','connected'].includes(name);
  renderBackgroundOrders(name);
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
@@ -419,8 +419,7 @@ function showScreen(name, extra){
  else if(name==='receipt') renderReceipt(el);
  else if(name==='checking') renderChecking(el);
  else if(name==='otp') renderOtp(el);
- else if(name==='activating') renderActivating(el);
- else if(name==='success') renderSuccess(el);
+ else if(name==='connected') renderConnected(el);
  else if(name==='failed') renderFailed(el);
  // Live-run UX fix (2026-09-07): the previous "poll on every screen with any order in flight" rule
  // (meant to keep the background-orders strip fresh) also fired on phone/receipt/otp - screens where
@@ -430,7 +429,7 @@ function showScreen(name, extra){
  // screens are short, client-driven steps with nothing server-side to watch mid-fill, so they never
  // need live polling at all; the background-orders strip is correspondingly hidden there too (see
  // renderBackgroundOrders above), so there is nothing to keep fresh in the first place.
- const ALWAYS_POLL=['checking','activating'], BG_POLL=['packages','success','failed'];
+ const ALWAYS_POLL=['checking','connected'], BG_POLL=['packages','failed'];
  if(ALWAYS_POLL.includes(name) || (BG_POLL.includes(name) && ctx && Array.isArray(ctx.orders) && ctx.orders.length)) startPoll();
 }
 
@@ -638,25 +637,39 @@ function renderChecking(el){
  bindSupport();
 }
 
-function renderActivating(el){
+// Owner request (2026-09-07): merged the separate "activating" (still training) and "success"
+// (genuinely completed) screens into one - from the customer's side there was no meaningful
+// difference between "almost done" and "done", just two near-identical screens in a row. One honest,
+// state-agnostic message ("activates within ~5 minutes") covers both: never a false "done" claim
+// while genuinely still in progress (the actual bug fixed earlier today), and no less true once the
+// order has genuinely completed - crediting still finishes within that same window either way.
+function renderConnected(el){
  // Parallel orders on different numbers (2026-09-07): ctx.selectedPackage/ctx.client.phone describe
  // only the CLIENT's current interactive step - the client is freed (and these cleared) as soon as
  // THIS order's training starts, so by the time this screen is showing they're usually already null
  // (or, worse, could belong to a DIFFERENT order the client has since started). Resolve the watched
- // order's own package/phone from ctx.orders instead; fall back to the old fields only if that entry
- // isn't there yet (e.g. the very first render right after OTP, before the next poll lands).
+ // order's own package/phone from ctx.orders first (still genuinely in flight); once it completes and
+ // drops out of ctx.orders, fall back to ctx.lastCompletedOrder (a real, already-terminal order row).
  const mine = watchedOrderId();
  const mineEntry = mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null;
- const pkg = mineEntry ? (ctx.availablePackages||[]).find(p => p.id === mineEntry.packageId) : ctx.selectedPackage;
- const phone = mineEntry ? mineEntry.targetPhone : ctx.client.phone;
+ const completedPkgId = ctx.lastCompletedOrder && ctx.lastCompletedOrder.packageId;
+ const pkg = mineEntry
+  ? (ctx.availablePackages||[]).find(p => p.id === mineEntry.packageId)
+  : (ctx.selectedPackage || (ctx.availablePackages||[]).find(p => p.id === completedPkgId) || null);
+ const gb = pkg ? (pkg.trafficGb || '') : '';
+ const phone = mineEntry ? mineEntry.targetPhone : ((ctx.lastCompletedOrder && ctx.lastCompletedOrder.targetPhone) || ctx.client.phone);
  el.innerHTML = `
   <div class="card center">
    <div class="icon-circle ok">⏳</div>
-   <h2 class="title">${esc(t('activating_title'))}</h2>
-   <p class="desc">${esc(t('activating_desc'))}</p>
+   <h2 class="title">${esc(t('connected_title'))}</h2>
+   <p class="desc">${esc(t('connected_desc'))}</p>
    <div class="receipt" style="margin-top:16px">
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(phone||'')}</span></div>
-    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${gb} ГБ</span></div>
+   </div>
+   <div class="info-box" style="margin-top:14px;text-align:left">
+    <div class="ico">🎁</div>
+    <div>${gb} ${esc(t('gifting'))}</div>
    </div>
   </div>
   <div class="card center">
@@ -665,6 +678,7 @@ function renderActivating(el){
    <button class="btn btn-primary" id="buyAgainBtn">${esc(t('buy_again_btn'))} →</button>
   </div>
   ${supportBlock()}
+  ${trustBlock()}
   ${footBlock()}
  `;
  bindSupport();
@@ -672,7 +686,7 @@ function renderActivating(el){
  // correctly rejects it (INVALID_STATE_TRANSITION) while still TRAINING/PROVISIONING; browsing/picking
  // is still made available from this screen (2026-09-04 request), the friendly explanation lives in
  // renderPackages's own catch handler right next to that call.
- document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ showScreen('packages'); });
+ document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ engagedThisSession = false; showScreen('packages'); });
 }
 
 let otpBoxes = [];
@@ -824,48 +838,6 @@ function renderOtp(el, wrong){
  }else{
   startResendCooldown(document.getElementById('resendWrap'), 60, false);
  }
-}
-
-function renderSuccess(el){
- const completedPkgId = ctx.lastCompletedOrder && ctx.lastCompletedOrder.packageId;
- const pkg = ctx.selectedPackage || (ctx.availablePackages||[]).find(p=>p.id===completedPkgId) || null;
- const gb = pkg ? (pkg.trafficGb || '') : '';
- // Parallel orders on different numbers (2026-09-07): ctx.client.phone is the client's single, most
- // recently entered phone number - once a second order has been started (even just phone entry, not
- // yet paid), it no longer reflects THIS (just-completed) order's own number. lastCompletedOrder is a
- // real order row and already carries its own targetPhone - use that instead, falling back to
- // ctx.client.phone only if it's somehow missing.
- const phone = (ctx.lastCompletedOrder && ctx.lastCompletedOrder.targetPhone) || ctx.client.phone;
- el.innerHTML = `
-  <div class="card center">
-   <div class="icon-circle ok">✓</div>
-   <h2 class="title">${esc(t('success_title'))}</h2>
-   <p class="desc">${esc(t('success_sub'))}</p>
-   <div class="receipt" style="margin-top:16px">
-    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(phone||'')}</span></div>
-    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${gb} ГБ</span></div>
-   </div>
-   <div class="info-box" style="margin-top:14px;text-align:left">
-    <div class="ico">🎁</div>
-    <div><strong style="display:block">${gb} ${esc(t('gifting'))}</strong>${esc(t('started'))}</div>
-   </div>
-   <p class="desc" style="margin-top:14px">${esc(t('sms'))}</p>
-  </div>
-  <div class="card center">
-   <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
-   <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
-   <button class="btn btn-primary" id="buyAgainBtn">${esc(t('buy_again_btn'))} →</button>
-  </div>
-  ${supportBlock()}
-  ${trustBlock()}
-  ${footBlock()}
- `;
- bindSupport();
- // "Buy another package" (2026-09-04): the account is already ACTIVE/free-to-act on the backend -
- // selecting a new package from here is the exact same repeat-purchase path selectPackage always
- // supported (see order-c2-repeat-purchase.test.js). Client-side we just need to stop treating this
- // page load as "just finished" so render() shows packages instead of bouncing back to this screen.
- document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ engagedThisSession = false; showScreen('packages'); });
 }
 
 function renderFailed(el){
