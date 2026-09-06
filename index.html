@@ -165,7 +165,7 @@ const STR = {
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
-  activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
+  activating_title:'Пакет подключается…', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
   bg_training:'подключается…', bg_done:'подключён ✓', bg_problem:'возникла проблема',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
@@ -188,7 +188,7 @@ const STR = {
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
-  activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
+  activating_title:'Пакет қосылуда…', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
   bg_training:'қосылуда…', bg_done:'қосылды ✓', bg_problem:'мәселе туындады',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
@@ -310,10 +310,14 @@ function forgetWatchedOrder(){ localStorage.removeItem('gm_watching_order'); }
 // small, non-intrusive status strip - never replaces the main screen. A background order that finishes
 // successfully simply drops out of ctx.orders (COMPLETED is terminal server-side) rather than lingering
 // here - the customer already gets the real outcome via the existing WhatsApp/Telegram notification.
-function renderBackgroundOrders(){
+// Owner request (2026-09-07): hidden on phone/receipt/otp - a customer filling in a phone number,
+// choosing a payment method, or entering their OTP code doesn't need (and was confused by) another
+// order's status showing up above the form they're actively working on.
+const HIDE_BG_ORDERS_ON = ['phone','receipt','otp'];
+function renderBackgroundOrders(screenName){
  const el = document.getElementById('backgroundOrders');
  if(!el) return;
- if(!ctx || !Array.isArray(ctx.orders) || !ctx.orders.length){ el.innerHTML = ''; return; }
+ if(HIDE_BG_ORDERS_ON.includes(screenName) || !ctx || !Array.isArray(ctx.orders) || !ctx.orders.length){ el.innerHTML = ''; return; }
  const mine = watchedOrderId();
  const others = ctx.orders.filter(o => o.orderId !== mine);
  if(!others.length){ el.innerHTML = ''; return; }
@@ -336,7 +340,6 @@ function setBack(show, handler){
 
 function render(){
  if(!ctx) return;
- renderBackgroundOrders();
  const state = ctx.clientState;
  if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
  if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
@@ -403,9 +406,11 @@ function startPoll(){
 function showScreen(name, extra){
  stopPoll();
  setBack(false);
- // Owner request (2026-09-06): the BEELINE/GEO MASTER brand block is fine on the first (package
- // choice) screen but eats useful space on every screen after it - hidden everywhere except there.
- document.querySelector('.brand').hidden = (name !== 'packages');
+ // Owner request (2026-09-06/09-07): the BEELINE/GEO MASTER brand block only makes sense on the first
+ // (package choice) and final (success) screens - hidden everywhere in between (it just eats space on
+ // a customer's active form-filling steps).
+ document.querySelector('.brand').hidden = !['packages','success'].includes(name);
+ renderBackgroundOrders(name);
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
@@ -417,11 +422,16 @@ function showScreen(name, extra){
  else if(name==='activating') renderActivating(el);
  else if(name==='success') renderSuccess(el);
  else if(name==='failed') renderFailed(el);
- // Parallel orders on different numbers (2026-09-07): keep polling on EVERY screen, not just
- // checking/activating, as long as this client has any order still in flight (ctx.orders) - otherwise
- // a background order's progress (and the small status strip above the screen) would freeze the
- // moment the customer navigates away to start a second purchase.
- if(name==='checking' || name==='activating' || (ctx && Array.isArray(ctx.orders) && ctx.orders.length)) startPoll();
+ // Live-run UX fix (2026-09-07): the previous "poll on every screen with any order in flight" rule
+ // (meant to keep the background-orders strip fresh) also fired on phone/receipt/otp - screens where
+ // the customer is actively filling in a form. Every ~3.5s poll called render()->showScreen(), which
+ // fully wipes and rebuilds the screen's DOM - destroying any in-progress inline state (confirmed live:
+ // the OTP screen's inline "change number" form opened and then vanished within seconds). Those three
+ // screens are short, client-driven steps with nothing server-side to watch mid-fill, so they never
+ // need live polling at all; the background-orders strip is correspondingly hidden there too (see
+ // renderBackgroundOrders above), so there is nothing to keep fresh in the first place.
+ const ALWAYS_POLL=['checking','activating'], BG_POLL=['packages','success','failed'];
+ if(ALWAYS_POLL.includes(name) || (BG_POLL.includes(name) && ctx && Array.isArray(ctx.orders) && ctx.orders.length)) startPoll();
 }
 
 function tplMessage(title, desc, cls, emoji){
@@ -641,7 +651,7 @@ function renderActivating(el){
  const phone = mineEntry ? mineEntry.targetPhone : ctx.client.phone;
  el.innerHTML = `
   <div class="card center">
-   <div class="icon-circle ok">🎁</div>
+   <div class="icon-circle ok">⏳</div>
    <h2 class="title">${esc(t('activating_title'))}</h2>
    <p class="desc">${esc(t('activating_desc'))}</p>
    <div class="receipt" style="margin-top:16px">
