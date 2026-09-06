@@ -115,9 +115,6 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
 .foot{text-align:center;font:500 11.5px var(--body);color:var(--ink-dim);}
 .foot b{color:var(--ink);}
 [hidden]{display:none!important;}
-.reward{background:#FFF3D6;border:1px solid #FCE29C;border-radius:16px;padding:16px;text-align:center;margin-top:8px;}
-.reward h4{font:800 15px var(--display);margin-bottom:6px;}
-.reward p{color:#7A5A10;font:500 13px var(--body);margin-bottom:12px;}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
 </head>
@@ -154,14 +151,13 @@ const STR = {
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
-  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
+  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
   activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
   daily_limit_title:'Лимит на этот номер исчерпан', daily_limit_desc:'На этот номер сегодня уже подключали интернет-пакет. Следующее подключение будет доступно после 00:00.',
   change_number_link:'Изменить', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
-  reward_title:'🎁 Пригласите друга', reward_desc:'Получите +5 ГБ бесплатно за каждого приглашённого друга.', reward_btn:'Хочу получить ссылку',
   fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
   need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
@@ -176,14 +172,13 @@ const STR = {
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
-  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
+  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
   activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
   daily_limit_title:'Бұл нөмір бойынша лимит таусылды', daily_limit_desc:'Бұл нөмірге бүгін интернет-пакет қосылған болатын. Келесі қосылым 00:00-ден кейін қолжетімді болады.',
   change_number_link:'Өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
-  reward_title:'🎁 Досыңызды шақырыңыз', reward_desc:'Әр шақырылған дос үшін +5 ГБ тегін алыңыз.', reward_btn:'Сілтеме алғым келеді',
   fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
   need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
@@ -341,6 +336,9 @@ function startPoll(){
 function showScreen(name, extra){
  stopPoll();
  setBack(false);
+ // Owner request (2026-09-06): the BEELINE/GEO MASTER brand block is fine on the first (package
+ // choice) screen but eats useful space on every screen after it - hidden everywhere except there.
+ document.querySelector('.brand').hidden = (name !== 'packages');
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
@@ -692,10 +690,31 @@ function renderOtp(el, wrong){
    if(pendingOtpAttempts<=0){ pendingOtpAttempts = 3; }
   }
  });
+ // Owner request (2026-09-06): clicking "запросить новый код" gave no visible confirmation beyond a
+ // tiny "✓" replacing the button text (easy to miss next to the wrong-code error banner above it), and
+ // the button then stayed disabled forever - no cooldown, no way to ever ask again. Now it shows an
+ // explicit "code sent" message and re-arms itself after a real 30s cooldown, same countdown pattern
+ // already used for the first automatic send below.
+ function startResendCooldown(el, secs, justSent){
+  el.innerHTML = `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:${String(secs).padStart(2,'0')}</span>` + (justSent ? `<div id="resendSentNotice" style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>` : '');
+  const cd = document.getElementById('resendCountdown');
+  const timer = setInterval(()=>{
+   secs--;
+   if(secs<=0){
+    clearInterval(timer);
+    el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
+    bindResendBtn(document.getElementById('resendBtn'));
+    return;
+   }
+   const m = String(Math.floor(secs/60)).padStart(2,'0'), s = String(secs%60).padStart(2,'0');
+   cd.textContent = `⏱ ${t('resend_in')} ${m}:${s}`;
+  }, 1000);
+ }
  function bindResendBtn(btn){
   btn.addEventListener('click', async (ev)=>{
    ev.target.disabled = true;
-   try{ await api('/otp-resend', {}); ev.target.textContent = '✓'; }catch(e){ ev.target.disabled=false; }
+   try{ await api('/otp-resend', {}); startResendCooldown(document.getElementById('resendWrap'), 30, true); }
+   catch(e){ ev.target.disabled=false; }
   });
  }
  // Live-run UX fix (2026-09-04): a wrong code no longer makes the customer wait out the full 60s
@@ -705,19 +724,7 @@ function renderOtp(el, wrong){
  if(wrong){
   bindResendBtn(document.getElementById('resendBtn'));
  }else{
-  let secs = 60;
-  const cd = document.getElementById('resendCountdown');
-  const timer = setInterval(()=>{
-   secs--;
-   if(secs<=0){
-    clearInterval(timer);
-    document.getElementById('resendWrap').innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
-    bindResendBtn(document.getElementById('resendBtn'));
-    return;
-   }
-   const m = String(Math.floor(secs/60)).padStart(2,'0'), s = String(secs%60).padStart(2,'0');
-   cd.textContent = `⏱ ${t('resend_in')} ${m}:${s}`;
-  }, 1000);
+  startResendCooldown(document.getElementById('resendWrap'), 60, false);
  }
 }
 
@@ -740,11 +747,6 @@ function renderSuccess(el){
    </div>
    <p class="desc" style="margin-top:14px">${esc(t('sms'))}</p>
   </div>
-  <div class="reward">
-   <h4>${esc(t('reward_title'))}</h4>
-   <p>${esc(t('reward_desc'))}</p>
-   <button class="btn btn-primary" id="referralBtn">${esc(t('reward_btn'))}</button>
-  </div>
   <div class="card center">
    <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
    <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
@@ -755,12 +757,6 @@ function renderSuccess(el){
   ${footBlock()}
  `;
  bindSupport();
- const rbtn = document.getElementById('referralBtn');
- rbtn.addEventListener('click', async ()=>{
-  rbtn.disabled = true;
-  try{ const res = await api('/referral', {}); rbtn.textContent = res.link; rbtn.onclick=null; if(navigator.clipboard) navigator.clipboard.writeText(res.link).catch(()=>{}); }
-  catch(e){ rbtn.disabled=false; }
- });
  // "Buy another package" (2026-09-04): the account is already ACTIVE/free-to-act on the backend -
  // selecting a new package from here is the exact same repeat-purchase path selectPackage always
  // supported (see order-c2-repeat-purchase.test.js). Client-side we just need to stop treating this
