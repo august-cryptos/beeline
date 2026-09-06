@@ -157,6 +157,7 @@ const STR = {
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
   daily_limit_title:'Лимит на этот номер исчерпан', daily_limit_desc:'На этот номер сегодня уже подключали интернет-пакет. Следующее подключение будет доступно после 00:00.',
+  phone_in_progress_title:'На этот номер уже идёт подключение', phone_in_progress_desc:'Дождитесь завершения текущего подключения на этом номере — или укажите другой номер, если хотите оформить ещё один пакет параллельно.',
   change_number_link:'Изменить', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
   fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
   need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
@@ -178,6 +179,7 @@ const STR = {
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
   daily_limit_title:'Бұл нөмір бойынша лимит таусылды', daily_limit_desc:'Бұл нөмірге бүгін интернет-пакет қосылған болатын. Келесі қосылым 00:00-ден кейін қолжетімді болады.',
+  phone_in_progress_title:'Бұл нөмірге қазір қосылу жүріп жатыр', phone_in_progress_desc:'Осы нөмірдегі ағымдағы қосылу аяқталғанша күтіңіз — немесе тағы бір пакетті параллель ресімдегіңіз келсе, басқа нөмір көрсетіңіз.',
   change_number_link:'Өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
   fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
   need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
@@ -376,6 +378,10 @@ function supportBlock(){
 // (own icon circle, bold title, plain-language deadline) and callers scroll it into view - the same
 // kind of block the OTP/phone screens already use for their real terminal states.
 function dailyLimitBanner(){ return `<div class="card center daily-limit-banner" id="dailyLimitBanner"><div class="icon-circle err">⏳</div><h2 class="title" style="font-size:17px">${esc(t('daily_limit_title'))}</h2><p class="desc">${esc(t('daily_limit_desc'))}</p></div>`; }
+// Parallel orders on different numbers (2026-09-06): same banner shape as dailyLimitBanner - this is a
+// business rule about the NUMBER just entered, not a typo, so it gets the same unmissable treatment
+// rather than a red-border cue.
+function phoneInProgressBanner(){ return `<div class="card center daily-limit-banner" id="dailyLimitBanner"><div class="icon-circle err">⏳</div><h2 class="title" style="font-size:17px">${esc(t('phone_in_progress_title'))}</h2><p class="desc">${esc(t('phone_in_progress_desc'))}</p></div>`; }
 function trustBlock(){
  return `<div class="trust"><div>🛡️<span>${esc(t('trust1'))}</span></div><div>⚡<span>${esc(t('trust2'))}</span></div><div>👍<span>${esc(t('trust3'))}</span></div></div>`;
 }
@@ -475,6 +481,9 @@ function renderPhone(el){
    // small phone). Every other rejection keeps the plain red-border cue as before.
    if(e.code==='DAILY_PHONE_LIMIT'){
     document.getElementById('phoneNotice').innerHTML = dailyLimitBanner();
+    document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
+   }else if(e.code==='PHONE_ALREADY_IN_PROGRESS'){
+    document.getElementById('phoneNotice').innerHTML = phoneInProgressBanner();
     document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
    }else{
     input.style.borderColor='var(--danger)';
