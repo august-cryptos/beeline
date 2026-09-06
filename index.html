@@ -52,17 +52,6 @@ body{
 .brand .geo u{display:block;width:26px;height:2px;background:var(--black);margin:3px auto 0;text-decoration:none;}
 .back{align-self:flex-start;background:none;border:none;font:600 15px var(--body);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 0;}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 10px 30px -18px rgba(20,15,5,.25);}
-/* Parallel orders on different numbers (2026-09-07): small, non-intrusive status strip for any OTHER
-   order the client has in flight besides the one currently shown full-screen - never replaces the
-   main screen, just sits above it, updated on every poll regardless of which screen is showing. */
-#backgroundOrders{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-#backgroundOrders:empty{display:none;margin:0;}
-.bg-order{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font:600 13px var(--body);}
-.bg-order .dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--yellow-deep);animation:bgPulse 1.4s ease-in-out infinite;}
-.bg-order.done .dot{background:#2fae63;animation:none;}
-.bg-order.problem .dot{background:var(--danger);animation:none;}
-.bg-order .label{color:var(--ink-dim);}
-@keyframes bgPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 .subtitle{font:600 15px var(--body);color:var(--ink-dim);text-align:center;margin-bottom:14px;}
 .pkg{display:flex;align-items:center;gap:14px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s ease,box-shadow .12s ease;}
 .pkg:active{transform:scale(.98);}
@@ -145,7 +134,6 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
   </div>
   <button class="back" id="backBtn" hidden>← <span id="tBack">Назад</span></button>
   <div id="reconnectBanner" hidden style="text-align:center;font:600 12.5px var(--body);color:var(--ink-dim);padding:6px 0"><span id="tReconnect"></span></div>
-  <div id="backgroundOrders"></div>
   <div id="screens"></div>
 </div>
 
@@ -166,7 +154,6 @@ const STR = {
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
-  bg_training:'подключается…', bg_done:'подключён ✓', bg_problem:'возникла проблема',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
   daily_limit_title:'Лимит на этот номер исчерпан', daily_limit_desc:'На этот номер сегодня уже подключали интернет-пакет. Следующее подключение будет доступно после 00:00.',
@@ -189,7 +176,6 @@ const STR = {
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
-  bg_training:'қосылуда…', bg_done:'қосылды ✓', bg_problem:'мәселе туындады',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
   daily_limit_title:'Бұл нөмір бойынша лимит таусылды', daily_limit_desc:'Бұл нөмірге бүгін интернет-пакет қосылған болатын. Келесі қосылым 00:00-ден кейін қолжетімді болады.',
@@ -306,31 +292,6 @@ function rememberWatchedOrder(orderId){ localStorage.setItem('gm_watching_order'
 function watchedOrderId(){ return localStorage.getItem('gm_watching_order'); }
 function forgetWatchedOrder(){ localStorage.removeItem('gm_watching_order'); }
 
-// Renders every order in ctx.orders EXCEPT the one currently shown full-screen (watchedOrderId) as a
-// small, non-intrusive status strip - never replaces the main screen. A background order that finishes
-// successfully simply drops out of ctx.orders (COMPLETED is terminal server-side) rather than lingering
-// here - the customer already gets the real outcome via the existing WhatsApp/Telegram notification.
-// Owner request (2026-09-07): hidden on phone/receipt/otp - a customer filling in a phone number,
-// choosing a payment method, or entering their OTP code doesn't need (and was confused by) another
-// order's status showing up above the form they're actively working on.
-const HIDE_BG_ORDERS_ON = ['phone','receipt','otp'];
-function renderBackgroundOrders(screenName){
- const el = document.getElementById('backgroundOrders');
- if(!el) return;
- if(HIDE_BG_ORDERS_ON.includes(screenName) || !ctx || !Array.isArray(ctx.orders) || !ctx.orders.length){ el.innerHTML = ''; return; }
- const mine = watchedOrderId();
- const others = ctx.orders.filter(o => o.orderId !== mine);
- if(!others.length){ el.innerHTML = ''; return; }
- const PROBLEM_ORDER = ['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'];
- const PROBLEM_JOB = ['FAILED','CANCELLED'];
- el.innerHTML = others.map(o => {
-  const pkg = (ctx.availablePackages||[]).find(p => p.id === o.packageId);
-  const gb = pkg ? `${pkg.trafficGb} ГБ` : (o.packageId || '');
-  const isProblem = PROBLEM_ORDER.includes(o.orderStatus) || PROBLEM_JOB.includes(o.jobStatus);
-  return `<div class="bg-order ${isProblem?'problem':'training'}"><span class="dot"></span><span>${esc(gb)}</span><span class="label">${esc(isProblem?t('bg_problem'):t('bg_training'))}</span></div>`;
- }).join('');
-}
-
 function screensEl(){ return document.getElementById('screens'); }
 function setBack(show, handler){
  const b = document.getElementById('backBtn');
@@ -410,7 +371,6 @@ function showScreen(name, extra){
  // (package choice) and final (connected) screens - hidden everywhere in between (it just eats space
  // on a customer's active form-filling steps).
  document.querySelector('.brand').hidden = !['packages','connected'].includes(name);
- renderBackgroundOrders(name);
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
@@ -421,16 +381,13 @@ function showScreen(name, extra){
  else if(name==='otp') renderOtp(el);
  else if(name==='connected') renderConnected(el);
  else if(name==='failed') renderFailed(el);
- // Live-run UX fix (2026-09-07): the previous "poll on every screen with any order in flight" rule
- // (meant to keep the background-orders strip fresh) also fired on phone/receipt/otp - screens where
- // the customer is actively filling in a form. Every ~3.5s poll called render()->showScreen(), which
- // fully wipes and rebuilds the screen's DOM - destroying any in-progress inline state (confirmed live:
- // the OTP screen's inline "change number" form opened and then vanished within seconds). Those three
- // screens are short, client-driven steps with nothing server-side to watch mid-fill, so they never
- // need live polling at all; the background-orders strip is correspondingly hidden there too (see
- // renderBackgroundOrders above), so there is nothing to keep fresh in the first place.
- const ALWAYS_POLL=['checking','connected'], BG_POLL=['packages','failed'];
- if(ALWAYS_POLL.includes(name) || (BG_POLL.includes(name) && ctx && Array.isArray(ctx.orders) && ctx.orders.length)) startPoll();
+ // Live-run UX fix (2026-09-07): polling only runs on 'checking' (waiting for a payment webhook) and
+ // 'connected' (waiting to see whether this order finishes or fails) - the only two screens with
+ // something server-side actually worth watching. phone/receipt/otp are short, client-driven form
+ // steps with nothing to poll for; a poll there used to fully re-render the screen every ~3.5s,
+ // destroying in-progress inline state (confirmed live: the OTP screen's "change number" form opened
+ // and vanished within seconds).
+ if(['checking','connected'].includes(name)) startPoll();
 }
 
 function tplMessage(title, desc, cls, emoji){
