@@ -52,6 +52,17 @@ body{
 .brand .geo u{display:block;width:26px;height:2px;background:var(--black);margin:3px auto 0;text-decoration:none;}
 .back{align-self:flex-start;background:none;border:none;font:600 15px var(--body);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 0;}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 10px 30px -18px rgba(20,15,5,.25);}
+/* Parallel orders on different numbers (2026-09-07): small, non-intrusive status strip for any OTHER
+   order the client has in flight besides the one currently shown full-screen - never replaces the
+   main screen, just sits above it, updated on every poll regardless of which screen is showing. */
+#backgroundOrders{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+#backgroundOrders:empty{display:none;margin:0;}
+.bg-order{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font:600 13px var(--body);}
+.bg-order .dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--yellow-deep);animation:bgPulse 1.4s ease-in-out infinite;}
+.bg-order.done .dot{background:#2fae63;animation:none;}
+.bg-order.problem .dot{background:var(--danger);animation:none;}
+.bg-order .label{color:var(--ink-dim);}
+@keyframes bgPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 .subtitle{font:600 15px var(--body);color:var(--ink-dim);text-align:center;margin-bottom:14px;}
 .pkg{display:flex;align-items:center;gap:14px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s ease,box-shadow .12s ease;}
 .pkg:active{transform:scale(.98);}
@@ -134,6 +145,7 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
   </div>
   <button class="back" id="backBtn" hidden>← <span id="tBack">Назад</span></button>
   <div id="reconnectBanner" hidden style="text-align:center;font:600 12.5px var(--body);color:var(--ink-dim);padding:6px 0"><span id="tReconnect"></span></div>
+  <div id="backgroundOrders"></div>
   <div id="screens"></div>
 </div>
 
@@ -154,6 +166,7 @@ const STR = {
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
   activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
+  bg_training:'подключается…', bg_done:'подключён ✓', bg_problem:'возникла проблема',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
   daily_limit_title:'Лимит на этот номер исчерпан', daily_limit_desc:'На этот номер сегодня уже подключали интернет-пакет. Следующее подключение будет доступно после 00:00.',
@@ -176,6 +189,7 @@ const STR = {
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
   activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
+  bg_training:'қосылуда…', bg_done:'қосылды ✓', bg_problem:'мәселе туындады',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
   daily_limit_title:'Бұл нөмір бойынша лимит таусылды', daily_limit_desc:'Бұл нөмірге бүгін интернет-пакет қосылған болатын. Келесі қосылым 00:00-ден кейін қолжетімді болады.',
@@ -283,6 +297,36 @@ async function initSession(){
 
 async function refreshContext(){ ctx = await api('/status', undefined, 'GET'); }
 
+// Parallel orders on different numbers (2026-09-07): the client is freed back to ACTIVE as soon as an
+// order's training STARTS (not once it finishes - see backend TrainingEventHandler), so client.state
+// alone can no longer tell this browser "is the order I just bought still going". This browser
+// remembers which orderId it's watching; ctx.orders (order/job-status, independent of client.state)
+// tells us whether that specific order is still genuinely in flight.
+function rememberWatchedOrder(orderId){ localStorage.setItem('gm_watching_order', orderId); }
+function watchedOrderId(){ return localStorage.getItem('gm_watching_order'); }
+function forgetWatchedOrder(){ localStorage.removeItem('gm_watching_order'); }
+
+// Renders every order in ctx.orders EXCEPT the one currently shown full-screen (watchedOrderId) as a
+// small, non-intrusive status strip - never replaces the main screen. A background order that finishes
+// successfully simply drops out of ctx.orders (COMPLETED is terminal server-side) rather than lingering
+// here - the customer already gets the real outcome via the existing WhatsApp/Telegram notification.
+function renderBackgroundOrders(){
+ const el = document.getElementById('backgroundOrders');
+ if(!el) return;
+ if(!ctx || !Array.isArray(ctx.orders) || !ctx.orders.length){ el.innerHTML = ''; return; }
+ const mine = watchedOrderId();
+ const others = ctx.orders.filter(o => o.orderId !== mine);
+ if(!others.length){ el.innerHTML = ''; return; }
+ const PROBLEM_ORDER = ['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'];
+ const PROBLEM_JOB = ['FAILED','CANCELLED'];
+ el.innerHTML = others.map(o => {
+  const pkg = (ctx.availablePackages||[]).find(p => p.id === o.packageId);
+  const gb = pkg ? `${pkg.trafficGb} ГБ` : (o.packageId || '');
+  const isProblem = PROBLEM_ORDER.includes(o.orderStatus) || PROBLEM_JOB.includes(o.jobStatus);
+  return `<div class="bg-order ${isProblem?'problem':'training'}"><span class="dot"></span><span>${esc(gb)}</span><span class="label">${esc(isProblem?t('bg_problem'):t('bg_training'))}</span></div>`;
+ }).join('');
+}
+
 function screensEl(){ return document.getElementById('screens'); }
 function setBack(show, handler){
  const b = document.getElementById('backBtn');
@@ -292,6 +336,7 @@ function setBack(show, handler){
 
 function render(){
  if(!ctx) return;
+ renderBackgroundOrders();
  const state = ctx.clientState;
  if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
  if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
@@ -303,6 +348,26 @@ function render(){
  // is what tells apart "I was just watching this order finish" (success screen) from "fresh page load,
  // ready to order again" (packages screen) - see its own comment above.
  if(['ACTIVE','COMPLETED'].includes(state)){
+  // Parallel orders on different numbers (2026-09-07): client.state now reads ACTIVE the instant
+  // training STARTS, not once it finishes (the client is freed early so a second, different-numbered
+  // order can begin) - so ACTIVE no longer means "this order is done". If the order THIS browser is
+  // watching is still in ctx.orders (still genuinely PAID/TRAINING/PROVISIONING/etc), keep showing the
+  // activating screen for it instead of jumping to success/packages early. Once the customer explicitly
+  // starts a second order (clientState moves to WAITING_PHONE etc. above), this branch is never reached
+  // for it again - the old order simply continues as a background card instead.
+  // orders.listActiveOrders (what ctx.orders is built from) only excludes COMPLETED/FAILED/CANCELLED -
+  // a TRAINING_FAILED/PAYMENT_FAILED/AUTH_FAILED/MANUAL_REVIEW order is NOT terminal by that narrower
+  // definition (it's still useful for background-card display), so it can stay in ctx.orders
+  // indefinitely - must check the entry's OWN status here, or a genuinely failed watched order would
+  // show "activating" forever instead of ever reaching the failed screen.
+  const FAILURE_STATUSES=['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW','CANCELLED'];
+  const mine = watchedOrderId();
+  const mineEntry = mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null;
+  if(mineEntry){
+   engagedThisSession = true;
+   if(FAILURE_STATUSES.includes(mineEntry.orderStatus)){ forgetWatchedOrder(); return showScreen('failed'); }
+   return showScreen('activating');
+  }
   if(!engagedThisSession) return showScreen('packages');
   // Live-run forensic fix (2026-09-04): a real training failure moves the client TRAINING_FAILED->
   // ACTIVE in one backend transaction (the client must never be left stuck) - so by the time this
@@ -310,8 +375,8 @@ function render(){
   // a customer saw "всё круто" for an order support was paged about as failed, in the same instant.
   // ctx.lastOrder (the client's most recent order, any status) is the real signal - never clientState
   // alone - for which of the two screens below this actually was.
-  const FAILURE_STATUSES=['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW','CANCELLED'];
   const failed = ctx.lastOrder && FAILURE_STATUSES.includes(ctx.lastOrder.status);
+  forgetWatchedOrder();
   return showScreen(failed ? 'failed' : 'success');
  }
  if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)){ engagedThisSession=true; return showScreen('failed'); }
@@ -347,11 +412,16 @@ function showScreen(name, extra){
  else if(name==='packages') renderPackages(el);
  else if(name==='phone') renderPhone(el);
  else if(name==='receipt') renderReceipt(el);
- else if(name==='checking'){ renderChecking(el); startPoll(); }
+ else if(name==='checking') renderChecking(el);
  else if(name==='otp') renderOtp(el);
- else if(name==='activating'){ renderActivating(el); startPoll(); }
+ else if(name==='activating') renderActivating(el);
  else if(name==='success') renderSuccess(el);
  else if(name==='failed') renderFailed(el);
+ // Parallel orders on different numbers (2026-09-07): keep polling on EVERY screen, not just
+ // checking/activating, as long as this client has any order still in flight (ctx.orders) - otherwise
+ // a background order's progress (and the small status strip above the screen) would freeze the
+ // moment the customer navigates away to start a second purchase.
+ if(name==='checking' || name==='activating' || (ctx && Array.isArray(ctx.orders) && ctx.orders.length)) startPoll();
 }
 
 function tplMessage(title, desc, cls, emoji){
@@ -468,7 +538,7 @@ function renderPhone(el){
   document.getElementById('phoneNotice').innerHTML = '';
   const btn = document.getElementById('phoneContinue'); btn.disabled = true;
   const originalLabel = btn.textContent; btn.textContent = t('otp_checking');
-  try{ ctx = await api('/phone', {phone: '7'+digits}); render(); }
+  try{ ctx = await api('/phone', {phone: '7'+digits}); if(ctx.orderId) rememberWatchedOrder(ctx.orderId); render(); }
   catch(e){
    btn.disabled=false; btn.textContent = originalLabel;
    // Same class of bug as the OTP screen's fix (2026-09-04): PHONE_NOT_EXPECTED means an earlier
@@ -559,14 +629,23 @@ function renderChecking(el){
 }
 
 function renderActivating(el){
- const pkg = ctx.selectedPackage;
+ // Parallel orders on different numbers (2026-09-07): ctx.selectedPackage/ctx.client.phone describe
+ // only the CLIENT's current interactive step - the client is freed (and these cleared) as soon as
+ // THIS order's training starts, so by the time this screen is showing they're usually already null
+ // (or, worse, could belong to a DIFFERENT order the client has since started). Resolve the watched
+ // order's own package/phone from ctx.orders instead; fall back to the old fields only if that entry
+ // isn't there yet (e.g. the very first render right after OTP, before the next poll lands).
+ const mine = watchedOrderId();
+ const mineEntry = mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null;
+ const pkg = mineEntry ? (ctx.availablePackages||[]).find(p => p.id === mineEntry.packageId) : ctx.selectedPackage;
+ const phone = mineEntry ? mineEntry.targetPhone : ctx.client.phone;
  el.innerHTML = `
   <div class="card center">
    <div class="icon-circle ok">🎁</div>
    <h2 class="title">${esc(t('activating_title'))}</h2>
    <p class="desc">${esc(t('activating_desc'))}</p>
    <div class="receipt" style="margin-top:16px">
-    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(phone||'')}</span></div>
     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
    </div>
   </div>
@@ -741,13 +820,19 @@ function renderSuccess(el){
  const completedPkgId = ctx.lastCompletedOrder && ctx.lastCompletedOrder.packageId;
  const pkg = ctx.selectedPackage || (ctx.availablePackages||[]).find(p=>p.id===completedPkgId) || null;
  const gb = pkg ? (pkg.trafficGb || '') : '';
+ // Parallel orders on different numbers (2026-09-07): ctx.client.phone is the client's single, most
+ // recently entered phone number - once a second order has been started (even just phone entry, not
+ // yet paid), it no longer reflects THIS (just-completed) order's own number. lastCompletedOrder is a
+ // real order row and already carries its own targetPhone - use that instead, falling back to
+ // ctx.client.phone only if it's somehow missing.
+ const phone = (ctx.lastCompletedOrder && ctx.lastCompletedOrder.targetPhone) || ctx.client.phone;
  el.innerHTML = `
   <div class="card center">
    <div class="icon-circle ok">✓</div>
    <h2 class="title">${esc(t('success_title'))}</h2>
    <p class="desc">${esc(t('success_sub'))}</p>
    <div class="receipt" style="margin-top:16px">
-    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(phone||'')}</span></div>
     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${gb} ГБ</span></div>
    </div>
    <div class="info-box" style="margin-top:14px;text-align:left">
