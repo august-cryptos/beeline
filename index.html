@@ -748,6 +748,14 @@ function renderOtp(el, wrong){
    // code was entered correctly, training actually started, and the site still said it didn't match.
    // Refresh and show whatever the real state now is instead of guessing it was a bad code.
    if(e.code==='OTP_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   // Live-run forensic fix (2026-09-06): OTP_REJECTED is the ONLY code that genuinely means "you typed
+   // the wrong digits, try again" - the backend now auto-retries a real Beeline protocol hiccup
+   // (AUTH_PROTOCOL_ERROR) with a fresh code on its own, so if an error still reaches here and it is
+   // NOT OTP_REJECTED, the order has already been decided (usually failed) server-side. Confirmed live:
+   // painting that as "code incorrect, N attempts left" let the customer believe a retry could still
+   // help, when the real outcome (and a Support escalation) had already happened - refresh and show
+   // the real current screen instead of guessing it was a typo.
+   if(e.code!=='OTP_REJECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
    otpBoxes.forEach(b=>b.classList.add('bad'));
    renderOtp(el, true);
