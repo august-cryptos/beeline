@@ -171,7 +171,7 @@ const STR = {
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
   invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
   reconnecting:'⏳ Восстанавливаем соединение…',
-  inapp_title:'Откройте страницу в браузере', inapp_desc:'Вы открыли сайт из TikTok — оплата и код подтверждения могут не сработать во встроенном браузере TikTok.', inapp_steps:'Нажмите ⋯ в правом верхнем углу и выберите «Открыть в браузере».', inapp_copy:'Скопировать ссылку', inapp_copied:'Ссылка скопирована ✓', inapp_continue_anyway:'Продолжить здесь (не рекомендуется)'
+  inapp_title:'Откройте страницу в браузере', inapp_desc:'Вы открыли сайт из встроенного браузера приложения — оплата и код подтверждения могут не сработать в нём.', inapp_steps:'Нажмите ⋯ (или значок «поделиться») в углу экрана и выберите «Открыть в браузере».', inapp_copy:'Скопировать ссылку', inapp_copied:'Ссылка скопирована ✓', inapp_continue_anyway:'Продолжить здесь (не рекомендуется)'
  },
  kk:{
   slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа',
@@ -194,7 +194,7 @@ const STR = {
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
   invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
   reconnecting:'⏳ Байланыс қалпына келтірілуде…',
-  inapp_title:'Парақшаны браузерде ашыңыз', inapp_desc:'Сіз сайтты TikTok арқылы аштыңыз — TikTok-тың ішкі браузерінде төлем және растау коды дұрыс жұмыс істемеуі мүмкін.', inapp_steps:'Жоғарғы оң жақ бұрыштағы ⋯ түймесін басып, «Открыть в браузере» опциясын таңдаңыз.', inapp_copy:'Сілтемені көшіру', inapp_copied:'Сілтеме көшірілді ✓', inapp_continue_anyway:'Осы жерде жалғастыру (ұсынылмайды)'
+  inapp_title:'Парақшаны браузерде ашыңыз', inapp_desc:'Сіз сайтты қолданбаның ішкі браузерінен аштыңыз — онда төлем және растау коды дұрыс жұмыс істемеуі мүмкін.', inapp_steps:'Экранның бұрышындағы ⋯ (немесе «бөлісу» белгішесін) басып, «Открыть в браузере» опциясын таңдаңыз.', inapp_copy:'Сілтемені көшіру', inapp_copied:'Сілтеме көшірілді ✓', inapp_continue_anyway:'Осы жерде жалғастыру (ұсынылмайды)'
  }
 };
 STR.ru.b_all=[STR.ru.b1,STR.ru.b2,STR.ru.b3,STR.ru.b4];
@@ -441,16 +441,17 @@ function bindSupport(){
  });
 }
 
-// TikTok in-app-browser escape (2026-09-07): TikTok ad traffic opens this site inside TikTok's own
-// built-in WebView, not the phone's real browser. Cookies/storage there are often partitioned
-// differently, and the Kaspi/Halyk payment redirect and OTP autofill are known to be unreliable inside
-// it - so before the customer commits to picking a package (the point where a broken browser actually
-// costs them a stuck order), send them out to a real browser instead of letting the order start there.
-function isTikTokWebView(){ return /musical_ly|TikTok|BytedanceWebview/i.test(navigator.userAgent||''); }
+// In-app-browser escape (2026-09-07, extended for Instagram/Facebook): ad traffic from TikTok/
+// Instagram/Facebook opens this site inside that app's own built-in WebView, not the phone's real
+// browser. Cookies/storage there are often partitioned differently, and the Kaspi/Halyk payment
+// redirect and OTP autofill are known to be unreliable inside any of them - so before the customer
+// commits to picking a package (the point where a broken browser actually costs them a stuck order),
+// send them out to a real browser instead of letting the order start there.
+function isInAppBrowser(){ return /musical_ly|TikTok|BytedanceWebview|FBAN|FBAV|FB_IAB|FBIOS|Instagram/i.test(navigator.userAgent||''); }
 function isAndroid(){ return /Android/i.test(navigator.userAgent||''); }
 // Android: a generic (no target package) intent:// URL hands the current page to the phone's default
-// browser - a well-established escape hatch for in-app WebViews, since TikTok's own WebView exposes no
-// API for page JS to do this directly.
+// browser - a well-established escape hatch for in-app WebViews, since none of these apps' own WebViews
+// expose an API for page JS to do this directly.
 function escapeToSystemBrowser(){
  if(!isAndroid()) return false;
  const stripped = location.href.replace(/^https?:\/\//,'');
@@ -458,8 +459,10 @@ function escapeToSystemBrowser(){
  return true;
 }
 // iOS has no equivalent: Apple's WKWebView sandbox gives page JS no way to hand off to Safari, so
-// there's no automatic escape there - only TikTok's own "Open in browser" menu item can do it. This
-// overlay just points the customer at that menu, with a copy-link fallback in case they can't find it.
+// there's no automatic escape there - only the host app's own "Open in browser"/"Open in Safari" menu
+// item can do it. This overlay just points the customer at that menu, with a copy-link fallback in
+// case they can't find it. Wording is deliberately app-agnostic (no "TikTok" hardcoded) since the same
+// overlay now covers TikTok/Instagram/Facebook, and all three expose the same ⋯/share-menu mechanism.
 function showBrowserEscapeOverlay(){
  const wrap = document.createElement('div');
  wrap.className = 'inapp-overlay';
@@ -503,7 +506,7 @@ function renderPackages(el){
   ${footBlock()}
  `;
  el.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click', async ()=>{
-  if(isTikTokWebView()){
+  if(isInAppBrowser()){
    if(escapeToSystemBrowser()) return; // Android: navigating away to the system browser now
    showBrowserEscapeOverlay(); return; // iOS/other: no JS-only escape exists, show instructions instead
   }
