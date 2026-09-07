@@ -448,21 +448,19 @@ function bindSupport(){
 // commits to picking a package (the point where a broken browser actually costs them a stuck order),
 // send them out to a real browser instead of letting the order start there.
 function isInAppBrowser(){ return /musical_ly|TikTok|BytedanceWebview|FBAN|FBAV|FB_IAB|FBIOS|Instagram/i.test(navigator.userAgent||''); }
-function isAndroid(){ return /Android/i.test(navigator.userAgent||''); }
-// Android: a generic (no target package) intent:// URL hands the current page to the phone's default
-// browser - a well-established escape hatch for in-app WebViews, since none of these apps' own WebViews
-// expose an API for page JS to do this directly.
-function escapeToSystemBrowser(){
- if(!isAndroid()) return false;
- const stripped = location.href.replace(/^https?:\/\//,'');
- location.href = `intent://${stripped}#Intent;scheme=https;action=android.intent.action.VIEW;end`;
- return true;
-}
-// iOS has no equivalent: Apple's WKWebView sandbox gives page JS no way to hand off to Safari, so
-// there's no automatic escape there - only the host app's own "Open in browser"/"Open in Safari" menu
-// item can do it. This overlay just points the customer at that menu, with a copy-link fallback in
-// case they can't find it. Wording is deliberately app-agnostic (no "TikTok" hardcoded) since the same
-// overlay now covers TikTok/Instagram/Facebook, and all three expose the same ⋯/share-menu mechanism.
+// Live-run forensic fix (2026-09-07): the Android intent:// auto-redirect this used to attempt here
+// (escapeToSystemBrowser) is gone - confirmed live, TikTok's own WebView actively intercepts and
+// rejects intent:// navigation with a native "не удалось выполнить действие" error shown to the
+// customer, instead of silently doing nothing or falling through to JS. There is no way for page JS to
+// detect that rejection and fall back (the OS/host app shows its own error, nothing reaches our code),
+// so a "try it, hope it works" auto-redirect risks trading a solvable problem (customer stuck in the
+// wrong browser) for a worse, scarier one (a page that visibly errors). The overlay below never
+// attempts any navigation at all - it only shows instructions and offers to copy the link - so it
+// cannot fail loudly on any platform, Android included.
+// iOS never had an automatic option to begin with: Apple's WKWebView sandbox gives page JS no way to
+// hand off to Safari - only the host app's own "Open in browser"/"Open in Safari" menu item can do it.
+// Wording is deliberately app-agnostic (no "TikTok" hardcoded) since the same overlay now covers
+// TikTok/Instagram/Facebook, and all three expose the same ⋯/share-menu mechanism.
 function showBrowserEscapeOverlay(){
  const wrap = document.createElement('div');
  wrap.className = 'inapp-overlay';
@@ -506,10 +504,7 @@ function renderPackages(el){
   ${footBlock()}
  `;
  el.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click', async ()=>{
-  if(isInAppBrowser()){
-   if(escapeToSystemBrowser()) return; // Android: navigating away to the system browser now
-   showBrowserEscapeOverlay(); return; // iOS/other: no JS-only escape exists, show instructions instead
-  }
+  if(isInAppBrowser()){ showBrowserEscapeOverlay(); return; }
   document.getElementById('pkgNotice').innerHTML = '';
   el.querySelectorAll('.pkg').forEach(b=>b.disabled=true);
   try{ ctx = await api('/package', {packageId: btn.dataset.id}); render(); }
