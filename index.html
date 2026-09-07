@@ -114,6 +114,13 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
 .trust div{display:flex;flex-direction:column;align-items:center;gap:6px;}
 .foot{text-align:center;font:500 11.5px var(--body);color:var(--ink-dim);}
 .foot b{color:var(--ink);}
+.inapp-overlay{position:fixed;inset:0;background:rgba(21,21,21,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;}
+.inapp-card{background:var(--panel);border-radius:var(--radius);padding:26px 22px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 50px -20px rgba(0,0,0,.4);}
+.inapp-icon{font-size:34px;margin-bottom:10px;}
+.inapp-title{font:800 18px var(--display);margin-bottom:8px;}
+.inapp-desc{font:500 13.5px var(--body);color:var(--ink-dim);margin-bottom:12px;}
+.inapp-steps{font:600 13px var(--body);color:#5A4A1A;background:#FFF6E1;border:1px solid #FCE7B2;border-radius:12px;padding:12px;text-align:left;}
+.inapp-dismiss{display:block;width:100%;text-align:center;background:none;border:none;font:600 13px var(--body);color:var(--ink-dim);cursor:pointer;padding:14px 0 0;text-decoration:underline;}
 [hidden]{display:none!important;}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
@@ -163,7 +170,8 @@ const STR = {
   need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
   invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
-  reconnecting:'⏳ Восстанавливаем соединение…'
+  reconnecting:'⏳ Восстанавливаем соединение…',
+  inapp_title:'Откройте страницу в браузере', inapp_desc:'Вы открыли сайт из TikTok — оплата и код подтверждения могут не сработать во встроенном браузере TikTok.', inapp_steps:'Нажмите ⋯ в правом верхнем углу и выберите «Открыть в браузере».', inapp_copy:'Скопировать ссылку', inapp_copied:'Ссылка скопирована ✓', inapp_continue_anyway:'Продолжить здесь (не рекомендуется)'
  },
  kk:{
   slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа',
@@ -185,7 +193,8 @@ const STR = {
   need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
   invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
-  reconnecting:'⏳ Байланыс қалпына келтірілуде…'
+  reconnecting:'⏳ Байланыс қалпына келтірілуде…',
+  inapp_title:'Парақшаны браузерде ашыңыз', inapp_desc:'Сіз сайтты TikTok арқылы аштыңыз — TikTok-тың ішкі браузерінде төлем және растау коды дұрыс жұмыс істемеуі мүмкін.', inapp_steps:'Жоғарғы оң жақ бұрыштағы ⋯ түймесін басып, «Открыть в браузере» опциясын таңдаңыз.', inapp_copy:'Сілтемені көшіру', inapp_copied:'Сілтеме көшірілді ✓', inapp_continue_anyway:'Осы жерде жалғастыру (ұсынылмайды)'
  }
 };
 STR.ru.b_all=[STR.ru.b1,STR.ru.b2,STR.ru.b3,STR.ru.b4];
@@ -432,6 +441,46 @@ function bindSupport(){
  });
 }
 
+// TikTok in-app-browser escape (2026-09-07): TikTok ad traffic opens this site inside TikTok's own
+// built-in WebView, not the phone's real browser. Cookies/storage there are often partitioned
+// differently, and the Kaspi/Halyk payment redirect and OTP autofill are known to be unreliable inside
+// it - so before the customer commits to picking a package (the point where a broken browser actually
+// costs them a stuck order), send them out to a real browser instead of letting the order start there.
+function isTikTokWebView(){ return /musical_ly|TikTok|BytedanceWebview/i.test(navigator.userAgent||''); }
+function isAndroid(){ return /Android/i.test(navigator.userAgent||''); }
+// Android: a generic (no target package) intent:// URL hands the current page to the phone's default
+// browser - a well-established escape hatch for in-app WebViews, since TikTok's own WebView exposes no
+// API for page JS to do this directly.
+function escapeToSystemBrowser(){
+ if(!isAndroid()) return false;
+ const stripped = location.href.replace(/^https?:\/\//,'');
+ location.href = `intent://${stripped}#Intent;scheme=https;action=android.intent.action.VIEW;end`;
+ return true;
+}
+// iOS has no equivalent: Apple's WKWebView sandbox gives page JS no way to hand off to Safari, so
+// there's no automatic escape there - only TikTok's own "Open in browser" menu item can do it. This
+// overlay just points the customer at that menu, with a copy-link fallback in case they can't find it.
+function showBrowserEscapeOverlay(){
+ const wrap = document.createElement('div');
+ wrap.className = 'inapp-overlay';
+ wrap.innerHTML = `
+  <div class="inapp-card">
+   <div class="inapp-icon">🌐</div>
+   <p class="inapp-title">${esc(t('inapp_title'))}</p>
+   <p class="inapp-desc">${esc(t('inapp_desc'))}</p>
+   <div class="inapp-steps">${esc(t('inapp_steps'))}</div>
+   <button class="btn btn-primary" id="inappCopy" style="margin-top:16px">${esc(t('inapp_copy'))}</button>
+   <button class="inapp-dismiss" id="inappDismiss">${esc(t('inapp_continue_anyway'))}</button>
+  </div>`;
+ document.body.appendChild(wrap);
+ document.getElementById('inappCopy').addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText(location.href); }
+  catch(e){ /* clipboard API unavailable in some in-app WebViews - the visible steps above still work */ }
+  document.getElementById('inappCopy').textContent = t('inapp_copied');
+ });
+ document.getElementById('inappDismiss').addEventListener('click', ()=>{ wrap.remove(); });
+}
+
 function renderPackages(el){
  const pkgs = (ctx.availablePackages||[]).filter(p=>['7GB','20GB'].includes(p.id));
  const rows = pkgs.map(p=>{
@@ -454,6 +503,10 @@ function renderPackages(el){
   ${footBlock()}
  `;
  el.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click', async ()=>{
+  if(isTikTokWebView()){
+   if(escapeToSystemBrowser()) return; // Android: navigating away to the system browser now
+   showBrowserEscapeOverlay(); return; // iOS/other: no JS-only escape exists, show instructions instead
+  }
   document.getElementById('pkgNotice').innerHTML = '';
   el.querySelectorAll('.pkg').forEach(b=>b.disabled=true);
   try{ ctx = await api('/package', {packageId: btn.dataset.id}); render(); }
