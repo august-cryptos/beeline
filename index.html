@@ -257,17 +257,35 @@ document.getElementById('langToggle').addEventListener('click', e=>{
  render();
 });
 
+// Live-run forensic fix (2026-09-08, round 5): confirmed live - a customer's very first /session call
+// never resolved OR rejected (some in-app/restrictive webviews silently stall a cross-origin fetch
+// instead of erroring), so the existing catch-driven "не удалось подключиться" fallback in
+// initSession() never fired either - the page just sat blank below the static header forever, with
+// zero requests ever reaching the server. A hard timeout guarantees every call eventually settles one
+// way or the other, so a genuine stall now surfaces the same way a real network error already does.
 async function api(path, body, method){
  const opts = {method: method || (body!==undefined?'POST':'GET'), headers:{'content-type':'application/json'}};
  if(sessionToken) opts.headers.authorization = 'Bearer ' + sessionToken;
  if(body!==undefined) opts.body = JSON.stringify(body);
- const r = await fetch(API_BASE + path, opts);
+ const controller = new AbortController();
+ const timeoutId = setTimeout(()=>controller.abort(), 15000);
+ opts.signal = controller.signal;
+ let r;
+ try{ r = await fetch(API_BASE + path, opts); }
+ catch(e){ throw Object.assign(new Error('REQUEST_FAILED'), {code:'NETWORK_ERROR'}); }
+ finally{ clearTimeout(timeoutId); }
  const j = await r.json().catch(()=>({}));
  if(!r.ok) throw Object.assign(new Error(j.error||'REQUEST_FAILED'), {code:j.error, status:r.status});
  return j;
 }
 
 async function initSession(){
+ // Live-run forensic fix (2026-09-08, round 5): this overlay used to show only after a package click
+ // failed to escape the in-app browser - confirmed live, a customer stuck in one of these webviews
+ // never even gets that far if the FIRST /session call itself silently stalls there (no packages ever
+ // render to click). Warning immediately, before any network call, means the customer sees actionable
+ // instructions right away instead of a blank page with nothing to click.
+ if(isInAppBrowser()) showBrowserEscapeOverlay();
  const tg = window.Telegram && window.Telegram.WebApp;
  let body;
  if(tg && tg.initData){
