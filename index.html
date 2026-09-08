@@ -722,9 +722,14 @@ let resendCooldownTimer = null;
 // resend click (see bindResendBtn below) - never on a mere re-render.
 let otpCodeSentAt = null;
 const OTP_RESEND_COOLDOWN_SEC = 35;
-function renderOtp(el, wrong){
+// Owner request (2026-09-08): the backend's own "3 wrong attempts" auto-resend (see OTP_REJECTED_RESENT
+// below) must be just as visible to the customer as clicking "запросить новый код" manually - same
+// "new code sent" messaging, same timer reset. `justResent` is the signal for that specific case;
+// `wrong` still controls the wrong-code banner (a genuinely NEW code was just sent, but the code they
+// just typed WAS still wrong - both things are true at once here).
+function renderOtp(el, wrong, justResent){
  if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
- if(!wrong) otpCodeSentAt = Date.now();
+ if(!wrong || justResent) otpCodeSentAt = Date.now();
  const resendRemainingSec = Math.max(0, OTP_RESEND_COOLDOWN_SEC - Math.floor((Date.now() - otpCodeSentAt) / 1000));
  const phone = ctx.client.phone||'';
  el.innerHTML = `
@@ -737,6 +742,7 @@ function renderOtp(el, wrong){
    </div>
    ${wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('wrong_desc'))} ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
           :`<div class="info-box" style="margin-top:14px;text-align:left"><div class="ico">✓</div><div>${esc(t('otp_valid'))} ${esc(t('otp_secret'))}</div></div>`}
+   ${justResent?`<div style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>`:''}
    <label style="text-align:left;margin-top:18px">${esc(t('enter_code'))}</label>
    <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
    <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
@@ -833,15 +839,27 @@ function renderOtp(el, wrong){
    // painting that as "code incorrect, N attempts left" let the customer believe a retry could still
    // help, when the real outcome (and a Support escalation) had already happened - refresh and show
    // the real current screen instead of guessing it was a typo.
+   // Owner request (2026-09-08): OTP_REJECTED_RESENT is the 3rd-wrong-attempt case - the backend
+   // already requested a genuinely fresh code from Beeline before returning this, same as clicking
+   // "запросить новый код" manually. Tell the customer plainly (justResent=true - the same "new code
+   // sent" notice, and the resend timer restarts from now) instead of showing the same generic
+   // "wrong code" message a third time with no explanation of what just happened.
+   if(e.code==='OTP_REJECTED_RESENT'){
+    pendingOtpAttempts = 3;
+    otpBoxes.forEach(b=>b.classList.add('bad'));
+    renderOtp(el, true, true);
+    return;
+   }
    if(e.code!=='OTP_REJECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
    otpBoxes.forEach(b=>b.classList.add('bad'));
    renderOtp(el, true);
    // 2026-09-04: the backend itself already sends a fresh code and resets attempts once the 3rd wrong
-   // one lands (server-side WRONG_ATTEMPTS_EXHAUSTED handling) - calling /otp-resend here too used to
-   // be dead code (this catch never used to fire for a real wrong code, see the OTP_REJECTED fix on the
-   // backend), so fixing that would have started sending the customer a duplicate code. Just mirror the
-   // reset locally.
+   // one lands (server-side WRONG_ATTEMPTS_EXHAUSTED handling, now surfaced explicitly above via
+   // OTP_REJECTED_RESENT) - calling /otp-resend here too used to be dead code (this catch never used
+   // to fire for a real wrong code, see the OTP_REJECTED fix on the backend), so fixing that would
+   // have started sending the customer a duplicate code. Just mirror the reset locally as a fallback
+   // in case pendingOtpAttempts' own local count ever drifts from the server's.
    if(pendingOtpAttempts<=0){ pendingOtpAttempts = 3; }
   }
  });
