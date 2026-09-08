@@ -236,6 +236,12 @@ function formatPhoneDigits(digits){
 function bindPhoneMask(input){
  input.addEventListener('input', ()=>{ input.value = formatPhoneDigits(normalizePhoneDigits(input.value)); });
 }
+// Full stored phone (ctx.client.phone, e.g. "77770604701") displayed read-only, e.g. on the OTP screen -
+// same "+7-XXX-XXX-XX-XX" grouping as the phone input mask above, just with the whole thing shown at
+// once instead of split between a static "+7-" span and a live-typed field.
+function formatFullPhoneDisplay(phone){
+ return '+7-'+formatPhoneDigits(normalizePhoneDigits(phone));
+}
 
 function applyLang(){
  document.documentElement.lang = lang;
@@ -706,7 +712,7 @@ function renderOtp(el, wrong){
    <h2 class="title">${wrong?esc(t('wrong_code')):esc(t('otp_title'))}</h2>
    <p class="desc">${esc(t('otp_desc'))}</p>
    <div class="receipt" style="margin-top:14px">
-    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v" style="display:flex;align-items:center;gap:8px">+${esc(phone)}<button id="changeNumberLink" style="background:none;border:none;padding:0;font:700 12px var(--body);color:var(--blue);text-decoration:underline;cursor:pointer">${esc(t('change_number_link'))}</button></span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v" style="display:flex;align-items:center;gap:8px">${esc(formatFullPhoneDisplay(phone))}<button id="changeNumberLink" style="background:none;border:none;padding:0;font:700 12px var(--body);color:var(--blue);text-decoration:underline;cursor:pointer">${esc(t('change_number_link'))}</button></span></div>
    </div>
    ${wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('wrong_desc'))} ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
           :`<div class="info-box" style="margin-top:14px;text-align:left"><div class="ico">✓</div><div>${esc(t('otp_valid'))} ${esc(t('otp_secret'))}</div></div>`}
