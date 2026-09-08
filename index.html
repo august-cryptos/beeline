@@ -704,7 +704,16 @@ function renderConnected(el){
 }
 
 let otpBoxes = [];
+// Live-run forensic fix (2026-09-08): startResendCooldown()'s setInterval was never cleared when the
+// OTP screen re-rendered before it finished (e.g. entering a wrong code while the initial 60s countdown
+// was still running) - the old interval kept ticking against DETACHED elements, and when it finally hit
+// 0 it called bindResendBtn(document.getElementById('resendBtn')) which, via the global document
+// lookup, found and re-bound the CURRENT live resend button - a second click listener stacked on top
+// of the one the fresh render already attached, so one click could fire /otp-resend twice. Tracked
+// module-level so any render can clear whatever cooldown was left running from a previous one.
+let resendCooldownTimer = null;
 function renderOtp(el, wrong){
+ if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
  const phone = ctx.client.phone||'';
  el.innerHTML = `
   <div class="card center">
@@ -830,12 +839,14 @@ function renderOtp(el, wrong){
  // explicit "code sent" message and re-arms itself after a real 30s cooldown, same countdown pattern
  // already used for the first automatic send below.
  function startResendCooldown(el, secs, justSent){
+  if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
   el.innerHTML = `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:${String(secs).padStart(2,'0')}</span>` + (justSent ? `<div id="resendSentNotice" style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>` : '');
   const cd = document.getElementById('resendCountdown');
-  const timer = setInterval(()=>{
+  resendCooldownTimer = setInterval(()=>{
    secs--;
    if(secs<=0){
-    clearInterval(timer);
+    clearInterval(resendCooldownTimer);
+    resendCooldownTimer = null;
     el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
     bindResendBtn(document.getElementById('resendBtn'));
     return;
