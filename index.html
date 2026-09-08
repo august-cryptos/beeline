@@ -258,17 +258,16 @@ document.getElementById('langToggle').addEventListener('click', e=>{
 });
 
 // Live-run forensic fix (2026-09-08, round 5): confirmed live - a customer's very first /session call
-// never resolved OR rejected (some in-app/restrictive webviews silently stall a cross-origin fetch
-// instead of erroring), so the existing catch-driven "не удалось подключиться" fallback in
+// never resolved OR rejected, so the existing catch-driven "не удалось подключиться" fallback in
 // initSession() never fired either - the page just sat blank below the static header forever, with
 // zero requests ever reaching the server. A hard timeout guarantees every call eventually settles one
 // way or the other, so a genuine stall now surfaces the same way a real network error already does.
-async function api(path, body, method){
+async function apiOnce(path, body, method, timeoutMs){
  const opts = {method: method || (body!==undefined?'POST':'GET'), headers:{'content-type':'application/json'}};
  if(sessionToken) opts.headers.authorization = 'Bearer ' + sessionToken;
  if(body!==undefined) opts.body = JSON.stringify(body);
  const controller = new AbortController();
- const timeoutId = setTimeout(()=>controller.abort(), 15000);
+ const timeoutId = setTimeout(()=>controller.abort(), timeoutMs);
  opts.signal = controller.signal;
  let r;
  try{ r = await fetch(API_BASE + path, opts); }
@@ -277,6 +276,30 @@ async function api(path, body, method){
  const j = await r.json().catch(()=>({}));
  if(!r.ok) throw Object.assign(new Error(j.error||'REQUEST_FAILED'), {code:j.error, status:r.status});
  return j;
+}
+// Live-run forensic fix (2026-09-08, round 6): confirmed live on two separate devices - the very first
+// connection attempt can genuinely take longer than round 5's 15s timeout to succeed (mobile carriers
+// often try IPv6 first and this server only advertises IPv4, so the fallback to IPv4 can be slow), and
+// then the SAME request succeeds fine moments later with zero server-side changes. A 15s hard cutoff was
+// killing connections that would have worked if given a bit more time. Retrying automatically - each
+// attempt with its own generous timeout - lets that slow-but-working fallback path finish on its own
+// without the customer needing to notice a failure and manually reload. Safe to retry any call here: the
+// app already treats "this already happened" responses (PHONE_NOT_EXPECTED, OTP_NOT_EXPECTED, etc.) as
+// a normal refresh-and-continue case, not an error, so a retry landing on an already-processed request
+// can't leave the customer stuck.
+async function api(path, body, method){
+ // A healthy connection returns long before any of this matters - fetch() resolves as soon as the
+ // server answers (confirmed live: well under a second for every working request today), so this
+ // timeout is a ceiling for an ALREADY-broken connection, never an artificial delay on a working one.
+ let lastErr;
+ for(let attempt=0; attempt<3; attempt++){
+  try{ return await apiOnce(path, body, method, 12000); }
+  catch(e){
+   lastErr = e;
+   if(e.code!=='NETWORK_ERROR') throw e; // a real answer from the server - retrying won't change it
+  }
+ }
+ throw lastErr;
 }
 
 async function initSession(){
