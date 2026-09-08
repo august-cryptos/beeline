@@ -705,15 +705,27 @@ function renderConnected(el){
 
 let otpBoxes = [];
 // Live-run forensic fix (2026-09-08): startResendCooldown()'s setInterval was never cleared when the
-// OTP screen re-rendered before it finished (e.g. entering a wrong code while the initial 60s countdown
+// OTP screen re-rendered before it finished (e.g. entering a wrong code while the initial countdown
 // was still running) - the old interval kept ticking against DETACHED elements, and when it finally hit
 // 0 it called bindResendBtn(document.getElementById('resendBtn')) which, via the global document
 // lookup, found and re-bound the CURRENT live resend button - a second click listener stacked on top
 // of the one the fresh render already attached, so one click could fire /otp-resend twice. Tracked
 // module-level so any render can clear whatever cooldown was left running from a previous one.
 let resendCooldownTimer = null;
+// Live-run forensic fix (2026-09-08, round 2): the cooldown must be measured from when the code was
+// actually (re)sent, not from whenever the screen happens to re-render - confirmed live, Beeline's own
+// site does NOT reset its resend timer just because a wrong code was entered (the same code stays
+// live, entering a wrong one doesn't touch it). Previously renderOtp() restarted a fresh countdown on
+// EVERY call, including the wrong-code re-render, letting a customer who mistyped once effectively
+// reset their own wait indefinitely by mistyping again. otpCodeSentAt anchors the real send moment;
+// only set on a genuinely fresh, non-wrong render (renderOtp(el,true) never touches it) or an explicit
+// resend click (see bindResendBtn below) - never on a mere re-render.
+let otpCodeSentAt = null;
+const OTP_RESEND_COOLDOWN_SEC = 35;
 function renderOtp(el, wrong){
  if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
+ if(!wrong) otpCodeSentAt = Date.now();
+ const resendRemainingSec = Math.max(0, OTP_RESEND_COOLDOWN_SEC - Math.floor((Date.now() - otpCodeSentAt) / 1000));
  const phone = ctx.client.phone||'';
  el.innerHTML = `
   <div class="card center">
@@ -728,7 +740,7 @@ function renderOtp(el, wrong){
    <label style="text-align:left;margin-top:18px">${esc(t('enter_code'))}</label>
    <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
    <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
-   <div class="timer" id="resendWrap"><span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:35</span></div>
+   <div class="timer" id="resendWrap"></div>
    <div id="changeNumberForm" hidden style="text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
     <label>${esc(t('change_number_title'))}</label>
     <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('change_number_desc'))}</p>
@@ -838,8 +850,11 @@ function renderOtp(el, wrong){
  // the button then stayed disabled forever - no cooldown, no way to ever ask again. Now it shows an
  // explicit "code sent" message and re-arms itself after a real cooldown, same countdown pattern
  // already used for the first automatic send below.
+ // secs<=0 (the anchor's cooldown has already fully elapsed - e.g. the customer took their time typing
+ // a wrong code) renders the button immediately instead of a fake "00:00" tick.
  function startResendCooldown(el, secs, justSent){
   if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
+  if(secs<=0){ el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`; bindResendBtn(document.getElementById('resendBtn')); return; }
   el.innerHTML = `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:${String(secs).padStart(2,'0')}</span>` + (justSent ? `<div id="resendSentNotice" style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>` : '');
   const cd = document.getElementById('resendCountdown');
   resendCooldownTimer = setInterval(()=>{
@@ -858,20 +873,23 @@ function renderOtp(el, wrong){
  function bindResendBtn(btn){
   btn.addEventListener('click', async (ev)=>{
    ev.target.disabled = true;
-   try{ await api('/otp-resend', {}); startResendCooldown(document.getElementById('resendWrap'), 35, true); }
+   try{
+    await api('/otp-resend', {});
+    // A genuine new code just went out - THIS is the real send moment the cooldown must be measured
+    // from from now on, same as the very first send.
+    otpCodeSentAt = Date.now();
+    startResendCooldown(document.getElementById('resendWrap'), OTP_RESEND_COOLDOWN_SEC, true);
+   }
    catch(e){ ev.target.disabled=false; }
   });
  }
- // Live-run forensic fix (2026-09-08, workdata.har re-audit): the resend cooldown now matches
- // Beeline's own real minimum with a small safety margin (confirmed against real captured traffic: a
- // genuine resend request landed ~30s after the code was sent, never sooner - 35s gives a little room
- // rather than sitting right on the edge) - a wrong code used to make the resend button available
- // INSTANTLY (2026-09-04 fix, based on a since-corrected assumption that Beeline issues a fresh
- // code/form per wrong attempt - it doesn't, the same code stays live), which could let the customer
- // fire a resend request before Beeline's own server would honor it. Both the first send and a
- // wrong-code retry now wait out the same cooldown before offering the button, exactly like clicking
- // resend itself already did.
- startResendCooldown(document.getElementById('resendWrap'), 35, false);
+ // Live-run forensic fix (2026-09-08, workdata.har re-audit): the resend cooldown matches Beeline's
+ // own real minimum with a small safety margin (confirmed against real captured traffic: a genuine
+ // resend request landed ~30s after the code was sent, never sooner - 35s gives a little room rather
+ // than sitting right on the edge). Uses resendRemainingSec (computed above from otpCodeSentAt), NOT a
+ // flat OTP_RESEND_COOLDOWN_SEC every render - entering a wrong code must not reset the wait, only
+ // shrink what's left of it, exactly like Beeline's own site.
+ startResendCooldown(document.getElementById('resendWrap'), resendRemainingSec, false);
 }
 
 function renderFailed(el){
