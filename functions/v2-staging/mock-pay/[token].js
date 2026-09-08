@@ -8,8 +8,7 @@
 // relative form action (/v2-staging/mock-pay/<token>) still resolves to this same proxied path.
 export async function onRequest(context) {
  const { request, params } = context;
- const path = Array.isArray(params.path) ? params.path.join('/') : (params.path || '');
- const targetUrl = `https://qwertyxyz.com/v2-staging/mock-pay/${path}`;
+ const targetUrl = `https://qwertyxyz.com/v2-staging/mock-pay/${params.token}`;
 
  const init = { method: request.method, headers: {} };
  const contentType = request.headers.get('content-type');
