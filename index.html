@@ -769,34 +769,18 @@ let resendCooldownTimer = null;
 let otpCodeSentAt = null;
 const OTP_RESEND_COOLDOWN_SEC = 35;
 let resendClickInFlight = false;
-let otpSilentCheckTimer = null;
 // Owner request (2026-09-08): the backend's own "3 wrong attempts" auto-resend (see OTP_REJECTED_RESENT
 // below) must be just as visible to the customer as clicking "запросить новый код" manually - same
 // "new code sent" messaging, same timer reset. `justResent` is the signal for that specific case;
 // `wrong` still controls the wrong-code banner (a genuinely NEW code was just sent, but the code they
 // just typed WAS still wrong - both things are true at once here).
-// Live-run forensic fix (2026-09-08, round 10): confirmed live via server audit log, second-by-second -
-// a saved Beeline auth token can let training start with ZERO OTP request at all (a real order went
-// from phone-change to a fully finished, 15/15 game in under 3 seconds, no OTP_REQUESTED event ever
-// fired). The customer-facing site had no way to know that in advance, though - it renders this screen
-// the instant the backend response says WAITING_OTP, same as it always has to for the normal case where
-// a code really is coming. Since the OTP screen never polls (see startPoll's own comment - a poll here
-// would wreck in-progress typing), a customer who landed here right as the silent-refresh finished a
-// moment later had no way to find out except manually reloading. This one-shot check (never repeating,
-// unlike a poll) fires once, only on a genuinely fresh render, and only touches the DOM if the state
-// actually moved past WAITING_OTP - a customer mid-typing whose OTP is still genuinely pending is never
-// interrupted.
-function scheduleOtpSilentCheck(){
- if(otpSilentCheckTimer){ clearTimeout(otpSilentCheckTimer); otpSilentCheckTimer = null; }
- otpSilentCheckTimer = setTimeout(async ()=>{
-  try{ await refreshContext(); if(ctx.clientState !== 'WAITING_OTP') render(); }
-  catch(e){ /* stays on the OTP screen - the next real action will surface any actual problem */ }
- }, 900);
-}
+// Live-run forensic fix (2026-09-08, round 11): a client-side timer used to live here to paper over the
+// OTP screen appearing even when a saved auth token was about to skip the code entirely - removed in
+// favor of the real fix, on the backend (OrderWorkflow.replaceRecoverableOrder), which now never reports
+// clientState as WAITING_OTP until a real OTP request has actually happened. The site simply shows this
+// screen only when the backend genuinely means it - nothing to work around here any more.
 function renderOtp(el, wrong, justResent, resendFailed){
  if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
- if(otpSilentCheckTimer){ clearTimeout(otpSilentCheckTimer); otpSilentCheckTimer = null; }
- if(!wrong && !justResent && !resendFailed) scheduleOtpSilentCheck();
  if(!wrong || justResent) otpCodeSentAt = Date.now();
  const resendRemainingSec = Math.max(0, OTP_RESEND_COOLDOWN_SEC - Math.floor((Date.now() - otpCodeSentAt) / 1000));
  const phone = ctx.client.phone||'';
