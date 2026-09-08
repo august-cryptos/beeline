@@ -728,7 +728,7 @@ function renderOtp(el, wrong){
    <label style="text-align:left;margin-top:18px">${esc(t('enter_code'))}</label>
    <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
    <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
-   <div class="timer" id="resendWrap"><span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:30</span></div>
+   <div class="timer" id="resendWrap"><span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:35</span></div>
    <div id="changeNumberForm" hidden style="text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
     <label>${esc(t('change_number_title'))}</label>
     <p style="color:var(--ink-dim);font:500 12.5px var(--body);margin-bottom:10px">${esc(t('change_number_desc'))}</p>
@@ -836,7 +836,7 @@ function renderOtp(el, wrong){
  // Owner request (2026-09-06): clicking "запросить новый код" gave no visible confirmation beyond a
  // tiny "✓" replacing the button text (easy to miss next to the wrong-code error banner above it), and
  // the button then stayed disabled forever - no cooldown, no way to ever ask again. Now it shows an
- // explicit "code sent" message and re-arms itself after a real 30s cooldown, same countdown pattern
+ // explicit "code sent" message and re-arms itself after a real cooldown, same countdown pattern
  // already used for the first automatic send below.
  function startResendCooldown(el, secs, justSent){
   if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
@@ -858,19 +858,20 @@ function renderOtp(el, wrong){
  function bindResendBtn(btn){
   btn.addEventListener('click', async (ev)=>{
    ev.target.disabled = true;
-   try{ await api('/otp-resend', {}); startResendCooldown(document.getElementById('resendWrap'), 30, true); }
+   try{ await api('/otp-resend', {}); startResendCooldown(document.getElementById('resendWrap'), 35, true); }
    catch(e){ ev.target.disabled=false; }
   });
  }
  // Live-run forensic fix (2026-09-08, workdata.har re-audit): the resend cooldown now matches
- // Beeline's own real minimum (confirmed against real captured traffic: a genuine resend request
- // landed ~30s after the code was sent, never sooner) - a wrong code used to make the resend button
- // available INSTANTLY (2026-09-04 fix, based on a since-corrected assumption that Beeline issues a
- // fresh code/form per wrong attempt - it doesn't, the same code stays live), which could let the
- // customer fire a resend request before Beeline's own server would honor it. Both the first send and
- // a wrong-code retry now wait out the same 30s countdown before offering the button, exactly like
- // clicking resend itself already did.
- startResendCooldown(document.getElementById('resendWrap'), 30, false);
+ // Beeline's own real minimum with a small safety margin (confirmed against real captured traffic: a
+ // genuine resend request landed ~30s after the code was sent, never sooner - 35s gives a little room
+ // rather than sitting right on the edge) - a wrong code used to make the resend button available
+ // INSTANTLY (2026-09-04 fix, based on a since-corrected assumption that Beeline issues a fresh
+ // code/form per wrong attempt - it doesn't, the same code stays live), which could let the customer
+ // fire a resend request before Beeline's own server would honor it. Both the first send and a
+ // wrong-code retry now wait out the same cooldown before offering the button, exactly like clicking
+ // resend itself already did.
+ startResendCooldown(document.getElementById('resendWrap'), 35, false);
 }
 
 function renderFailed(el){
