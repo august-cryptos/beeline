@@ -158,7 +158,7 @@ const STR = {
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
-  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
+  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
@@ -181,7 +181,7 @@ const STR = {
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
-  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
+  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
@@ -722,12 +722,13 @@ let resendCooldownTimer = null;
 // resend click (see bindResendBtn below) - never on a mere re-render.
 let otpCodeSentAt = null;
 const OTP_RESEND_COOLDOWN_SEC = 35;
+let resendClickInFlight = false;
 // Owner request (2026-09-08): the backend's own "3 wrong attempts" auto-resend (see OTP_REJECTED_RESENT
 // below) must be just as visible to the customer as clicking "запросить новый код" manually - same
 // "new code sent" messaging, same timer reset. `justResent` is the signal for that specific case;
 // `wrong` still controls the wrong-code banner (a genuinely NEW code was just sent, but the code they
 // just typed WAS still wrong - both things are true at once here).
-function renderOtp(el, wrong, justResent){
+function renderOtp(el, wrong, justResent, resendFailed){
  if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
  if(!wrong || justResent) otpCodeSentAt = Date.now();
  const resendRemainingSec = Math.max(0, OTP_RESEND_COOLDOWN_SEC - Math.floor((Date.now() - otpCodeSentAt) / 1000));
@@ -743,6 +744,7 @@ function renderOtp(el, wrong, justResent){
    ${wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('wrong_desc'))} ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
           :`<div class="info-box" style="margin-top:14px;text-align:left"><div class="ico">✓</div><div>${esc(t('otp_valid'))} ${esc(t('otp_secret'))}</div></div>`}
    ${justResent?`<div style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>`:''}
+   ${resendFailed?`<div style="color:var(--danger);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_failed'))}</div>`:''}
    <label style="text-align:left;margin-top:18px">${esc(t('enter_code'))}</label>
    <div class="otp" id="otpBoxes">${Array.from({length:6}).map((_,i)=>`<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}</div>
    <button class="btn btn-primary" id="otpConfirm" disabled>${esc(t('confirm'))} →</button>
@@ -850,6 +852,16 @@ function renderOtp(el, wrong, justResent){
     renderOtp(el, true, true);
     return;
    }
+   // Live-run forensic fix (2026-09-08, round 4): the mandatory resend that's supposed to follow a 3rd
+   // wrong code can itself fail (Beeline-side throttling under rapid repeat use) - the backend no longer
+   // kills the order over this (see TrainingEngine), so the site must never claim "new code sent" here.
+   // Job stays WAITING_OTP - point the customer at the resend button/change-number instead of pretending
+   // a fresh code is already on its way.
+   if(e.code==='OTP_REJECTED_RESEND_FAILED'){
+    otpBoxes.forEach(b=>b.classList.add('bad'));
+    renderOtp(el, true, false, true);
+    return;
+   }
    if(e.code!=='OTP_REJECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    pendingOtpAttempts = Math.max(0, pendingOtpAttempts-1);
    otpBoxes.forEach(b=>b.classList.add('bad'));
@@ -890,15 +902,38 @@ function renderOtp(el, wrong, justResent){
  }
  function bindResendBtn(btn){
   btn.addEventListener('click', async (ev)=>{
+   // Live-run forensic fix (2026-09-08, round 4): confirmed live - a burst of 10+ /otp-resend requests
+   // landed within 7 seconds for one job. The button's own disabled=true survives until this handler's
+   // await resolves, but a customer getting zero feedback on failure (see the old bare catch below) had
+   // every reason to keep clicking - resendClickInFlight blocks a second dispatch from this same click
+   // handler regardless of DOM state, closing that gap at the source.
+   if(resendClickInFlight) return;
+   resendClickInFlight = true;
    ev.target.disabled = true;
+   const wrap = document.getElementById('resendWrap');
    try{
     await api('/otp-resend', {});
     // A genuine new code just went out - THIS is the real send moment the cooldown must be measured
     // from from now on, same as the very first send.
     otpCodeSentAt = Date.now();
-    startResendCooldown(document.getElementById('resendWrap'), OTP_RESEND_COOLDOWN_SEC, true);
+    startResendCooldown(wrap, OTP_RESEND_COOLDOWN_SEC, true);
    }
-   catch(e){ ev.target.disabled=false; }
+   catch(e){
+    // Live-run forensic fix (2026-09-08, round 4): this used to silently re-enable the button with zero
+    // feedback - confirmed live as the direct cause of the click-mashing above ("ничего не происходит").
+    // The backend no longer kills the order over a failed resend, so the button stays usable - the
+    // customer just needs to be told plainly that this attempt didn't go through.
+    ev.target.disabled = false;
+    let notice = document.getElementById('resendFailNotice');
+    if(!notice){
+     notice = document.createElement('div');
+     notice.id = 'resendFailNotice';
+     notice.style.cssText = 'color:var(--danger);font:700 12.5px var(--body);margin-top:8px';
+     wrap.appendChild(notice);
+    }
+    notice.textContent = t('resend_failed');
+   }
+   finally{ resendClickInFlight = false; }
   });
  }
  // Live-run forensic fix (2026-09-08, workdata.har re-audit): the resend cooldown matches Beeline's
