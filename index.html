@@ -147,7 +147,12 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 'use strict';
-const API_BASE = 'https://qwertyxyz.com/v2-staging/customer-api';
+// Live-run forensic fix (2026-09-08, round 7): routed through this same origin's own /api/* Cloudflare
+// Pages Function (functions/api/[[path]].js) instead of the origin server directly - a packet capture
+// proved a one-way routing/peering problem drops the origin's replies back to some customers, while
+// this exact Cloudflare Pages deployment has never had that problem for anyone. Same-origin also means
+// no CORS preflight round-trip on every call.
+const API_BASE = '/api';
 
 const STR = {
  ru:{
