@@ -175,6 +175,7 @@ const STR = {
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
+  payment_link_hint:'Страница оплаты не открылась? Такое бывает, если браузер заблокировал всплывающее окно.', payment_link_btn:'Перейти к оплате',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
@@ -198,6 +199,7 @@ const STR = {
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
+  payment_link_hint:'Төлем беті ашылмады ма? Бұл браузер қалқымалы терезені бөгегенде болады.', payment_link_btn:'Төлеуге өту',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
@@ -715,6 +717,14 @@ function renderReceipt(el){
  }));
 }
 
+// Live-run forensic fix (2026-09-09): confirmed live - the bank tab this screen depends on
+// (window.open(paymentUrl,'_blank') in the payment-method click handler) can be silently blocked by the
+// browser's own popup blocker, especially since it fires after an `await` inside the click handler -
+// some browsers no longer treat that as a direct user gesture and block it with zero visible error. A
+// customer whose tab never opened had no way to reach the payment page at all and was stuck watching
+// this spinner forever. ctx.paymentUrl (only present while a payment is genuinely still pending - see
+// customerContext()) now gets a visible fallback link here, so a blocked/closed popup is always
+// recoverable without needing the original click that opened it.
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
  el.innerHTML = `
@@ -727,6 +737,10 @@ function renderChecking(el){
     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
    </div>
+   ${ctx.paymentUrl?`<div style="margin-top:16px">
+    <p class="desc" style="margin-bottom:10px">${esc(t('payment_link_hint'))}</p>
+    <a class="btn btn-primary" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener" style="display:block;text-decoration:none">${esc(t('payment_link_btn'))}</a>
+   </div>`:''}
   </div>
   ${supportBlock()}
   ${footBlock()}
