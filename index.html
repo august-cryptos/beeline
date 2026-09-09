@@ -991,12 +991,33 @@ function renderOtp(el, wrong, justResent, resendFailed){
   if(digits.length<10){ newPhoneInput.style.borderColor='var(--danger)'; return; }
   document.getElementById('changeNumberNotice').innerHTML = '';
   const submitBtn = document.getElementById('changeNumberSubmit'); submitBtn.disabled = true;
+  const cancelBtn = document.getElementById('changeNumberCancel'); cancelBtn.disabled = true;
+  newPhoneInput.disabled = true;
+  const originalLabel = submitBtn.textContent;
   try{
    ctx = await api('/change-phone', {phone: '7'+digits});
    pendingOtpAttempts = 3;
+   // Owner report (2026-09-09, round 15): confirmed live - render() here used to navigate straight to
+   // the 'checking' screen (client.state briefly reads PAYMENT_CONFIRMED while the fresh job
+   // re-authenticates with Beeline for the corrected number) before landing back on THIS SAME otp
+   // screen moments later once a new code is ready - a jarring, unnecessary full-screen swap for what
+   // the customer experiences as one single action. They're already paid and already on this screen;
+   // there's nothing to "check" that needs its own screen. Stay right here with an inline wait instead
+   // - the same button just shows a loading label - and only call render() once the real next state (a
+   // fresh WAITING_OTP, or a genuine failure) is actually ready. Bounded to ~28s as a safety net: on the
+   // rare chance it genuinely never resolves, render() still runs and falls back to the ordinary
+   // 'checking' screen rather than leaving this button spinning forever with nothing to show for it.
+   submitBtn.textContent = t('otp_checking');
+   let waited = 0;
+   while(ctx.clientState === 'PAYMENT_CONFIRMED' && waited < 28000){
+    await new Promise(r=>setTimeout(r, 700));
+    waited += 700;
+    await refreshContext().catch(()=>{});
+   }
    render();
   }catch(e){
-   submitBtn.disabled=false;
+   submitBtn.disabled=false; submitBtn.textContent=originalLabel;
+   cancelBtn.disabled=false; newPhoneInput.disabled=false;
    if(e.code==='PHONE_CORRECTION_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
    if(e.code==='DAILY_PHONE_LIMIT'){
     document.getElementById('changeNumberNotice').innerHTML = dailyLimitBanner();
