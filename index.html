@@ -702,12 +702,22 @@ function renderReceipt(el){
  `;
  el.querySelectorAll('[data-method]').forEach(btn=>btn.addEventListener('click', async ()=>{
   el.querySelectorAll('[data-method]').forEach(b=>b.disabled=true);
+  // Live-run forensic fix (2026-09-09): window.open() called AFTER an await (the old code opened the
+  // tab only once the /payment-method response came back) loses its "direct user gesture" standing in
+  // several browsers, which then silently block it - no error, no visible sign anything went wrong, the
+  // customer just never gets a payment tab. Opening a blank window synchronously, in the very first line
+  // of this click handler, before any await runs, is the standard fix: it's still directly inside the
+  // click's own call stack, so no browser blocks it. The real URL is set on that already-open window
+  // once we actually have it - the customer sees a blank tab load into the real payment page a moment
+  // later, never a blocked popup.
+  const paymentTab = window.open('', '_blank');
   try{
    const res = await api('/payment-method', {method: btn.dataset.method});
    selectedMethod = res.method;
-   if(res.paymentUrl) window.open(res.paymentUrl, '_blank');
+   if(res.paymentUrl){ if(paymentTab && !paymentTab.closed) paymentTab.location = res.paymentUrl; else window.open(res.paymentUrl, '_blank'); }
    showScreen('checking');
   }catch(e){
+   if(paymentTab && !paymentTab.closed) paymentTab.close();
    // Same class of bug as the phone/OTP screens (2026-09-04): PAYMENT_METHOD_NOT_EXPECTED means an
    // earlier click already succeeded and moved past this screen - re-enabling these buttons would
    // just leave the customer stuck retrying a step that's already done. Refresh and move on instead.
