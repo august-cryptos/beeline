@@ -748,8 +748,29 @@ function renderReceipt(el){
 // this spinner forever. ctx.paymentUrl (only present while a payment is genuinely still pending - see
 // customerContext()) now gets a visible fallback link here, so a blocked/closed popup is always
 // recoverable without needing the original click that opened it.
+// Live-run forensic fix (2026-09-09): confirmed live - a customer who chose a bank but then decided not
+// to pay (closed the payment tab, changed their mind) had no way out of this screen at all - it just
+// waits, forever, with nothing to click. ctx.paymentStatus (not ctx.paymentUrl, which stays populated
+// even after PAID - the order's own paymentUrl field is never cleared once set, so it can't tell the two
+// cases apart) is the real signal for "still genuinely waiting on this specific payment, nothing
+// confirmed yet" - only then does either the payment-link fallback or this back button make sense. Once
+// PAYMENT_CONFIRMED (waiting for training to start instead), neither applies - the payment already
+// happened, going back to bank choice or re-opening the payment link at that point would be nonsensical.
+// Reuses the exact same /back-to-phone (goBackToPhone) the receipt screen's own back button already
+// uses - it's already guarded server-side to refuse once the order is genuinely PAID, so this can never
+// race a payment that lands in the same instant the customer clicks back.
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
+ const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
+ if(stillPending){
+  setBack(true, async ()=>{
+   const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
+   try{ ctx = await api('/back-to-phone', {}); }
+   catch(e){ await refreshContext().catch(()=>{}); }
+   backBtn.disabled = false;
+   render();
+  });
+ }
  el.innerHTML = `
   <div class="card center">
    <div class="spinner"></div>
@@ -760,7 +781,7 @@ function renderChecking(el){
     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
    </div>
-   ${ctx.paymentUrl?`<div style="margin-top:16px">
+   ${stillPending?`<div style="margin-top:16px">
     <p class="desc" style="margin-bottom:10px">${esc(t('payment_link_hint'))}</p>
     <a class="btn btn-primary" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener" style="display:block;text-decoration:none">${esc(t('payment_link_btn'))}</a>
    </div>`:''}
