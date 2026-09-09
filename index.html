@@ -102,6 +102,7 @@ label{font:700 13px var(--body);display:block;margin-bottom:8px;}
 .receipt-row .k{color:var(--ink-dim);font:500 13.5px var(--body);}
 .receipt-row .v{font:700 15px var(--display);}
 .spinner{width:64px;height:64px;border-radius:50%;border:6px solid #FCE7B2;border-top-color:var(--yellow-deep);animation:spin 1s linear infinite;margin:6px auto 18px;}
+.spinner-sm{display:inline-block;width:15px;height:15px;border-radius:50%;border:2.5px solid rgba(255,255,255,.45);border-top-color:#fff;animation:spin .8s linear infinite;vertical-align:-3px;margin-right:8px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .center{text-align:center;}
 .icon-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;}
@@ -996,6 +997,15 @@ function renderOtp(el, wrong, justResent, resendFailed){
   const originalLabel = submitBtn.textContent;
   try{
    ctx = await api('/change-phone', {phone: '7'+digits});
+   // Live-run forensic fix (2026-09-09, round 16): confirmed live - a customer who corrected their
+   // number here had the success screen later show a COMPLETELY UNRELATED earlier order's package
+   // (7GB instead of the 20GB they'd actually just bought). Root cause: watchedOrderId stayed pointed
+   // at the OLD, now-cancelled order (submitPhone's own handler already does this correctly, see the
+   // /phone continue button above - this one just never did). renderConnected can only resolve the
+   // right order/package via ctx.orders once this is current - otherwise it falls through
+   // ctx.selectedPackage (cleared the instant training starts) all the way to ctx.lastCompletedOrder,
+   // which on a heavily-reused number is very often a different order entirely.
+   if(ctx.orderId) rememberWatchedOrder(ctx.orderId);
    pendingOtpAttempts = 3;
    // Owner report (2026-09-09, round 15): confirmed live - render() here used to navigate straight to
    // the 'checking' screen (client.state briefly reads PAYMENT_CONFIRMED while the fresh job
@@ -1007,7 +1017,12 @@ function renderOtp(el, wrong, justResent, resendFailed){
    // fresh WAITING_OTP, or a genuine failure) is actually ready. Bounded to ~28s as a safety net: on the
    // rare chance it genuinely never resolves, render() still runs and falls back to the ordinary
    // 'checking' screen rather than leaving this button spinning forever with nothing to show for it.
-   submitBtn.textContent = t('otp_checking');
+   // Owner report (2026-09-09, round 16): confirmed live - a plain text-only button label read as
+   // "stuck"/slower than before, even though the actual wait is the same or shorter than the old
+   // full-screen 'checking' spinner it replaced. A real, visible spinner inside the button (not just
+   // changed text) gives the same honest "something is actively happening" signal without bringing
+   // back the screen swap.
+   submitBtn.innerHTML = `<span class="spinner-sm"></span>${esc(t('otp_checking'))}`;
    let waited = 0;
    while(ctx.clientState === 'PAYMENT_CONFIRMED' && waited < 28000){
     await new Promise(r=>setTimeout(r, 700));
