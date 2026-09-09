@@ -776,10 +776,17 @@ function renderChecking(el){
  if(stillPending){ if(!paymentPendingSince) paymentPendingSince = Date.now(); }
  else{ paymentPendingSince = null; }
  const waitedLongEnough = stillPending && (Date.now()-paymentPendingSince) > PAYMENT_PENDING_BACK_DELAY_MS;
+ // Owner request (2026-09-09, round 2): "back" here must land straight on package selection - the main
+ // menu - not on the phone-entry screen /back-to-phone's own server-side state (WAITING_PHONE) would
+ // normally show. This mirrors exactly what the phone screen's OWN back button already does (a pure
+ // client-side jump to 'packages' with no API call, while the real backend state stays WAITING_PHONE
+ // underneath) - selecting a package from there works fine either way, since WAITING_PHONE is one of its
+ // own valid self-transitions (ClientStateMachine), so nothing about that state is actually load-bearing
+ // for what screen shows next.
  if(waitedLongEnough){
   setBack(true, async ()=>{
    const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
-   try{ ctx = await api('/back-to-phone', {}); }
+   try{ ctx = await api('/back-to-phone', {}); showScreen('packages'); return; }
    catch(e){ await refreshContext().catch(()=>{}); }
    backBtn.disabled = false;
    render();
