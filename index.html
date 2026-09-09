@@ -176,6 +176,7 @@ const STR = {
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
   payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
+  payment_not_found_title:'Оплата не найдена', back_to_menu_btn:'Вернуться в главное меню',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
@@ -200,6 +201,7 @@ const STR = {
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
   payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
+  payment_not_found_title:'Төлем табылмады', back_to_menu_btn:'Басты мәзірге оралу',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
@@ -729,6 +731,14 @@ function renderReceipt(el){
   try{
    const res = await api('/payment-method', {method: btn.dataset.method});
    selectedMethod = res.method;
+   // Owner spec (2026-09-09): retrying payment from the "оплата не найдена" screen re-picks a bank on
+   // the SAME still-pending order (choosePaymentMethod only requires WAITING_PAYMENT, never re-creates
+   // or re-prices the link - see OrderWorkflow) - paymentStatus never actually leaves PAYMENT_PENDING
+   // during a retry, so paymentPendingSince (anchored to when it FIRST went pending) would otherwise
+   // still be the original timestamp and could immediately exceed the 11s window again the instant the
+   // customer lands back on 'checking', regardless of how long picking a bank just took. Resetting it
+   // here - the real moment a fresh attempt starts - gives every attempt its own full window.
+   paymentPendingSince = null;
    if(res.paymentUrl){ location.href = res.paymentUrl; return; }
    showScreen('checking');
   }catch(e){
@@ -755,42 +765,59 @@ function renderReceipt(el){
 // waits, forever, with nothing to click. ctx.paymentStatus (not ctx.paymentUrl, which stays populated
 // even after PAID - the order's own paymentUrl field is never cleared once set, so it can't tell the two
 // cases apart) is the real signal for "still genuinely waiting on this specific payment, nothing
-// confirmed yet" - only then does either the payment-link fallback or this back button make sense. Once
-// PAYMENT_CONFIRMED (waiting for training to start instead), neither applies - the payment already
-// happened, going back to bank choice or re-opening the payment link at that point would be nonsensical.
-// Reuses the exact same /back-to-phone (goBackToPhone) the receipt screen's own back button already
-// uses - it's already guarded server-side to refuse once the order is genuinely PAID, so this can never
-// race a payment that lands in the same instant the customer clicks back.
+// confirmed yet" - only then does the "payment not found" screen below make sense. Once PAYMENT_CONFIRMED
+// (waiting for training to start instead), it doesn't apply - the payment already happened.
+// Owner spec (2026-09-09, full flow spec): after 11s of no confirmation this is no longer a banner
+// glued under the spinner - it replaces the whole screen with a dedicated "оплата не найдена" state
+// (X icon, matching the wrong-OTP icon style) offering exactly three ways forward: retry the SAME
+// still-pending order with a (possibly different) bank (client-side jump to 'receipt' - no API call
+// needed, choosePaymentMethod only requires WAITING_PAYMENT, which the client never actually leaves
+// while a bank choice is pending - see OrderWorkflow), return to the main package menu (reuses the same
+// /back-to-phone the receipt screen's own back button already uses - guarded server-side to refuse once
+// the order is genuinely PAID, so this can never race a payment landing in the same instant), or contact
+// support (the standard supportBlock(), already present on every screen). No separate header back
+// button here any more - these three in-page choices replace it entirely.
 let paymentPendingSince = null;
-const PAYMENT_PENDING_BACK_DELAY_MS = 20000;
+const PAYMENT_NOT_FOUND_DELAY_MS = 11000;
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
  const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
- // Owner request (2026-09-09): the back button must not appear the instant this screen shows - a
- // payment that's still genuinely being checked (the customer may be mid-payment on the bank's own
- // page right now) must never look like an invitation to bail out, and must never let a customer who
- // actually DID pay stumble onto "back" while their confirmation is simply still in flight. Only once
- // real time has passed with no confirmation does "back" become a reasonable offer. paymentPendingSince
- // anchors the wait to the moment THIS pending payment started (reset the instant it's no longer
- // pending), the same pattern otpCodeSentAt already uses for the OTP resend cooldown.
+ // paymentPendingSince anchors the wait to the moment THIS pending payment started (reset the instant
+ // it's no longer pending, and reset again on every fresh /payment-method choice - see its click
+ // handler above), the same pattern otpCodeSentAt already uses for the OTP resend cooldown.
  if(stillPending){ if(!paymentPendingSince) paymentPendingSince = Date.now(); }
  else{ paymentPendingSince = null; }
- const waitedLongEnough = stillPending && (Date.now()-paymentPendingSince) > PAYMENT_PENDING_BACK_DELAY_MS;
- // Owner request (2026-09-09, round 2): "back" here must land straight on package selection - the main
- // menu - not on the phone-entry screen /back-to-phone's own server-side state (WAITING_PHONE) would
- // normally show. This mirrors exactly what the phone screen's OWN back button already does (a pure
- // client-side jump to 'packages' with no API call, while the real backend state stays WAITING_PHONE
- // underneath) - selecting a package from there works fine either way, since WAITING_PHONE is one of its
- // own valid self-transitions (ClientStateMachine), so nothing about that state is actually load-bearing
- // for what screen shows next.
- if(waitedLongEnough){
-  setBack(true, async ()=>{
-   const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
+ const notFound = stillPending && (Date.now()-paymentPendingSince) > PAYMENT_NOT_FOUND_DELAY_MS;
+ setBack(false);
+ if(notFound){
+  el.innerHTML = `
+   <div class="card center">
+    <div class="icon-circle err">✕</div>
+    <h2 class="title">${esc(t('payment_not_found_title'))}</h2>
+    <p class="desc" style="margin-bottom:18px">${esc(t('payment_not_confirmed'))}</p>
+    <div class="receipt">
+     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
+     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
+     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+     <button class="btn btn-primary" id="retryPaymentBtn">${esc(t('payment_link_btn'))}</button>
+     <button class="btn" id="backToMenuBtn" style="background:var(--line);color:var(--ink)">${esc(t('back_to_menu_btn'))}</button>
+    </div>
+   </div>
+   ${supportBlock()}
+   ${footBlock()}
+  `;
+  bindSupport();
+  document.getElementById('retryPaymentBtn').addEventListener('click', ()=>{ showScreen('receipt'); });
+  document.getElementById('backToMenuBtn').addEventListener('click', async ()=>{
+   const btn = document.getElementById('backToMenuBtn'); btn.disabled = true;
    try{ ctx = await api('/back-to-phone', {}); showScreen('packages'); return; }
    catch(e){ await refreshContext().catch(()=>{}); }
-   backBtn.disabled = false;
+   btn.disabled = false;
    render();
   });
+  return;
  }
  el.innerHTML = `
   <div class="card center">
@@ -802,10 +829,6 @@ function renderChecking(el){
     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
    </div>
-   ${waitedLongEnough?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('payment_not_confirmed'))}</div>
-   <div style="margin-top:16px">
-    <a class="btn btn-primary" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener" style="display:block;text-decoration:none">${esc(t('payment_link_btn'))}</a>
-   </div>`:''}
   </div>
   ${supportBlock()}
   ${footBlock()}
