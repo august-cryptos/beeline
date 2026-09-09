@@ -377,7 +377,17 @@ function render(){
  const state = ctx.clientState;
  if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
  if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
- if(state==='WAITING_PAYMENT'){ engagedThisSession=true; return showScreen('receipt'); }
+ // Live-run forensic fix (2026-09-09): confirmed live - choosing a bank (Kaspi/Halyk) does NOT itself
+ // advance clientState past WAITING_PAYMENT; only a real payment confirmation does, and the customer is
+ // legitimately still WAITING_PAYMENT for the whole time they're off paying on the bank's own page. The
+ // payment-method button forces showScreen('checking') directly for exactly this reason - but polling's
+ // own render() call didn't know that, so as soon as polling started checking sooner (see the immediate-
+ // poll fix above), a customer who had JUST picked a bank got bounced straight back to bank-selection on
+ // the very first check, before they'd even had a chance to pay. ctx.paymentStatus (order.status) tells
+ // the two cases apart: 'CREATED' means no method chosen yet (show 'receipt'); 'PAYMENT_PENDING' means a
+ // method IS chosen and a real payment is genuinely in flight (show 'checking', same as the button
+ // already forces on the very first click - now the poll agrees with it instead of overriding it).
+ if(state==='WAITING_PAYMENT'){ engagedThisSession=true; return showScreen(ctx.paymentStatus==='PAYMENT_PENDING' ? 'checking' : 'receipt'); }
  if(state==='PAYMENT_CONFIRMED'){ engagedThisSession=true; return showScreen('checking'); }
  if(state==='WAITING_OTP'){ engagedThisSession=true; return showScreen('otp'); }
  if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('connected'); }
