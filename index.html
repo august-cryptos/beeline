@@ -421,24 +421,39 @@ function render(){
 }
 
 let pollTimer = null;
-function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } document.getElementById('reconnectBanner').hidden = true; }
+let currentPollScreen = null;
+function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } currentPollScreen = null; document.getElementById('reconnectBanner').hidden = true; }
 // Live-run resilience fix (2026-09-04): a poll failure used to be swallowed completely silently -
 // during a brief staging deploy restart (routine while iterating on backend fixes) the screen simply
 // froze with zero feedback until the customer manually refreshed. Three consecutive misses (~10s)
 // now shows a small "reconnecting" hint instead of nothing; it clears itself the moment a poll
 // succeeds again. This never touches which screen renders - only whether this hint is visible.
 let pollFailures = 0;
-function startPoll(){
+async function pollTick(){
+ try{ await refreshContext(); pollFailures = 0; document.getElementById('reconnectBanner').hidden = true; render(); }
+ catch(e){ pollFailures++; if(pollFailures>=3) document.getElementById('reconnectBanner').hidden = false; }
+}
+// Live-run forensic fix (2026-09-09): confirmed live - showScreen() used to call startPoll()
+// unconditionally on every same-screen re-render triggered by the poll's own render() call, tearing
+// down and rebuilding the interval every ~3.5s even though nothing about the screen changed. Harmless
+// on its own, but it also meant the very first check after landing on 'checking'/'connected' had to
+// wait the full interval before firing at all - a customer moving from "проверяем платёж" straight into
+// a code that already arrived could sit looking at a stale screen for up to 3.5s before the first poll
+// even happened, which read as "stuck" often enough to prompt a manual reload. startPoll() now only
+// resets anything when the screen name has genuinely changed, and fires one check immediately instead
+// of waiting for the first tick - a customer who already has an answer waiting sees it right away.
+function startPoll(screenName){
+ if(currentPollScreen===screenName) return;
  stopPoll();
+ currentPollScreen = screenName;
  pollFailures = 0;
- pollTimer = setInterval(async ()=>{
-  try{ await refreshContext(); pollFailures = 0; document.getElementById('reconnectBanner').hidden = true; render(); }
-  catch(e){ pollFailures++; if(pollFailures>=3) document.getElementById('reconnectBanner').hidden = false; }
- }, 3500);
+ pollTick();
+ pollTimer = setInterval(pollTick, 3500);
 }
 
 function showScreen(name, extra){
- stopPoll();
+ const pollable = ['checking','connected'].includes(name);
+ if(!pollable) stopPoll();
  setBack(false);
  // Owner request (2026-09-06/09-07): the BEELINE/GEO MASTER brand block only makes sense on the first
  // (package choice) and final (connected) screens - hidden everywhere in between (it just eats space
@@ -460,7 +475,7 @@ function showScreen(name, extra){
  // steps with nothing to poll for; a poll there used to fully re-render the screen every ~3.5s,
  // destroying in-progress inline state (confirmed live: the OTP screen's "change number" form opened
  // and vanished within seconds).
- if(['checking','connected'].includes(name)) startPoll();
+ if(pollable) startPoll(name);
 }
 
 function tplMessage(title, desc, cls, emoji){
