@@ -441,9 +441,22 @@ function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; 
 // now shows a small "reconnecting" hint instead of nothing; it clears itself the moment a poll
 // succeeds again. This never touches which screen renders - only whether this hint is visible.
 let pollFailures = 0;
+// Live-run forensic fix (2026-09-09, round 13): confirmed live - the site could get stuck showing a
+// stale screen until the customer manually reloaded, with no error ever visible. Root cause: a single
+// slow poll (api()'s own retry logic can legitimately take up to ~36s on a rough connection) doesn't
+// stop the next setInterval tick from firing 3.5s later anyway - each slow poll left a NEW one stacking
+// on top of it, and with enough of these piled up at once the browser's own per-origin connection limit
+// gets saturated, so even a poll that WOULD have succeeded never gets to run at all. This is invisible -
+// no error, no banner, the screen just never updates again until a full reload clears every pending
+// request at once. pollInFlight makes a tick that's still waiting on the last one a no-op instead of
+// starting another - there is never more than one poll request in flight, so nothing can pile up.
+let pollInFlight = false;
 async function pollTick(){
+ if(pollInFlight) return;
+ pollInFlight = true;
  try{ await refreshContext(); pollFailures = 0; document.getElementById('reconnectBanner').hidden = true; render(); }
  catch(e){ pollFailures++; if(pollFailures>=3) document.getElementById('reconnectBanner').hidden = false; }
+ finally{ pollInFlight = false; }
 }
 // Live-run forensic fix (2026-09-09): confirmed live - showScreen() used to call startPoll()
 // unconditionally on every same-screen re-render triggered by the poll's own render() call, tearing
