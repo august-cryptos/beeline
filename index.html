@@ -175,7 +175,7 @@ const STR = {
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
-  payment_link_hint:'Страница оплаты не открылась? Такое бывает, если браузер заблокировал всплывающее окно.', payment_link_btn:'Перейти к оплате',
+  payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
@@ -199,7 +199,7 @@ const STR = {
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
-  payment_link_hint:'Төлем беті ашылмады ма? Бұл браузер қалқымалы терезені бөгегенде болады.', payment_link_btn:'Төлеуге өту',
+  payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
@@ -715,19 +715,21 @@ function renderReceipt(el){
  `;
  el.querySelectorAll('[data-method]').forEach(btn=>btn.addEventListener('click', async ()=>{
   el.querySelectorAll('[data-method]').forEach(b=>b.disabled=true);
-  // Live-run forensic fix (2026-09-09): window.open() called AFTER an await (the old code opened the
-  // tab only once the /payment-method response came back) loses its "direct user gesture" standing in
-  // several browsers, which then silently block it - no error, no visible sign anything went wrong, the
-  // customer just never gets a payment tab. Opening a blank window synchronously, in the very first line
-  // of this click handler, before any await runs, is the standard fix: it's still directly inside the
-  // click's own call stack, so no browser blocks it. The real URL is set on that already-open window
-  // once we actually have it - the customer sees a blank tab load into the real payment page a moment
-  // later, never a blocked popup.
-  const paymentTab = window.open('', '_blank');
+  // Live-run forensic fix (2026-09-09, round 2): the previous fix (open a blank tab synchronously, then
+  // navigate it once the URL is known) solved popup-blocking, but confirmed live it created a WORSE
+  // problem on mobile - a background tab opening gives no obvious signal at all on a phone, so the
+  // customer just sees THIS tab jump straight to "проверяем платёж" with no visible sign a payment page
+  // exists anywhere, and the checking screen's own payment-link button (meant as a rare fallback) reads
+  // as an extra, confusing required step instead. A same-tab redirect (location.href) is simpler, matches
+  // exactly what the customer described as the expected flow (click bank -> land on the bank's own page
+  // -> pay -> come back), and - unlike window.open in any form - can never be popup-blocked at all, since
+  // it isn't a popup. The checking screen's own payment-link button stays as a genuine fallback for
+  // exactly the case this leaves open: the customer navigates back here (browser back, or the tab was
+  // simply reopened) before ever completing payment.
   try{
    const res = await api('/payment-method', {method: btn.dataset.method});
    selectedMethod = res.method;
-   if(res.paymentUrl){ if(paymentTab && !paymentTab.closed) paymentTab.location = res.paymentUrl; else window.open(res.paymentUrl, '_blank'); }
+   if(res.paymentUrl){ location.href = res.paymentUrl; return; }
    showScreen('checking');
   }catch(e){
    if(paymentTab && !paymentTab.closed) paymentTab.close();
@@ -759,10 +761,22 @@ function renderReceipt(el){
 // Reuses the exact same /back-to-phone (goBackToPhone) the receipt screen's own back button already
 // uses - it's already guarded server-side to refuse once the order is genuinely PAID, so this can never
 // race a payment that lands in the same instant the customer clicks back.
+let paymentPendingSince = null;
+const PAYMENT_PENDING_BACK_DELAY_MS = 20000;
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
  const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
- if(stillPending){
+ // Owner request (2026-09-09): the back button must not appear the instant this screen shows - a
+ // payment that's still genuinely being checked (the customer may be mid-payment on the bank's own
+ // page right now) must never look like an invitation to bail out, and must never let a customer who
+ // actually DID pay stumble onto "back" while their confirmation is simply still in flight. Only once
+ // real time has passed with no confirmation does "back" become a reasonable offer. paymentPendingSince
+ // anchors the wait to the moment THIS pending payment started (reset the instant it's no longer
+ // pending), the same pattern otpCodeSentAt already uses for the OTP resend cooldown.
+ if(stillPending){ if(!paymentPendingSince) paymentPendingSince = Date.now(); }
+ else{ paymentPendingSince = null; }
+ const waitedLongEnough = stillPending && (Date.now()-paymentPendingSince) > PAYMENT_PENDING_BACK_DELAY_MS;
+ if(waitedLongEnough){
   setBack(true, async ()=>{
    const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
    try{ ctx = await api('/back-to-phone', {}); }
@@ -781,8 +795,8 @@ function renderChecking(el){
     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
    </div>
-   ${stillPending?`<div style="margin-top:16px">
-    <p class="desc" style="margin-bottom:10px">${esc(t('payment_link_hint'))}</p>
+   ${waitedLongEnough?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('payment_not_confirmed'))}</div>
+   <div style="margin-top:16px">
     <a class="btn btn-primary" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener" style="display:block;text-decoration:none">${esc(t('payment_link_btn'))}</a>
    </div>`:''}
   </div>
