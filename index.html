@@ -177,6 +177,7 @@ const STR = {
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Выставить счёт в Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   kaspi_phone:'Номер, привязанный к Kaspi', kaspi_phone_hint:'Счёт появится в приложении Kaspi. Номер может отличаться от номера Beeline.', kaspi_not_found:'Этот номер не найден в Kaspi. Проверьте номер и попробуйте снова.',
   kaspi_phone_title:'Введите номер Kaspi', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
+  payment_cancelled_title:'Вы отменили покупку', payment_cancelled_desc:'Счёт в Kaspi был отклонён.', payment_expired_title:'Вы не оплатили', payment_expired_desc:'Срок действия счёта истёк.',
   checking_title:'Счёт отправлен в Kaspi', checking_desc:'Откройте приложение Kaspi и оплатите выставленный счёт. После оплаты начисление запустится автоматически.', number:'Номер Beeline', paid:'Оплачено',
   payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
   payment_not_found_title:'Оплата не найдена', back_to_menu_btn:'Вернуться в главное меню',
@@ -205,6 +206,7 @@ const STR = {
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi-де шот жіберу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   kaspi_phone:'Kaspi-ге тіркелген нөмір', kaspi_phone_hint:'Шот Kaspi қолданбасында пайда болады. Бұл нөмір Beeline нөмірінен өзгеше болуы мүмкін.', kaspi_not_found:'Бұл нөмір Kaspi-де табылмады. Нөмірді тексеріп, қайталап көріңіз.',
   kaspi_phone_title:'Kaspi нөмірін енгізіңіз', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
+  payment_cancelled_title:'Сіз сатып алудан бас тарттыңыз', payment_cancelled_desc:'Kaspi-дегі шот қабылданбады.', payment_expired_title:'Сіз төлемедіңіз', payment_expired_desc:'Шоттың жарамдылық мерзімі аяқталды.',
   checking_title:'Шот Kaspi-ге жіберілді', checking_desc:'Kaspi қолданбасын ашып, жіберілген шотты төлеңіз. Төлемнен кейін қосу автоматты түрде басталады.', number:'Beeline нөмірі', paid:'Төленді',
   payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
   payment_not_found_title:'Төлем табылмады', back_to_menu_btn:'Басты мәзірге оралу',
@@ -401,7 +403,7 @@ function render(){
  // in flight (show 'checking', same as the payment-method button already forces on the very first click -
  // now the poll agrees with it instead of overriding it). Survives a page reload, unlike a client-side-only
  // flag, since it's read straight off the order row.
- if(state==='WAITING_PAYMENT'){ engagedThisSession=true; return showScreen(ctx.paymentMethod ? 'checking' : 'receipt'); }
+ if(state==='WAITING_PAYMENT'){ engagedThisSession=true;if(ctx.paymentStatus==='CANCELLED'||ctx.paymentStatus==='PAYMENT_FAILED')return showScreen('paymentEnded');return showScreen(ctx.paymentMethod ? 'checking' : 'receipt'); }
  if(state==='PAYMENT_CONFIRMED'){ engagedThisSession=true; return showScreen('checking'); }
  if(state==='WAITING_OTP'){ engagedThisSession=true; return showScreen('otp'); }
  if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('connected'); }
@@ -505,6 +507,7 @@ function showScreen(name, extra){
  else if(name==='kaspiPhone') renderKaspiPhone(el);
  else if(name==='kaspiConfirm') renderKaspiConfirm(el,extra);
  else if(name==='checking') renderChecking(el);
+ else if(name==='paymentEnded') renderPaymentEnded(el);
  else if(name==='otp') renderOtp(el);
  else if(name==='connected') renderConnected(el);
  else if(name==='failed') renderFailed(el);
@@ -799,48 +802,25 @@ function renderKaspiConfirm(el,draft){
 // support (the standard supportBlock(), already present on every screen). No separate header back
 // button here any more - these three in-page choices replace it entirely.
 let paymentPendingSince = null;
-// Remote Kaspi invoices are paid in a separate app, so allow enough time to open Kaspi and confirm.
-const PAYMENT_NOT_FOUND_DELAY_MS = 120000;
+function renderPaymentEnded(el){
+ const rejected=ctx.paymentStatus==='CANCELLED';
+ setBack(false);
+ el.innerHTML=`<div class="card center">
+  <div class="icon-circle err">✕</div>
+  <h2 class="title">${esc(t(rejected?'payment_cancelled_title':'payment_expired_title'))}</h2>
+  <p class="desc">${esc(t(rejected?'payment_cancelled_desc':'payment_expired_desc'))}</p>
+  <button class="btn btn-primary" id="paymentBackBtn" style="margin-top:18px">${esc(t('back'))}</button>
+ </div>${footBlock()}`;
+ el.querySelector('#paymentBackBtn').addEventListener('click',async()=>{
+  const btn=el.querySelector('#paymentBackBtn');btn.disabled=true;
+  try{ctx=await api('/back-to-phone',{});render();}
+  catch(e){await refreshContext().catch(()=>{});btn.disabled=false;render();}
+ });
+}
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
  const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
- // paymentPendingSince anchors the wait to the moment THIS pending payment started (reset the instant
- // it's no longer pending, and reset again on every fresh /payment-method choice - see its click
- // handler above), the same pattern otpCodeSentAt already uses for the OTP resend cooldown.
- if(stillPending){ if(!paymentPendingSince) paymentPendingSince = Date.now(); }
- else{ paymentPendingSince = null; }
- const notFound = stillPending && (Date.now()-paymentPendingSince) > PAYMENT_NOT_FOUND_DELAY_MS;
  setBack(false);
- if(notFound){
-  el.innerHTML = `
-   <div class="card center">
-    <div class="icon-circle err">✕</div>
-    <h2 class="title">${esc(t('payment_not_found_title'))}</h2>
-    <p class="desc" style="margin-bottom:18px">${esc(t('payment_not_confirmed'))}</p>
-    <div class="receipt">
-     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
-     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
-     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
-     <button class="btn btn-primary" id="retryPaymentBtn">${esc(t('payment_link_btn'))}</button>
-     <button class="btn" id="backToMenuBtn" style="background:var(--line);color:var(--ink)">${esc(t('back_to_menu_btn'))}</button>
-    </div>
-   </div>
-   ${supportBlock()}
-   ${footBlock()}
-  `;
-  bindSupport();
-  document.getElementById('retryPaymentBtn').addEventListener('click', ()=>{ showScreen('receipt'); });
-  document.getElementById('backToMenuBtn').addEventListener('click', async ()=>{
-   const btn = document.getElementById('backToMenuBtn'); btn.disabled = true;
-   try{ ctx = await api('/back-to-phone', {}); showScreen('packages'); return; }
-   catch(e){ await refreshContext().catch(()=>{}); }
-   btn.disabled = false;
-   render();
-  });
-  return;
- }
  // Owner report (2026-09-09, round 14): confirmed live - correcting the phone number on the OTP screen
  // (WAITING_OTP -> replaceRecoverableOrder -> PAYMENT_CONFIRMED, briefly, until the fresh job reaches
  // OTP_REQUIRED again) landed here and showed "Проверяем платёж…" - flatly wrong wording for a customer
