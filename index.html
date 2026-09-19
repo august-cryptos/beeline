@@ -174,8 +174,10 @@ const STR = {
   benefits_title:'✨ Преимущества', b1:'Интернет действует 30 дней', b2:'Работает даже при неоплаченном тарифе', b3:'Ваш основной тариф не изменяется', b4:'Подключение занимает всего несколько минут',
   phone_title:'Вы выбрали тариф', phone_label:'Введите номер Beeline', phone_hint:'Укажите номер телефона для подключения выбранного тарифа.', phone_secure:'Мы гарантируем безопасность ваших данных', validity:'Срок действия', days30:'30 дней', continue:'Продолжить',
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
-  receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Оплатить через Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
-  checking_title:'Проверяем платёж…', checking_desc:'Обычно это занимает до 1–2 минут. Пожалуйста, подождите, не закрывайте страницу.', number:'Номер Beeline', paid:'Оплачено',
+  receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Выставить счёт в Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
+  kaspi_phone:'Номер, привязанный к Kaspi', kaspi_phone_hint:'Счёт появится в приложении Kaspi. Номер может отличаться от номера Beeline.', kaspi_not_found:'Этот номер не найден в Kaspi. Проверьте номер и попробуйте снова.',
+  kaspi_phone_title:'Введите номер Kaspi', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
+  checking_title:'Счёт отправлен в Kaspi', checking_desc:'Откройте приложение Kaspi и оплатите выставленный счёт. После оплаты начисление запустится автоматически.', number:'Номер Beeline', paid:'Оплачено',
   payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
   payment_not_found_title:'Оплата не найдена', back_to_menu_btn:'Вернуться в главное меню',
   preparing_otp_title:'Оплата подтверждена', preparing_otp_desc:'Готовим для вас код. Обычно это занимает несколько секунд.',
@@ -200,8 +202,10 @@ const STR = {
   benefits_title:'✨ Артықшылықтар', b1:'Интернет 30 күн жарамды', b2:'Тариф төленбесе де жұмыс істейді', b3:'Негізгі тарифіңіз өзгермейді', b4:'Қосылу бірнеше минутты алады',
   phone_title:'Сіз тарифті таңдадыңыз', phone_label:'Beeline нөмірін енгізіңіз', phone_hint:'Таңдалған тарифті қосу үшін телефон нөмірін көрсетіңіз.', phone_secure:'Деректеріңіздің қауіпсіздігіне кепілдік береміз', validity:'Жарамдылық мерзімі', days30:'30 күн', continue:'Жалғастыру',
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
-  receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi арқылы төлеу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
-  checking_title:'Төлем тексерілуде…', checking_desc:'Әдетте бұл 1–2 минутты алады. Өтінеміз, күте тұрыңыз, бетті жаппаңыз.', number:'Beeline нөмірі', paid:'Төленді',
+  receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi-де шот жіберу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
+  kaspi_phone:'Kaspi-ге тіркелген нөмір', kaspi_phone_hint:'Шот Kaspi қолданбасында пайда болады. Бұл нөмір Beeline нөмірінен өзгеше болуы мүмкін.', kaspi_not_found:'Бұл нөмір Kaspi-де табылмады. Нөмірді тексеріп, қайталап көріңіз.',
+  kaspi_phone_title:'Kaspi нөмірін енгізіңіз', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
+  checking_title:'Шот Kaspi-ге жіберілді', checking_desc:'Kaspi қолданбасын ашып, жіберілген шотты төлеңіз. Төлемнен кейін қосу автоматты түрде басталады.', number:'Beeline нөмірі', paid:'Төленді',
   payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
   payment_not_found_title:'Төлем табылмады', back_to_menu_btn:'Басты мәзірге оралу',
   preparing_otp_title:'Төлем расталды', preparing_otp_desc:'Сіз үшін код дайындалуда. Әдетте бұл бірнеше секунд алады.',
@@ -230,6 +234,7 @@ let ctx = null;
 let stack = [];
 let pendingOtpAttempts = 3;
 let selectedMethod = null;
+let kaspiPaymentDraft = null;
 // Live-run UX fix (2026-09-04): the site must work fully standalone, not only when opened via a
 // WhatsApp/Telegram link (see initSession). This flag is what lets the ACTIVE state mean two
 // different things correctly: "just finished an order in THIS page load" (show the success screen)
@@ -497,6 +502,8 @@ function showScreen(name, extra){
  else if(name==='packages') renderPackages(el);
  else if(name==='phone') renderPhone(el);
  else if(name==='receipt') renderReceipt(el);
+ else if(name==='kaspiPhone') renderKaspiPhone(el);
+ else if(name==='kaspiConfirm') renderKaspiConfirm(el,extra);
  else if(name==='checking') renderChecking(el);
  else if(name==='otp') renderOtp(el);
  else if(name==='connected') renderConnected(el);
@@ -715,46 +722,55 @@ function renderReceipt(el){
    <label style="margin-top:4px">${esc(t('method'))}</label>
    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
     <button class="btn btn-kaspi" data-method="KASPI">${esc(t('kaspi'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
-    <button class="btn btn-halyk" data-method="HALYK">${esc(t('halyk'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
    </div>
   </div>
   ${footBlock()}
  `;
- el.querySelectorAll('[data-method]').forEach(btn=>btn.addEventListener('click', async ()=>{
-  el.querySelectorAll('[data-method]').forEach(b=>b.disabled=true);
-  // Live-run forensic fix (2026-09-09, round 2): the previous fix (open a blank tab synchronously, then
-  // navigate it once the URL is known) solved popup-blocking, but confirmed live it created a WORSE
-  // problem on mobile - a background tab opening gives no obvious signal at all on a phone, so the
-  // customer just sees THIS tab jump straight to "проверяем платёж" with no visible sign a payment page
-  // exists anywhere, and the checking screen's own payment-link button (meant as a rare fallback) reads
-  // as an extra, confusing required step instead. A same-tab redirect (location.href) is simpler, matches
-  // exactly what the customer described as the expected flow (click bank -> land on the bank's own page
-  // -> pay -> come back), and - unlike window.open in any form - can never be popup-blocked at all, since
-  // it isn't a popup. The checking screen's own payment-link button stays as a genuine fallback for
-  // exactly the case this leaves open: the customer navigates back here (browser back, or the tab was
-  // simply reopened) before ever completing payment.
-  try{
-   const res = await api('/payment-method', {method: btn.dataset.method});
-   selectedMethod = res.method;
-   // Owner spec (2026-09-09): retrying payment from the "оплата не найдена" screen re-picks a bank on
-   // the SAME still-pending order (choosePaymentMethod only requires WAITING_PAYMENT, never re-creates
-   // or re-prices the link - see OrderWorkflow) - paymentStatus never actually leaves PAYMENT_PENDING
-   // during a retry, so paymentPendingSince (anchored to when it FIRST went pending) would otherwise
-   // still be the original timestamp and could immediately exceed the 11s window again the instant the
-   // customer lands back on 'checking', regardless of how long picking a bank just took. Resetting it
-   // here - the real moment a fresh attempt starts - gives every attempt its own full window.
-   paymentPendingSince = null;
-   if(res.paymentUrl){ location.href = res.paymentUrl; return; }
-   showScreen('checking');
-  }catch(e){
-   if(paymentTab && !paymentTab.closed) paymentTab.close();
-   // Same class of bug as the phone/OTP screens (2026-09-04): PAYMENT_METHOD_NOT_EXPECTED means an
-   // earlier click already succeeded and moved past this screen - re-enabling these buttons would
-   // just leave the customer stuck retrying a step that's already done. Refresh and move on instead.
-   if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
-   el.querySelectorAll('[data-method]').forEach(b=>b.disabled=false);
-  }
- }));
+ el.querySelector('[data-method="KASPI"]').addEventListener('click',()=>showScreen('kaspiPhone'));
+}
+
+function renderKaspiPhone(el){
+ setBack(true,()=>showScreen('receipt'));
+ const initial=kaspiPaymentDraft?.paymentPhone||ctx.client.phone||'';
+ el.innerHTML=`<div class="card">
+  <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
+  <p class="desc">${esc(t('kaspi_phone_hint'))}</p>
+  <label>${esc(t('kaspi_phone'))}</label>
+  <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13"></div>
+  <div id="paymentError" class="notice error" style="display:none;margin:12px 0"></div>
+  <button class="btn btn-kaspi" id="checkKaspiBtn" style="margin-top:16px">${esc(t('check_number'))}</button>
+ </div>${footBlock()}`;
+ const input=el.querySelector('#kaspiPhone');input.value=formatPhoneDigits(normalizePhoneDigits(initial));bindPhoneMask(input);
+ el.querySelector('#checkKaspiBtn').addEventListener('click',async()=>{
+  const btn=el.querySelector('#checkKaspiBtn'),error=el.querySelector('#paymentError'),digits=normalizePhoneDigits(input.value);
+  error.style.display='none';input.style.borderColor='';
+  if(digits.length!==10){input.style.borderColor='var(--danger)';return;}
+  btn.disabled=true;
+  try{kaspiPaymentDraft=await api('/payment-recipient',{method:'KASPI',paymentPhone:'+7'+digits});showScreen('kaspiConfirm',kaspiPaymentDraft);}
+  catch(e){error.textContent=e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_not_found'):t('reconnecting');error.style.display='block';btn.disabled=false;}
+ });
+}
+
+function renderKaspiConfirm(el,draft){
+ draft=draft||kaspiPaymentDraft;if(!draft)return showScreen('kaspiPhone');
+ setBack(true,()=>showScreen('kaspiPhone'));
+ el.innerHTML=`<div class="card">
+  <h2 class="title">${esc(t('recipient_title'))}</h2>
+  <div class="receipt">
+   <div class="receipt-row"><span class="k">${esc(t('recipient_name'))}</span><span class="v">${esc(draft.clientName)}</span></div>
+   <div class="receipt-row"><span class="k">${esc(t('recipient_phone'))}</span><span class="v">${esc(formatFullPhoneDisplay(draft.paymentPhone))}</span></div>
+   <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${money(ctx.selectedPackage?.price||0)} ₸</span></div>
+  </div>
+  <div id="paymentError" class="notice error" style="display:none;margin:12px 0"></div>
+  <button class="btn btn-kaspi" id="sendInvoiceBtn" style="margin-top:16px">${esc(t('send_invoice'))}</button>
+  <button class="btn" id="changeKaspiBtn" style="margin-top:10px;background:var(--line);color:var(--ink)">${esc(t('change_kaspi_phone'))}</button>
+ </div>${footBlock()}`;
+ el.querySelector('#changeKaspiBtn').addEventListener('click',()=>showScreen('kaspiPhone'));
+ el.querySelector('#sendInvoiceBtn').addEventListener('click',async()=>{
+  const btn=el.querySelector('#sendInvoiceBtn'),error=el.querySelector('#paymentError');btn.disabled=true;el.querySelector('#changeKaspiBtn').disabled=true;
+  try{const res=await api('/payment-method',{method:'KASPI',paymentPhone:draft.paymentPhone});selectedMethod=res.method;paymentPendingSince=null;kaspiPaymentDraft=null;showScreen('checking');}
+  catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refreshContext().catch(()=>{});render();return;}error.textContent=e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_not_found'):t('reconnecting');error.style.display='block';btn.disabled=false;el.querySelector('#changeKaspiBtn').disabled=false;}
+ });
 }
 
 // Live-run forensic fix (2026-09-09): confirmed live - the bank tab this screen depends on
@@ -783,7 +799,8 @@ function renderReceipt(el){
 // support (the standard supportBlock(), already present on every screen). No separate header back
 // button here any more - these three in-page choices replace it entirely.
 let paymentPendingSince = null;
-const PAYMENT_NOT_FOUND_DELAY_MS = 11000;
+// Remote Kaspi invoices are paid in a separate app, so allow enough time to open Kaspi and confirm.
+const PAYMENT_NOT_FOUND_DELAY_MS = 120000;
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
  const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
