@@ -94,6 +94,21 @@ label{font:700 13px var(--body);display:block;margin-bottom:8px;}
 .btn-primary{background:var(--yellow);color:var(--black);}
 .btn-kaspi{background:linear-gradient(135deg,#FF5B34,#E4361A);color:#fff;}
 .btn-halyk{background:linear-gradient(135deg,#0B8A3E,#075E2A);color:#fff;}
+.checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;padding:0 4px;}
+.checkout-step{height:5px;border-radius:999px;background:#EAE4DA;overflow:hidden;}
+.checkout-step.done,.checkout-step.active{background:var(--yellow);}
+.checkout-step.active{box-shadow:0 0 0 3px rgba(255,201,74,.18);}
+.kaspi-card{position:relative;overflow:hidden;background:linear-gradient(145deg,#FFF 0%,#FFF8F5 100%);border-color:#FFD8CE;}
+.kaspi-card:before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(240,68,37,.07);right:-70px;top:-70px;pointer-events:none;}
+.kaspi-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;position:relative;}
+.kaspi-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#FF6B45,#E6381E);color:#fff;display:flex;align-items:center;justify-content:center;font:900 24px var(--display);box-shadow:0 9px 18px -10px rgba(228,54,26,.7);flex:none;}
+.kaspi-head-text{text-align:left}.kaspi-head-text strong{display:block;font:800 16px var(--display);}.kaspi-head-text span{color:var(--ink-dim);font:500 12.5px var(--body);}
+.recipient{display:flex;align-items:center;gap:12px;padding:14px;background:#FFF7F4;border:1px solid #FFE0D8;border-radius:16px;margin-bottom:14px;}
+.recipient-avatar{width:42px;height:42px;border-radius:50%;background:#F04425;color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px var(--display);flex:none;}
+.recipient-copy{min-width:0}.recipient-copy small{display:block;color:var(--ink-dim);font:500 12px var(--body);margin-bottom:2px}.recipient-copy strong{display:block;font:800 16px var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recipient-copy span{font:500 12.5px var(--body);color:var(--ink-dim)}
+.payment-progress{display:flex;flex-direction:column;gap:12px;text-align:left;margin:18px 0 4px;padding:16px;background:#FAF8F4;border-radius:16px;}
+.payment-progress-row{display:flex;align-items:center;gap:10px;color:var(--ink-dim);font:600 13px var(--body)}.payment-progress-row.active{color:var(--ink)}
+.payment-progress-dot{width:20px;height:20px;border-radius:50%;background:#E6E0D6;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none}.payment-progress-row.active .payment-progress-dot{background:var(--yellow);color:var(--black)}
 .info-box{background:#FFF6E1;border:1px solid #FCE7B2;border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;font:500 13.5px var(--body);color:#5A4A1A;}
 .info-box .ico{flex:none;width:22px;height:22px;border-radius:50%;background:var(--yellow-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
 .receipt{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
@@ -247,6 +262,8 @@ let engagedThisSession = false;
 function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(n){return new Intl.NumberFormat('ru-RU').format(n);}
+function checkoutSteps(active){return`<div class="checkout-steps" aria-hidden="true">${[1,2,3,4].map(n=>`<i class="checkout-step ${n<active?'done':n===active?'active':''}"></i>`).join('')}</div>`;}
+function kaspiHeader(subtitle='Kaspi Pay'){return`<div class="kaspi-head"><div class="kaspi-logo">K</div><div class="kaspi-head-text"><strong>Kaspi.kz</strong><span>${esc(subtitle)}</span></div></div>`;}
 
 // Phone input mask (2026-09-04): people paste their number from WhatsApp in every shape imaginable -
 // with the leading 8 Kazakhstan habit ("8777..."), with a + ("+7777..."), or just the bare local part
@@ -645,7 +662,7 @@ function renderPhone(el){
  // Nothing has been submitted to the backend yet at this point (submitPhone only fires on Continue),
  // so going back to packages is pure client-side navigation - no API call needed.
  setBack(true, ()=>{ showScreen('packages'); });
- el.innerHTML = `
+ el.innerHTML = `${checkoutSteps(2)}
   <div class="card">
    <p class="subtitle" style="margin-bottom:16px">${esc(t('phone_title'))}</p>
    ${pkg ? `<div class="pkg ${pkg.id==='20GB'?'std':'lite'}" style="cursor:default;margin-bottom:18px">
@@ -735,7 +752,8 @@ function renderReceipt(el){
 function renderKaspiPhone(el){
  setBack(true,()=>showScreen('receipt'));
  const initial=kaspiPaymentDraft?.paymentPhone||ctx.client.phone||'';
- el.innerHTML=`<div class="card">
+ el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
+  ${kaspiHeader(t('kaspi_phone_title'))}
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
   <p class="desc">${esc(t('kaspi_phone_hint'))}</p>
   <label>${esc(t('kaspi_phone'))}</label>
@@ -757,11 +775,12 @@ function renderKaspiPhone(el){
 function renderKaspiConfirm(el,draft){
  draft=draft||kaspiPaymentDraft;if(!draft)return showScreen('kaspiPhone');
  setBack(true,()=>showScreen('kaspiPhone'));
- el.innerHTML=`<div class="card">
+ const initials=String(draft.clientName||'K').trim().split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+ el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
+  ${kaspiHeader(t('recipient_title'))}
   <h2 class="title">${esc(t('recipient_title'))}</h2>
+  <div class="recipient"><div class="recipient-avatar">${esc(initials)}</div><div class="recipient-copy"><small>${esc(t('recipient_name'))}</small><strong>${esc(draft.clientName)}</strong><span>${esc(formatFullPhoneDisplay(draft.paymentPhone))}</span></div></div>
   <div class="receipt">
-   <div class="receipt-row"><span class="k">${esc(t('recipient_name'))}</span><span class="v">${esc(draft.clientName)}</span></div>
-   <div class="receipt-row"><span class="k">${esc(t('recipient_phone'))}</span><span class="v">${esc(formatFullPhoneDisplay(draft.paymentPhone))}</span></div>
    <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${money(ctx.selectedPackage?.price||0)} ₸</span></div>
   </div>
   <div id="paymentError" class="notice error" style="display:none;margin:12px 0"></div>
@@ -805,7 +824,7 @@ let paymentPendingSince = null;
 function renderPaymentEnded(el){
  const rejected=ctx.paymentStatus==='CANCELLED';
  setBack(false);
- el.innerHTML=`<div class="card center">
+ el.innerHTML=`${checkoutSteps(4)}<div class="card center">
   <div class="icon-circle err">✕</div>
   <h2 class="title">${esc(t(rejected?'payment_cancelled_title':'payment_expired_title'))}</h2>
   <p class="desc">${esc(t(rejected?'payment_cancelled_desc':'payment_expired_desc'))}</p>
@@ -829,15 +848,20 @@ function renderChecking(el){
  // a real payment first confirms - both are "already paid, nothing left to check" moments, so both get
  // this copy instead of payment-checking language. Never shows the receipt/price block either - it's
  // irrelevant once payment is already done.
- el.innerHTML = stillPending ? `
-  <div class="card center">
+ el.innerHTML = stillPending ? `${checkoutSteps(4)}
+  <div class="card center kaspi-card">
+   ${kaspiHeader(t('checking_title'))}
    <div class="spinner"></div>
    <h2 class="title">${esc(t('checking_title'))}</h2>
    <p class="desc" style="margin-bottom:18px">${esc(t('checking_desc'))}</p>
    <div class="receipt">
     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
-    <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+   <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
+   </div>
+   <div class="payment-progress">
+    <div class="payment-progress-row active"><span class="payment-progress-dot">1</span><span>${esc(t('checking_title'))}</span></div>
+    <div class="payment-progress-row"><span class="payment-progress-dot">2</span><span>${esc(t('preparing_otp_title'))}</span></div>
    </div>
   </div>
   ${supportBlock()}
