@@ -822,9 +822,20 @@ function renderPackages(el){
 
 function renderPhone(el){
  const pkg = ctx.selectedPackage;
- // Nothing has been submitted to the backend yet at this point (submitPhone only fires on Continue),
- // so going back to packages is pure client-side navigation - no API call needed.
- setBack(true, ()=>{ showScreen('packages'); });
+ // Persist the return to step 1. A client-side-only showScreen('packages') leaves the backend in
+ // WAITING_PHONE, so changing language or reloading immediately restores this screen with the stale
+ // package (usually 7GB). No order exists yet here, therefore this reset cannot affect payment flow.
+ setBack(true, async ()=>{
+  const back = document.getElementById('backBtn');
+  back.disabled = true;
+  try{
+   ctx = await api('/back-to-packages', {});
+   engagedThisSession = false;
+   render();
+  }catch(e){
+   back.disabled = false;
+  }
+ });
  el.innerHTML = `${checkoutSteps(2)}
   <div class="card">
    <p class="subtitle" style="margin-bottom:16px">${esc(t('phone_title'))}</p>
