@@ -152,6 +152,169 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
 [hidden]{display:none!important;}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Onest:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style id="geomaster-design-v2">
+:root{
+  --bg:#f5f4ef;
+  --panel:#fff;
+  --panel-soft:#faf9f5;
+  --line:#e8e5dc;
+  --ink:#171714;
+  --ink-dim:#706f68;
+  --yellow:#ffd528;
+  --yellow-deep:#efb900;
+  --black:#171714;
+  --blue:#2563eb;
+  --green:#169b62;
+  --green-deep:#0c5b3a;
+  --red:#dc4937;
+  --danger:#dc4937;
+  --danger-bg:#fff0ed;
+  --radius:26px;
+  --display:"Onest","Segoe UI",sans-serif;
+  --body:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --shadow-sm:0 8px 24px rgba(23,23,20,.06);
+  --shadow-md:0 20px 60px rgba(23,23,20,.10);
+}
+html{background:var(--bg);scroll-behavior:smooth}
+body{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  min-height:100svh;
+  padding:22px 16px calc(38px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 12% 2%,rgba(255,213,40,.20),transparent 27rem),
+    radial-gradient(circle at 92% 26%,rgba(37,99,235,.07),transparent 24rem),
+    linear-gradient(180deg,#faf9f5 0%,#f3f2ed 100%);
+  color:var(--ink);
+  font-family:var(--body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;background-image:radial-gradient(rgba(23,23,20,.12) .55px,transparent .55px);background-size:6px 6px;mask-image:linear-gradient(to bottom,#000,transparent 45%)}
+.wrap{position:relative;width:min(100%,520px);max-width:calc(100vw - 32px);min-width:0;display:flex;flex-direction:column;gap:18px}
+.topbar{position:absolute;z-index:5;right:0;top:2px;display:flex;justify-content:flex-end}
+.langtoggle{padding:3px;border:1px solid rgba(23,23,20,.09);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 22px rgba(23,23,20,.06);backdrop-filter:blur(16px)}
+.langtoggle button{min-width:48px;padding:8px 13px;border-radius:999px;font:800 11px var(--body);letter-spacing:.06em;color:#88867f;transition:background .18s ease,color .18s ease,transform .18s ease}
+.langtoggle button:hover{color:var(--ink)}
+.langtoggle button.active{background:var(--black);color:#fff;box-shadow:0 5px 12px rgba(23,23,20,.18)}
+.brand{position:relative;padding:18px 82px 2px;gap:3px;text-align:center}
+.brand .mark{width:58px;height:58px;margin-bottom:8px;border:4px solid #fff;background:repeating-linear-gradient(-38deg,var(--black) 0 8px,var(--yellow) 8px 16px);box-shadow:0 12px 28px rgba(23,23,20,.18)}
+.brand h1{font:800 30px/1 var(--display);letter-spacing:-.04em}
+.brand .tag{margin-top:6px;font:800 9px var(--body);letter-spacing:.16em;color:#8a887f}
+.brand .tag i{display:none}
+.brand .geo{font:800 13px var(--display);letter-spacing:.04em;color:#4f4e49}
+.brand .geo b{color:#bd8d00}
+.brand .geo u{display:none}
+.back{width:max-content;min-height:42px;padding:9px 13px;border:1px solid rgba(23,23,20,.08);border-radius:13px;background:rgba(255,255,255,.72);box-shadow:var(--shadow-sm);font:750 13px var(--body);backdrop-filter:blur(14px);transition:transform .16s ease,background .16s ease}
+.back:hover{background:#fff;transform:translateX(-2px)}
+#reconnectBanner{margin:-8px 0 0!important;padding:10px 14px!important;border:1px solid #f1df9b;border-radius:14px;background:#fff8d9!important;color:#765d00!important}
+#screens{width:100%;min-width:0;display:flex;flex-direction:column;gap:16px;animation:screen-in .24s ease both}
+@keyframes screen-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.card,.benefits{border:1px solid rgba(23,23,20,.075);border-radius:var(--radius);background:rgba(255,255,255,.94);box-shadow:var(--shadow-md);backdrop-filter:blur(14px)}
+.card{padding:25px}
+.subtitle{margin-bottom:16px;font:800 18px/1.35 var(--display);color:var(--ink);text-align:left;letter-spacing:-.02em}
+#screens>.subtitle{text-align:center;font-size:20px;margin:0 0 2px}
+.pkg{position:relative;isolation:isolate;min-height:92px;gap:15px;padding:18px;border:1.5px solid rgba(23,23,20,.09);border-radius:22px;background:rgba(255,255,255,.94);box-shadow:var(--shadow-sm);overflow:hidden;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.pkg:before{content:"";position:absolute;z-index:-1;inset:auto -30px -55px auto;width:130px;height:130px;border-radius:50%;background:rgba(255,213,40,.13)}
+.pkg:hover{transform:translateY(-2px);border-color:rgba(23,23,20,.18);box-shadow:0 16px 34px rgba(23,23,20,.10)}
+.pkg:active{transform:scale(.985)}
+.pkg+.pkg{margin-top:12px}
+.pkg.std{border-color:rgba(37,99,235,.22);background:linear-gradient(135deg,#fff 20%,#f5f8ff 100%)}
+.pkg.std:before{background:rgba(37,99,235,.11)}
+.pkg.std:after{content:"TOP";position:absolute;right:14px;top:0;padding:5px 10px;border-radius:0 0 10px 10px;background:var(--blue);color:#fff;font:800 9px var(--body);letter-spacing:.08em}
+.pkg .icon{width:50px;height:50px;border-radius:17px;font-size:21px;box-shadow:inset 0 0 0 1px rgba(23,23,20,.04)}
+.pkg.lite .icon{background:#fff5c8}.pkg.std .icon{background:#e7efff}
+.pkg .info{min-width:0}.pkg .name{font:800 18px/1.15 var(--display);letter-spacing:-.025em}
+.pkg .gb{margin-top:5px;font:650 13px var(--body);color:var(--ink-dim)}
+.pkg .price{flex:none;padding:10px 12px;border-radius:13px;background:var(--yellow);font:800 15px var(--display);box-shadow:0 7px 18px rgba(239,185,0,.18)}
+.pkg.std .price{background:#e6eeff;color:#1d54c7;box-shadow:none}
+.benefits{margin-top:16px;padding:21px}
+.benefits h3{margin-bottom:14px;font:800 15px var(--display)}
+.benefits ul{gap:12px}
+.benefits li{align-items:flex-start;font:600 13px/1.5 var(--body);color:#53524d}
+.benefits li .e{width:20px;height:20px;display:grid;place-items:center;flex:none;border-radius:50%;background:#eff8f3;color:var(--green);font-size:0}
+.benefits li .e:after{content:"✓";font-size:11px;font-weight:900}
+label{font:800 12px var(--body);letter-spacing:.01em}
+.phoneinput{min-height:56px;padding:13px 15px;border:1.5px solid #dcd9d0;border-radius:16px;background:#fff;box-shadow:inset 0 1px 1px rgba(23,23,20,.02);transition:border-color .16s ease,box-shadow .16s ease}
+.phoneinput:focus-within{border-color:#d6a800;box-shadow:0 0 0 4px rgba(255,213,40,.20)}
+.phoneinput span{font:800 15px var(--display);color:#55544f}
+.phoneinput input{min-width:0;font:750 17px var(--display);color:var(--ink)}
+.phoneinput input::placeholder{color:#b3b0a7}
+.hint{margin-top:11px;font:600 11.5px/1.45 var(--body);color:#7d7b74}
+.btn{min-height:54px;padding:15px 18px;border-radius:17px;font:800 14px var(--display);letter-spacing:-.01em;box-shadow:0 10px 22px rgba(23,23,20,.09);transition:transform .16s ease,box-shadow .16s ease,filter .16s ease,opacity .16s ease}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 26px rgba(23,23,20,.13);filter:saturate(1.04)}
+.btn:active:not(:disabled){transform:scale(.985)}
+.btn:disabled{opacity:.52;box-shadow:none}
+.btn-primary{background:linear-gradient(135deg,#ffdd3e,#ffc91e);color:#161610}
+.btn-kaspi{background:linear-gradient(135deg,#f75b3d,#dd351f);box-shadow:0 12px 24px rgba(221,53,31,.20)}
+.btn-halyk{background:linear-gradient(135deg,#159553,#08733c)}
+.checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 2px;padding:0 3px}
+.checkout-step{position:relative;height:auto;min-width:0;padding-top:26px;background:none!important;overflow:visible;text-align:center;font:700 9px/1.2 var(--body);color:#99968e;font-style:normal}
+.checkout-step:before{content:attr(data-step);position:absolute;z-index:2;left:50%;top:0;width:20px;height:20px;display:grid;place-items:center;transform:translateX(-50%);border:2px solid #ddd9cf;border-radius:50%;background:#f7f5f0;color:#8d8a82;font:800 9px var(--body)}
+.checkout-step:after{content:"";position:absolute;z-index:1;left:calc(50% + 12px);right:calc(-50% + 12px);top:10px;height:2px;background:#ddd9cf}
+.checkout-step:last-child:after{display:none}
+.checkout-step.done,.checkout-step.active{color:var(--ink);box-shadow:none}
+.checkout-step.done:before{content:"✓";border-color:var(--black);background:var(--black);color:#fff}
+.checkout-step.done:after{background:var(--black)}
+.checkout-step.active:before{border-color:var(--yellow-deep);background:var(--yellow);color:var(--black);box-shadow:0 0 0 5px rgba(255,213,40,.18)}
+.kaspi-card{background:linear-gradient(145deg,#fff 0%,#fff8f6 100%);border-color:rgba(237,72,42,.16)}
+.kaspi-card:before{width:190px;height:190px;right:-100px;top:-105px;background:rgba(240,68,37,.075)}
+.kaspi-head{margin-bottom:22px;padding-bottom:17px;border-bottom:1px solid rgba(240,68,37,.10)}
+.kaspi-logo{width:46px;height:46px;border-radius:15px;font-size:22px}
+.kaspi-head-text strong{font-size:16px}.kaspi-head-text span{font-size:11.5px}
+.recipient{padding:15px;border-color:#f6d8cf;border-radius:18px;background:rgba(255,247,244,.86)}
+.recipient-avatar{width:44px;height:44px;box-shadow:0 8px 18px rgba(240,68,37,.18)}
+.receipt{gap:0;margin-bottom:18px;padding:4px 15px;border:1px solid var(--line);border-radius:18px;background:var(--panel-soft)}
+.receipt-row{min-height:48px;padding:11px 0}
+.receipt-row .k{font:600 12.5px var(--body)}
+.receipt-row .v{font:800 14px var(--display);text-align:right}
+.info-box{padding:16px;border-color:#f0dfa2;border-radius:18px;background:#fff9df;font:600 12.5px/1.55 var(--body);color:#55491f}
+.info-box .ico{width:24px;height:24px;background:#26251f;font-size:12px}
+.error-banner,.notice.error{padding:13px 15px;border-color:#f2c5bd;border-radius:16px;background:var(--danger-bg);color:#8d2f22;font:700 12.5px/1.45 var(--body)}
+.payment-progress{gap:0;margin:18px 0 0;padding:5px 16px;border:1px solid var(--line);border-radius:18px;background:#faf9f5}
+.payment-progress-row{position:relative;min-height:48px;padding:9px 0;font-size:12px}
+.payment-progress-row:first-child:after{content:"";position:absolute;left:10px;top:34px;width:2px;height:27px;background:#ddd9cf}
+.payment-progress-dot{position:relative;z-index:1;width:22px;height:22px;font-size:10px}
+.payment-progress-row.active .payment-progress-dot{background:var(--yellow);box-shadow:0 0 0 4px rgba(255,213,40,.16)}
+.spinner{width:58px;height:58px;margin:9px auto 20px;border:5px solid #eee8d9;border-top-color:var(--yellow-deep);box-shadow:0 0 0 7px rgba(255,213,40,.08)}
+.center{ text-align:center }
+.icon-circle{width:66px;height:66px;margin-bottom:18px;border-radius:22px;font-size:27px;transform:rotate(-2deg)}
+.ok{background:#e8f8ef;color:var(--green)}.err{background:#fff0ed;color:var(--danger)}
+h2.title{margin-bottom:8px;font:800 22px/1.2 var(--display);letter-spacing:-.035em}
+p.desc{font:600 13px/1.6 var(--body);color:var(--ink-dim)}
+.otp{gap:7px;margin:18px 0 12px}
+.otp input{width:calc((100% - 35px)/6);max-width:52px;height:58px;border:1.5px solid #dcd9d0;border-radius:15px;background:#fff;font:800 21px var(--display);transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+.otp input:focus{border-color:var(--yellow-deep);box-shadow:0 0 0 4px rgba(255,213,40,.18);transform:translateY(-1px)}
+.otp input.filled{border-color:#d2a600;background:#fffbea}.otp input.bad{border-color:var(--danger);background:var(--danger-bg)}
+.timer{margin:15px 0 2px;font-size:11.5px}
+.resend{min-height:42px;padding:10px 15px;border-color:#d6d2c8;border-radius:13px;color:var(--ink);background:#fff}
+.support{padding:15px;border-color:#cce8d9;border-radius:20px;background:rgba(237,250,243,.92);box-shadow:var(--shadow-sm)}
+.support .wa{width:42px;height:42px;background:#16a866;box-shadow:0 8px 18px rgba(22,168,102,.18)}
+.support .txt strong{font-size:13px}.support .txt span{font-size:11.5px;line-height:1.4}
+.support-btn{min-height:40px;padding:10px 13px;border-radius:12px;background:#149a5f;font-size:11.5px}
+.trust{width:100%;min-width:0;gap:8px;margin-top:4px;padding:0}
+.trust div{flex:1;min-width:0;padding:12px 6px;border:1px solid rgba(23,23,20,.065);border-radius:15px;background:rgba(255,255,255,.64);font-size:16px}
+.trust div span{font:700 9.5px var(--body);color:#74726b}
+.foot{margin-top:3px;font:700 9px var(--body);letter-spacing:.12em;color:#aaa79e}
+.inapp-overlay{background:rgba(18,18,15,.72);backdrop-filter:blur(10px)}
+.inapp-card{max-width:380px;padding:27px 23px;border:1px solid rgba(255,255,255,.5);border-radius:27px;box-shadow:0 30px 80px rgba(0,0,0,.30)}
+.inapp-icon{width:58px;height:58px;display:grid;place-items:center;margin:0 auto 13px;border-radius:19px;background:#fff4bf;font-size:28px}
+.inapp-title{font:800 20px var(--display)}
+.inapp-desc{font:600 12.5px/1.55 var(--body)}
+.inapp-steps{border-radius:15px;font:650 12px/1.5 var(--body)}
+:where(button,a,input):focus-visible{outline:3px solid rgba(37,99,235,.32);outline-offset:3px}
+@media(min-width:760px){
+ body{padding-top:34px}.wrap{max-width:590px}.brand{padding-top:12px}.card{padding:30px}.pkg{min-height:100px;padding:20px}.benefits{padding:24px}.checkout-step{font-size:10px}
+}
+@media(max-width:390px){
+ body{padding-left:12px;padding-right:12px}.wrap{max-width:calc(100vw - 24px);gap:15px}.brand{padding-left:68px;padding-right:68px}.brand .mark{width:52px;height:52px}.brand h1{font-size:27px}.card{padding:20px}.pkg{min-height:86px;padding:15px;gap:11px}.pkg .icon{width:45px;height:45px}.pkg .price{padding:9px 10px;font-size:13px}.checkout-step{font-size:8px}.support{align-items:flex-start;flex-wrap:wrap}.support-btn{width:100%;justify-content:center;margin-left:0}.otp{gap:5px}.otp input{width:calc((100% - 25px)/6);height:54px;border-radius:12px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}#screens{animation:none}.pkg,.btn,.back{transition:none}}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -184,7 +347,7 @@ const API_BASE = '/api';
 
 const STR = {
  ru:{
-  slogan:'ПО ВЫГОДНЫМ ЦЕНАМ', back:'Назад',
+  slogan:'ПО ВЫГОДНЫМ ЦЕНАМ', back:'Назад', progress_package:'Пакет', progress_number:'Номер', progress_payment:'Оплата', progress_ready:'Готово',
   choose_title:'Нажмите на выбранный тариф ↓', lite:'Lite', std:'Standard', per_month:'на каждый день', best:'Выгоднее',
   benefits_title:'✨ Преимущества', b1:'Интернет действует 30 дней', b2:'Работает даже при неоплаченном тарифе', b3:'Ваш основной тариф не изменяется', b4:'Подключение занимает всего несколько минут',
   phone_title:'Вы выбрали тариф', phone_label:'Введите номер Beeline', phone_hint:'Укажите номер телефона для подключения выбранного тарифа.', phone_secure:'Мы гарантируем безопасность ваших данных', validity:'Срок действия', days30:'30 дней', continue:'Продолжить',
@@ -213,7 +376,7 @@ const STR = {
   inapp_title:'Откройте страницу в браузере', inapp_desc:'Вы открыли сайт из встроенного браузера приложения — оплата и код подтверждения могут не сработать в нём.', inapp_steps:'Нажмите ⋯ (или значок «поделиться») в углу экрана и выберите «Открыть в браузере».', inapp_copy:'Скопировать ссылку', inapp_copied:'Ссылка скопирована ✓', inapp_continue_anyway:'Продолжить здесь (не рекомендуется)'
  },
  kk:{
-  slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа',
+  slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа', progress_package:'Пакет', progress_number:'Нөмір', progress_payment:'Төлем', progress_ready:'Дайын',
   choose_title:'Таңдалған тарифті басыңыз ↓', lite:'Lite', std:'Standard', per_month:'күн сайын', best:'Тиімдірек',
   benefits_title:'✨ Артықшылықтар', b1:'Интернет 30 күн жарамды', b2:'Тариф төленбесе де жұмыс істейді', b3:'Негізгі тарифіңіз өзгермейді', b4:'Қосылу бірнеше минутты алады',
   phone_title:'Сіз тарифті таңдадыңыз', phone_label:'Beeline нөмірін енгізіңіз', phone_hint:'Таңдалған тарифті қосу үшін телефон нөмірін көрсетіңіз.', phone_secure:'Деректеріңіздің қауіпсіздігіне кепілдік береміз', validity:'Жарамдылық мерзімі', days30:'30 күн', continue:'Жалғастыру',
@@ -262,7 +425,7 @@ let engagedThisSession = false;
 function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(n){return new Intl.NumberFormat('ru-RU').format(n);}
-function checkoutSteps(active){return`<div class="checkout-steps" aria-hidden="true">${[1,2,3,4].map(n=>`<i class="checkout-step ${n<active?'done':n===active?'active':''}"></i>`).join('')}</div>`;}
+function checkoutSteps(active){const labels=[t('progress_package'),t('progress_number'),t('progress_payment'),t('progress_ready')];return`<div class="checkout-steps" aria-label="Progress">${[1,2,3,4].map(n=>`<i class="checkout-step ${n<active?'done':n===active?'active':''}" data-step="${n}">${esc(labels[n-1])}</i>`).join('')}</div>`;}
 function kaspiHeader(subtitle='Kaspi Pay'){return`<div class="kaspi-head"><div class="kaspi-logo">K</div><div class="kaspi-head-text"><strong>Kaspi.kz</strong><span>${esc(subtitle)}</span></div></div>`;}
 
 // Phone input mask (2026-09-04): people paste their number from WhatsApp in every shape imaginable -
