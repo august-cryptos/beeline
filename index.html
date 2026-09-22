@@ -196,7 +196,7 @@ body{
 }
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;background-image:radial-gradient(rgba(23,23,20,.12) .55px,transparent .55px);background-size:6px 6px;mask-image:linear-gradient(to bottom,#000,transparent 45%)}
 .wrap{position:relative;width:min(100%,520px);max-width:calc(100vw - 32px);min-width:0;display:flex;flex-direction:column;gap:18px}
-.topbar{position:absolute;z-index:5;right:0;top:2px;display:flex;justify-content:flex-end}
+.topbar{position:relative;z-index:5;align-self:flex-end;display:flex;justify-content:flex-end;margin-bottom:-8px}
 .langtoggle{padding:3px;border:1px solid rgba(23,23,20,.09);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 22px rgba(23,23,20,.06);backdrop-filter:blur(16px)}
 .langtoggle button{min-width:48px;padding:8px 13px;border-radius:999px;font:800 11px var(--body);letter-spacing:.06em;color:#88867f;transition:background .18s ease,color .18s ease,transform .18s ease}
 .langtoggle button:hover{color:var(--ink)}
@@ -253,6 +253,7 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .btn-primary{background:linear-gradient(135deg,#ffdd3e,#ffc91e);color:#161610}
 .btn-kaspi{background:linear-gradient(135deg,#f75b3d,#dd351f);box-shadow:0 12px 24px rgba(221,53,31,.20)}
 .btn-halyk{background:linear-gradient(135deg,#159553,#08733c)}
+.btn-cancel{margin-top:14px;border:1px solid rgba(220,73,55,.25);background:var(--danger-bg);color:var(--danger);box-shadow:none}
 .checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 2px;padding:0 3px}
 .checkout-step{position:relative;height:auto;min-width:0;padding-top:26px;background:none!important;overflow:visible;text-align:center;font:700 9px/1.2 var(--body);color:#99968e;font-style:normal}
 .checkout-step:before{content:attr(data-step);position:absolute;z-index:2;left:50%;top:0;width:20px;height:20px;display:grid;place-items:center;transform:translateX(-50%);border:2px solid #ddd9cf;border-radius:50%;background:#f7f5f0;color:#8d8a82;font:800 9px var(--body)}
@@ -356,7 +357,7 @@ const STR = {
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Выставить счёт в Kaspi', halyk:'Оплатить через Halyk', no_fee:'Без комиссии',
   kaspi_phone:'Номер, привязанный к Kaspi', kaspi_phone_hint:'Счёт появится в приложении Kaspi. Номер может отличаться от номера Beeline.', kaspi_not_found:'Этот номер не найден в Kaspi. Проверьте номер и попробуйте снова.',
   kaspi_phone_title:'Введите номер Kaspi', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
-  payment_cancelled_title:'Вы отменили покупку', payment_cancelled_desc:'Счёт в Kaspi был отклонён.', payment_expired_title:'Вы не оплатили', payment_expired_desc:'Срок действия счёта истёк.',
+  payment_cancelled_title:'Вы отменили покупку', payment_cancelled_desc:'Счёт в Kaspi был отменён.', payment_expired_title:'Вы не оплатили', payment_expired_desc:'Срок действия счёта истёк.', cancel_purchase:'Отменить покупку', cancel_purchase_confirm:'Отменить выставленный счёт в Kaspi?', cancelling_purchase:'Отменяем счёт…', cancel_purchase_failed:'Не удалось отменить счёт. Проверьте Kaspi или попробуйте ещё раз.',
   checking_title:'Счёт отправлен в Kaspi', checking_desc:'Откройте приложение Kaspi и оплатите выставленный счёт. После оплаты начисление запустится автоматически.', invoice_time_left:'Счёт действует 24 часа. Осталось:', number:'Номер Beeline', paid:'Оплачено',
   payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
   payment_not_found_title:'Оплата не найдена', back_to_menu_btn:'Вернуться в главное меню',
@@ -385,7 +386,7 @@ const STR = {
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi-де шот жіберу', halyk:'Halyk арқылы төлеу', no_fee:'Комиссиясыз',
   kaspi_phone:'Kaspi-ге тіркелген нөмір', kaspi_phone_hint:'Шот Kaspi қолданбасында пайда болады. Бұл нөмір Beeline нөмірінен өзгеше болуы мүмкін.', kaspi_not_found:'Бұл нөмір Kaspi-де табылмады. Нөмірді тексеріп, қайталап көріңіз.',
   kaspi_phone_title:'Kaspi нөмірін енгізіңіз', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
-  payment_cancelled_title:'Сіз сатып алудан бас тарттыңыз', payment_cancelled_desc:'Kaspi-дегі шот қабылданбады.', payment_expired_title:'Сіз төлемедіңіз', payment_expired_desc:'Шоттың жарамдылық мерзімі аяқталды.',
+  payment_cancelled_title:'Сіз сатып алудан бас тарттыңыз', payment_cancelled_desc:'Kaspi-дегі шот жойылды.', payment_expired_title:'Сіз төлемедіңіз', payment_expired_desc:'Шоттың жарамдылық мерзімі аяқталды.', cancel_purchase:'Сатып алудан бас тарту', cancel_purchase_confirm:'Kaspi-дегі жіберілген шотты жою керек пе?', cancelling_purchase:'Шот жойылуда…', cancel_purchase_failed:'Шотты жою мүмкін болмады. Kaspi-ді тексеріп, қайталап көріңіз.',
   checking_title:'Шот Kaspi-ге жіберілді', checking_desc:'Kaspi қолданбасын ашып, жіберілген шотты төлеңіз. Төлемнен кейін қосу автоматты түрде басталады.', invoice_time_left:'Шот 24 сағат жарамды. Қалған уақыт:', number:'Beeline нөмірі', paid:'Төленді',
   payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
   payment_not_found_title:'Төлем табылмады', back_to_menu_btn:'Басты мәзірге оралу',
@@ -1044,6 +1045,8 @@ function renderChecking(el){
     <div class="payment-progress-row active"><span class="payment-progress-dot">1</span><span>${esc(t('checking_title'))}</span></div>
     <div class="payment-progress-row"><span class="payment-progress-dot">2</span><span>${esc(t('preparing_otp_title'))}</span></div>
    </div>
+   <button class="btn btn-cancel" id="cancelPaymentBtn">${esc(t('cancel_purchase'))}</button>
+   <div class="error" id="cancelPaymentError" hidden></div>
   </div>
   ${supportBlock()}
   ${footBlock()}
@@ -1057,6 +1060,18 @@ function renderChecking(el){
   ${footBlock()}
  `;
  bindSupport();
+ const cancelBtn=el.querySelector('#cancelPaymentBtn');
+ if(cancelBtn)cancelBtn.addEventListener('click',async()=>{
+  if(!window.confirm(t('cancel_purchase_confirm')))return;
+  const errorEl=el.querySelector('#cancelPaymentError');
+  cancelBtn.disabled=true;cancelBtn.textContent=t('cancelling_purchase');errorEl.hidden=true;
+  try{ctx=await api('/payment-cancel',{});render();}
+  catch(error){
+   await refreshContext().catch(()=>{});
+   if(ctx.paymentStatus!=='PAYMENT_PENDING')return render();
+   cancelBtn.disabled=false;cancelBtn.textContent=t('cancel_purchase');errorEl.textContent=t('cancel_purchase_failed');errorEl.hidden=false;
+  }
+ });
 }
 
 // Owner request (2026-09-07): merged the separate "activating" (still training) and "success"
