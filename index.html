@@ -228,8 +228,9 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;ba
 .pkg.std:after{content:"TOP";position:absolute;right:14px;top:0;padding:5px 10px;border-radius:0 0 10px 10px;background:var(--blue);color:#fff;font:800 9px var(--body);letter-spacing:.08em}
 .pkg .icon{width:50px;height:50px;border-radius:17px;font-size:21px;box-shadow:inset 0 0 0 1px rgba(23,23,20,.04)}
 .pkg.lite .icon{background:#fff5c8}.pkg.std .icon{background:#e7efff}
-.pkg .info{min-width:0}.pkg .name{font:800 18px/1.15 var(--display);letter-spacing:-.025em}
-.pkg .gb{margin-top:5px;font:650 13px var(--body);color:var(--ink-dim)}
+.pkg .info{min-width:0}.pkg .gb{font:800 21px/1.15 var(--display);letter-spacing:-.025em;color:var(--ink)}
+.pkg.std .gb{color:#1d54c7}
+.pkg .name{margin-top:4px;font:750 12px var(--body);letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim)}
 .pkg .price{flex:none;padding:10px 12px;border-radius:13px;background:var(--yellow);font:800 15px var(--display);box-shadow:0 7px 18px rgba(239,185,0,.18)}
 .pkg.std .price{background:#e6eeff;color:#1d54c7;box-shadow:none}
 .benefits{margin-top:16px;padding:21px}
@@ -789,7 +790,7 @@ function renderPackages(el){
   const isStd = p.id==='20GB';
   return `<button class="pkg ${isStd?'std':'lite'}" data-id="${esc(p.id)}">
    <div class="icon">${isStd?'⭐':'🚀'}</div>
-   <div class="info"><div class="name">${isStd?t('std'):t('lite')}</div><div class="gb">${p.trafficGb} ГБ · ${t('per_month')}</div></div>
+   <div class="info"><div class="gb">${p.trafficGb} ГБ · ${t('per_month')}</div><div class="name">${isStd?t('std'):t('lite')}</div></div>
    <div class="price">${money(p.price)} ₸</div>
   </button>`;
  }).join('');
@@ -841,7 +842,7 @@ function renderPhone(el){
    <p class="subtitle" style="margin-bottom:16px">${esc(t('phone_title'))}</p>
    ${pkg ? `<div class="pkg ${pkg.id==='20GB'?'std':'lite'}" style="cursor:default;margin-bottom:18px">
      <div class="icon">${pkg.id==='20GB'?'⭐':'🚀'}</div>
-     <div class="info"><div class="name">${pkg.id==='20GB'?t('std'):t('lite')}</div><div class="gb">${pkg.trafficGb} ГБ</div></div>
+     <div class="info"><div class="gb">${pkg.trafficGb} ГБ</div><div class="name">${pkg.id==='20GB'?t('std'):t('lite')}</div></div>
      <div class="price">${money(pkg.price)} ₸<div style="font-size:10px;font-weight:600;color:var(--ink-dim);margin-top:2px">${t('validity')}: ${t('days30')}</div></div>
    </div>` : ''}
    <label>${esc(t('phone_label'))}</label>
