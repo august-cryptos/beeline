@@ -932,17 +932,16 @@ function renderReceipt(el){
 
 function renderKaspiPhone(el){
  setBack(true,()=>showScreen('receipt'));
- const initial=kaspiPaymentDraft?.paymentPhone||ctx.client.phone||'';
  el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
   ${kaspiHeader(t('kaspi_phone_title'))}
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
   <p class="desc">${esc(t('kaspi_phone_hint'))}</p>
   <label>${esc(t('kaspi_phone'))}</label>
-  <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13"></div>
+  <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13"></div>
   <div id="paymentError" class="notice error" style="display:none;margin:12px 0"></div>
   <button class="btn btn-kaspi" id="checkKaspiBtn" style="margin-top:16px">${esc(t('check_number'))}</button>
  </div>${footBlock()}`;
- const input=el.querySelector('#kaspiPhone');input.value=formatPhoneDigits(normalizePhoneDigits(initial));bindPhoneMask(input);
+ const input=el.querySelector('#kaspiPhone');bindPhoneMask(input);
  el.querySelector('#checkKaspiBtn').addEventListener('click',async()=>{
   const btn=el.querySelector('#checkKaspiBtn'),error=el.querySelector('#paymentError'),digits=normalizePhoneDigits(input.value);
   error.style.display='none';input.style.borderColor='';
