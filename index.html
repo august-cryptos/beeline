@@ -154,7 +154,7 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style id="geomaster-design-v2">
 :root{
   --bg:#f5f4ef;
@@ -173,8 +173,8 @@ p.desc{color:var(--ink-dim);font:500 14.5px var(--body);text-align:center;line-h
   --danger:#dc4937;
   --danger-bg:#fff0ed;
   --radius:26px;
-  --display:"Manrope","Segoe UI",sans-serif;
-  --body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --display:"Onest","Segoe UI",sans-serif;
+  --body:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --shadow-sm:0 8px 24px rgba(23,23,20,.06);
   --shadow-md:0 20px 60px rgba(23,23,20,.10);
 }
@@ -216,8 +216,9 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;ba
 @keyframes screen-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 .card,.benefits{border:1px solid rgba(23,23,20,.075);border-radius:var(--radius);background:rgba(255,255,255,.94);box-shadow:var(--shadow-md);backdrop-filter:blur(14px)}
 .card{padding:25px}
-.subtitle{margin-bottom:16px;font:800 18px/1.35 var(--display);color:var(--ink);text-align:left;letter-spacing:-.02em}
-#screens>.subtitle{text-align:center;font-size:20px;margin:0 0 2px}
+.home-heading{padding:4px 12px 2px;text-align:center}
+.home-heading h2{margin:0;font:700 27px/1.16 var(--display);letter-spacing:-.035em;color:var(--ink);text-wrap:balance}
+.home-heading p{max-width:390px;margin:9px auto 0;font:400 14px/1.5 var(--body);color:var(--ink-dim);text-wrap:balance}
 .pkg{position:relative;isolation:isolate;min-height:92px;gap:15px;padding:18px;border:1.5px solid rgba(23,23,20,.09);border-radius:22px;background:rgba(255,255,255,.94);box-shadow:var(--shadow-sm);overflow:hidden;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
 .pkg:before{content:"";position:absolute;z-index:-1;inset:auto -30px -55px auto;width:130px;height:130px;border-radius:50%;background:rgba(255,213,40,.13)}
 .pkg:hover{transform:translateY(-2px);border-color:rgba(23,23,20,.18);box-shadow:0 16px 34px rgba(23,23,20,.10)}
@@ -228,15 +229,15 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;ba
 .pkg.std:after{content:"TOP";position:absolute;right:14px;top:0;padding:5px 10px;border-radius:0 0 10px 10px;background:var(--blue);color:#fff;font:800 9px var(--body);letter-spacing:.08em}
 .pkg .icon{width:50px;height:50px;border-radius:17px;font-size:21px;box-shadow:inset 0 0 0 1px rgba(23,23,20,.04)}
 .pkg.lite .icon{background:#fff5c8}.pkg.std .icon{background:#e7efff}
-.pkg .info{min-width:0}.pkg .gb{font:800 21px/1.15 var(--display);letter-spacing:-.025em;color:var(--ink)}
+.pkg .info{min-width:0}.pkg .gb{font:700 22px/1.15 var(--display);letter-spacing:-.035em;color:var(--ink)}
 .pkg.std .gb{color:#1d54c7}
-.pkg .name{margin-top:4px;font:750 12px var(--body);letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim)}
-.pkg .price{flex:none;padding:10px 12px;border-radius:13px;background:var(--yellow);font:800 15px var(--display);box-shadow:0 7px 18px rgba(239,185,0,.18)}
+.pkg .name{margin-top:5px;font:500 13px/1.3 var(--body);letter-spacing:0;color:var(--ink-dim)}
+.pkg .price{flex:none;padding:10px 13px;border-radius:13px;background:var(--yellow);font:700 16px var(--display);letter-spacing:-.02em;box-shadow:0 7px 18px rgba(239,185,0,.18)}
 .pkg.std .price{background:#e6eeff;color:#1d54c7;box-shadow:none}
 .benefits{margin-top:16px;padding:21px}
-.benefits h3{margin-bottom:14px;font:800 15px var(--display)}
+.benefits h3{margin-bottom:14px;font:700 17px/1.25 var(--display);letter-spacing:-.02em}
 .benefits ul{gap:12px}
-.benefits li{align-items:flex-start;font:600 13px/1.5 var(--body);color:#53524d}
+.benefits li{align-items:flex-start;font:400 14px/1.55 var(--body);color:#53524d}
 .benefits li .e{width:20px;height:20px;display:grid;place-items:center;flex:none;border-radius:50%;background:#eff8f3;color:var(--green);font-size:0}
 .benefits li .e:after{content:"✓";font-size:11px;font-weight:900}
 label{font:800 12px var(--body);letter-spacing:.01em}
@@ -313,7 +314,7 @@ p.desc{font:600 13px/1.6 var(--body);color:var(--ink-dim)}
  body{padding-top:34px}.wrap{max-width:590px}.brand{padding-top:12px}.card{padding:30px}.pkg{min-height:100px;padding:20px}.benefits{padding:24px}.checkout-step{font-size:10px}
 }
 @media(max-width:390px){
- body{padding-left:12px;padding-right:12px}.wrap{max-width:calc(100vw - 24px);gap:15px}.brand{padding-left:68px;padding-right:68px}.brand .mark{width:52px;height:52px}.brand h1{font-size:27px}.card{padding:20px}.pkg{min-height:86px;padding:15px;gap:11px}.pkg .icon{width:45px;height:45px}.pkg .price{padding:9px 10px;font-size:13px}.checkout-step{font-size:8px}.support{align-items:flex-start;flex-wrap:wrap}.support-btn{width:100%;justify-content:center;margin-left:0}.otp{gap:5px}.otp input{width:calc((100% - 25px)/6);height:54px;border-radius:12px}
+ body{padding-left:12px;padding-right:12px}.wrap{max-width:calc(100vw - 24px);gap:15px}.brand{padding-left:68px;padding-right:68px}.brand .mark{width:52px;height:52px}.brand h1{font-size:27px}.home-heading h2{font-size:24px}.home-heading p{font-size:13px}.card{padding:20px}.pkg{min-height:86px;padding:15px;gap:11px}.pkg .icon{width:45px;height:45px}.pkg .gb{font-size:20px}.pkg .price{padding:9px 10px;font-size:14px}.checkout-step{font-size:8px}.support{align-items:flex-start;flex-wrap:wrap}.support-btn{width:100%;justify-content:center;margin-left:0}.otp{gap:5px}.otp input{width:calc((100% - 25px)/6);height:54px;border-radius:12px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}#screens{animation:none}.pkg,.btn,.back{transition:none}}
 </style>
@@ -350,7 +351,7 @@ const API_BASE = '/api';
 const STR = {
  ru:{
   slogan:'ПО ВЫГОДНЫМ ЦЕНАМ', back:'Назад', progress_package:'Пакет', progress_number:'Номер', progress_payment:'Оплата', progress_ready:'Готово',
-  choose_title:'Нажмите на выбранный тариф ↓', lite:'Lite', std:'Standard', per_month:'на каждый день', best:'Выгоднее',
+  choose_title:'Выберите интернет-пакет', choose_desc:'Дополнительный интернет на 30 дней без изменения основного тарифа.', lite:'Лёгкий пакет', std:'Больше интернета', per_month:'на 30 дней', best:'Выгоднее',
   benefits_title:'✨ Преимущества', b1:'Интернет действует 30 дней', b2:'Работает даже при неоплаченном тарифе', b3:'Ваш основной тариф не изменяется', b4:'Подключение занимает всего несколько минут',
   phone_title:'Вы выбрали тариф', phone_label:'Введите номер Beeline', phone_hint:'Укажите номер телефона для подключения выбранного тарифа.', phone_secure:'Мы гарантируем безопасность ваших данных', validity:'Срок действия', days30:'30 дней', continue:'Продолжить',
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
@@ -379,7 +380,7 @@ const STR = {
  },
  kk:{
   slogan:'ТИІМДІ БАҒАЛАРМЕН', back:'Артқа', progress_package:'Пакет', progress_number:'Нөмір', progress_payment:'Төлем', progress_ready:'Дайын',
-  choose_title:'Таңдалған тарифті басыңыз ↓', lite:'Lite', std:'Standard', per_month:'күн сайын', best:'Тиімдірек',
+  choose_title:'Интернет-пакетті таңдаңыз', choose_desc:'Негізгі тарифті өзгертпей, 30 күнге қосымша интернет алыңыз.', lite:'Жеңіл пакет', std:'Көбірек интернет', per_month:'30 күнге', best:'Тиімдірек',
   benefits_title:'✨ Артықшылықтар', b1:'Интернет 30 күн жарамды', b2:'Тариф төленбесе де жұмыс істейді', b3:'Негізгі тарифіңіз өзгермейді', b4:'Қосылу бірнеше минутты алады',
   phone_title:'Сіз тарифті таңдадыңыз', phone_label:'Beeline нөмірін енгізіңіз', phone_hint:'Таңдалған тарифті қосу үшін телефон нөмірін көрсетіңіз.', phone_secure:'Деректеріңіздің қауіпсіздігіне кепілдік береміз', validity:'Жарамдылық мерзімі', days30:'30 күн', continue:'Жалғастыру',
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
@@ -801,7 +802,7 @@ function renderPackages(el){
   </button>`;
  }).join('');
  el.innerHTML = `
-  <p class="subtitle">${esc(t('choose_title'))}</p>
+  <div class="home-heading"><h2>${esc(t('choose_title'))}</h2><p>${esc(t('choose_desc'))}</p></div>
   <div id="pkgNotice"></div>
   <div>${rows}</div>
   <div class="benefits">
