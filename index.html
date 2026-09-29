@@ -681,7 +681,9 @@ function startPoll(screenName){
  currentPollScreen = screenName;
  pollFailures = 0;
  pollTick();
- pollTimer = setInterval(pollTick, 3500);
+ // Keep the confirmation screen responsive after Kaspi reports PAID. The backend watcher runs
+ // independently; a short client interval only refreshes our own lightweight session context.
+ pollTimer = setInterval(pollTick, 1000);
 }
 
 function showScreen(name, extra){
