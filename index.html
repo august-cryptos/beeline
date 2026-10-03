@@ -381,6 +381,7 @@ const STR = {
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
   invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
   reconnecting:'⏳ Восстанавливаем соединение…',
+  maintenance_title:'Ведутся технические работы', maintenance_desc:'Сервис временно недоступен. Пожалуйста, попробуйте немного позже.',
   inapp_title:'Откройте страницу в браузере', inapp_desc:'Вы открыли сайт из встроенного браузера приложения — оплата и код подтверждения могут не сработать в нём.', inapp_steps:'Нажмите ⋯ (или значок «поделиться») в углу экрана и выберите «Открыть в браузере».', inapp_copy:'Скопировать ссылку', inapp_copied:'Ссылка скопирована ✓', inapp_continue_anyway:'Продолжить здесь (не рекомендуется)'
  },
  kk:{
@@ -411,6 +412,7 @@ const STR = {
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
   invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
   reconnecting:'⏳ Байланыс қалпына келтірілуде…',
+  maintenance_title:'Техникалық жұмыстар жүргізілуде', maintenance_desc:'Сервис уақытша қолжетімсіз. Сәл кейінірек қайталап көріңіз.',
   inapp_title:'Парақшаны браузерде ашыңыз', inapp_desc:'Сіз сайтты қолданбаның ішкі браузерінен аштыңыз — онда төлем және растау коды дұрыс жұмыс істемеуі мүмкін.', inapp_steps:'Экранның бұрышындағы ⋯ (немесе «бөлісу» белгішесін) басып, «Открыть в браузере» опциясын таңдаңыз.', inapp_copy:'Сілтемені көшіру', inapp_copied:'Сілтеме көшірілді ✓', inapp_continue_anyway:'Осы жерде жалғастыру (ұсынылмайды)'
  }
 };
@@ -554,7 +556,7 @@ async function initSession(){
  }
  try{
   const res = await api('/session', body);
-  if(res.paused){ showScreen('paused', {message:res.message}); return; }
+  if(res.paused){ showScreen(res.paused==='MAINTENANCE'?'maintenance':'paused', {message:res.message}); return; }
   if(res.webId) localStorage.setItem('gm_web_id', res.webId);
   sessionToken = res.sessionToken; ctx = res.context;
   if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
@@ -583,6 +585,12 @@ function setBack(show, handler){
 function render(){
  if(!ctx) return;
  const state = ctx.clientState;
+ // The Telegram admin switch and the website read the same runtime setting. Pause only customers
+ // who have not entered a payment/activation flow; an already pending or paid order must remain
+ // visible so maintenance can never strand somebody after money has been sent.
+ const activeOrder=(ctx.orders||[]).some(o=>['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus));
+ const maintenanceEntryState=['NEW','CHOOSING_PACKAGE','WAITING_PHONE'].includes(state)||(['ACTIVE','COMPLETED'].includes(state)&&!activeOrder);
+ if(ctx.maintenanceMode&&maintenanceEntryState)return showScreen('maintenance');
  if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
  if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
  // Live-run forensic fix (2026-09-09, round 14): confirmed live - order.status flips CREATED->
@@ -693,9 +701,10 @@ function showScreen(name, extra){
  // Owner request (2026-09-06/09-07): the BEELINE/GEO MASTER brand block only makes sense on the first
  // (package choice) and final (connected) screens - hidden everywhere in between (it just eats space
  // on a customer's active form-filling steps).
- document.querySelector('.brand').hidden = !['packages','connected'].includes(name);
+ document.querySelector('.brand').hidden = !['packages','connected','maintenance'].includes(name);
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
+ else if(name==='maintenance') el.innerHTML = tplMessage(t('maintenance_title'), t('maintenance_desc'), '', '🛠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
  else if(name==='packages') renderPackages(el);
  else if(name==='phone') renderPhone(el);
