@@ -1332,6 +1332,12 @@ function renderOtp(el, wrong, justResent, resendFailed){
   confirmBtn.disabled = code.length!==6;
   otpBoxes.forEach(b=>b.classList.toggle('filled', !!b.value));
  }
+ // Owner request (2026-10-04): during the 15-minute Beeline block the code boxes and "Подтвердить"
+ // stay locked too, not just the resend button - unlocked by the same countdown that re-arms resend.
+ function setOtpLocked(locked){
+  otpBoxes.forEach(b=>{ b.disabled = locked; b.style.opacity = locked ? '.45' : ''; if(locked) b.value = ''; });
+  if(locked) confirmBtn.disabled = true; else updateState();
+ }
  otpBoxes.forEach((box,i)=>{
   box.addEventListener('input', ()=>{
    box.value = box.value.replace(/\D/g,'');
@@ -1425,6 +1431,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
     clearInterval(resendCooldownTimer);
     resendCooldownTimer = null;
     document.getElementById('rateLimitBanner')?.remove();
+    if(otpBoxes[0]?.disabled) setOtpLocked(false);
     el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
     bindResendBtn(document.getElementById('resendBtn'));
     return;
@@ -1476,6 +1483,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
  // than sitting right on the edge). Uses resendRemainingSec (computed above from otpCodeSentAt), NOT a
  // flat OTP_RESEND_COOLDOWN_SEC every render - entering a wrong code must not reset the wait, only
  // shrink what's left of it, exactly like Beeline's own site.
+ if(rateLimitSec>0) setOtpLocked(true);
  startResendCooldown(document.getElementById('resendWrap'), Math.max(resendRemainingSec, rateLimitSec), false);
 }
 
