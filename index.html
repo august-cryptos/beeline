@@ -368,7 +368,7 @@ const STR = {
   payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
   payment_not_found_title:'Оплата не найдена', back_to_menu_btn:'Вернуться в главное меню',
   preparing_otp_title:'Оплата подтверждена', preparing_otp_desc:'Готовим для вас код. Обычно это занимает несколько секунд.',
-  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
+  otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', otp_rate_limited:'⚠ Слишком частые запросы кода подтверждения. Подождите 15 минут и запросите новый код — кнопка ниже включится сама.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
@@ -399,7 +399,7 @@ const STR = {
   payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
   payment_not_found_title:'Төлем табылмады', back_to_menu_btn:'Басты мәзірге оралу',
   preparing_otp_title:'Төлем расталды', preparing_otp_desc:'Сіз үшін код дайындалуда. Әдетте бұл бірнеше секунд алады.',
-  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
+  otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', otp_rate_limited:'⚠ Растау коды тым жиі сұралды. 15 минут күтіп, жаңа код сұраңыз — төмендегі батырма өзі қосылады.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
@@ -501,7 +501,7 @@ async function apiOnce(path, body, method, timeoutMs){
  catch(e){ throw Object.assign(new Error('REQUEST_FAILED'), {code:'NETWORK_ERROR'}); }
  finally{ clearTimeout(timeoutId); }
  const j = await r.json().catch(()=>({}));
- if(!r.ok) throw Object.assign(new Error(j.error||'REQUEST_FAILED'), {code:j.error, status:r.status});
+ if(!r.ok) throw Object.assign(new Error(j.error||'REQUEST_FAILED'), {code:j.error, status:r.status, retryAfterSeconds:j.retryAfterSeconds});
  return j;
 }
 // Live-run forensic fix (2026-09-08, round 6): confirmed live on two separate devices - the very first
@@ -1192,6 +1192,22 @@ let resendCooldownTimer = null;
 let otpCodeSentAt = null;
 const OTP_RESEND_COOLDOWN_SEC = 35;
 let resendClickInFlight = false;
+// Owner request (2026-10-04): Beeline stops issuing new codes for a number to our server after a few
+// requests and unblocks it ~15 minutes later. The backend answers OTP_RATE_LIMITED + retryAfterSeconds;
+// the resend button stays locked with a countdown until then. Kept in localStorage so a page reload
+// doesn't offer a button that would just be refused again (and could extend the block).
+let otpRateLimitUntil = 0;
+try{ otpRateLimitUntil = Number(localStorage.getItem('otpRateLimitUntil'))||0; }catch(_){}
+function setOtpRateLimit(seconds){
+ otpRateLimitUntil = Date.now() + Math.max(60, Number(seconds)||900)*1000;
+ try{ localStorage.setItem('otpRateLimitUntil', String(otpRateLimitUntil)); }catch(_){}
+}
+function clearOtpRateLimit(){
+ otpRateLimitUntil = 0;
+ try{ localStorage.removeItem('otpRateLimitUntil'); }catch(_){}
+}
+function otpRateLimitRemainingSec(){ return Math.max(0, Math.ceil((otpRateLimitUntil - Date.now())/1000)); }
+function fmtMmSs(secs){ return String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0'); }
 // Owner request (2026-09-08): the backend's own "3 wrong attempts" auto-resend (see OTP_REJECTED_RESENT
 // below) must be just as visible to the customer as clicking "запросить новый код" manually - same
 // "new code sent" messaging, same timer reset. `justResent` is the signal for that specific case;
@@ -1206,6 +1222,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
  if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
  if(!wrong || justResent) otpCodeSentAt = Date.now();
  const resendRemainingSec = Math.max(0, OTP_RESEND_COOLDOWN_SEC - Math.floor((Date.now() - otpCodeSentAt) / 1000));
+ const rateLimitSec = otpRateLimitRemainingSec();
  const phone = ctx.client.phone||'';
  el.innerHTML = `
   <div class="card center">
@@ -1215,7 +1232,8 @@ function renderOtp(el, wrong, justResent, resendFailed){
    <div class="receipt" style="margin-top:14px">
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v" style="display:flex;align-items:center;gap:8px">${esc(formatFullPhoneDisplay(phone))}<button id="changeNumberLink" style="background:none;border:none;padding:0;font:700 12px var(--body);color:var(--blue);text-decoration:underline;cursor:pointer">${esc(t('change_number_link'))}</button></span></div>
    </div>
-   ${wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('wrong_desc'))} ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
+   ${rateLimitSec>0?`<div class="error-banner" id="rateLimitBanner" style="margin-top:14px">${esc(t('otp_rate_limited'))}</div>`
+   :wrong?`<div class="error-banner" style="margin-top:14px">⚠️ ${esc(t('wrong_desc'))} ${esc(t('attempts_left'))} ${pendingOtpAttempts}</div>`
           :`<div class="info-box" style="margin-top:14px;text-align:left"><div class="ico">✓</div><div>${esc(t('otp_valid'))} ${esc(t('otp_secret'))}</div></div>`}
    ${justResent?`<div style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>`:''}
    ${resendFailed?`<div style="color:var(--danger);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_failed'))}</div>`:''}
@@ -1269,6 +1287,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
    // ctx.selectedPackage (cleared the instant training starts) all the way to ctx.lastCompletedOrder,
    // which on a heavily-reused number is very often a different order entirely.
    if(ctx.orderId) rememberWatchedOrder(ctx.orderId);
+   clearOtpRateLimit(); // the block is per number - a different number starts clean
    pendingOtpAttempts = 3;
    // Owner report (2026-09-09, round 15): confirmed live - render() here used to navigate straight to
    // the 'checking' screen (client.state briefly reads PAYMENT_CONFIRMED while the fresh job
@@ -1334,6 +1353,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
   confirmBtn.textContent = t('otp_checking');
   try{
    ctx = await api('/otp', {code: currentCode()});
+   clearOtpRateLimit();
    pendingOtpAttempts = 3;
    render();
   }catch(e){
@@ -1343,6 +1363,9 @@ function renderOtp(el, wrong, justResent, resendFailed){
    // code was entered correctly, training actually started, and the site still said it didn't match.
    // Refresh and show whatever the real state now is instead of guessing it was a bad code.
    if(e.code==='OTP_NOT_EXPECTED'){ await refreshContext().catch(()=>{}); render(); return; }
+   // Owner request (2026-10-04): the code didn't go through AND Beeline is refusing new codes for this
+   // number right now - the order is still alive server-side, just wait out the block.
+   if(e.code==='OTP_RATE_LIMITED'){ setOtpRateLimit(e.retryAfterSeconds); renderOtp(el); return; }
    // Live-run forensic fix (2026-09-06): OTP_REJECTED is the ONLY code that genuinely means "you typed
    // the wrong digits, try again" - the backend now auto-retries a real Beeline protocol hiccup
    // (AUTH_PROTOCOL_ERROR) with a fresh code on its own, so if an error still reaches here and it is
@@ -1394,13 +1417,14 @@ function renderOtp(el, wrong, justResent, resendFailed){
  function startResendCooldown(el, secs, justSent){
   if(resendCooldownTimer){ clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
   if(secs<=0){ el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`; bindResendBtn(document.getElementById('resendBtn')); return; }
-  el.innerHTML = `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} 00:${String(secs).padStart(2,'0')}</span>` + (justSent ? `<div id="resendSentNotice" style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>` : '');
+  el.innerHTML = `<span id="resendCountdown">⏱ ${esc(t('resend_in'))} ${fmtMmSs(secs)}</span>` + (justSent ? `<div id="resendSentNotice" style="color:var(--blue);font:700 12.5px var(--body);margin-top:8px">${esc(t('resend_sent'))}</div>` : '');
   const cd = document.getElementById('resendCountdown');
   resendCooldownTimer = setInterval(()=>{
    secs--;
    if(secs<=0){
     clearInterval(resendCooldownTimer);
     resendCooldownTimer = null;
+    document.getElementById('rateLimitBanner')?.remove();
     el.innerHTML = `<button class="resend" id="resendBtn">${esc(t('resend'))}</button>`;
     bindResendBtn(document.getElementById('resendBtn'));
     return;
@@ -1428,6 +1452,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
     startResendCooldown(wrap, OTP_RESEND_COOLDOWN_SEC, true);
    }
    catch(e){
+    if(e.code==='OTP_RATE_LIMITED'){ setOtpRateLimit(e.retryAfterSeconds); renderOtp(el); return; }
     // Live-run forensic fix (2026-09-08, round 4): this used to silently re-enable the button with zero
     // feedback - confirmed live as the direct cause of the click-mashing above ("ничего не происходит").
     // The backend no longer kills the order over a failed resend, so the button stays usable - the
@@ -1451,7 +1476,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
  // than sitting right on the edge). Uses resendRemainingSec (computed above from otpCodeSentAt), NOT a
  // flat OTP_RESEND_COOLDOWN_SEC every render - entering a wrong code must not reset the wait, only
  // shrink what's left of it, exactly like Beeline's own site.
- startResendCooldown(document.getElementById('resendWrap'), resendRemainingSec, false);
+ startResendCooldown(document.getElementById('resendWrap'), Math.max(resendRemainingSec, rateLimitSec), false);
 }
 
 function renderFailed(el){
