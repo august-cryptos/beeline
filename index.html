@@ -260,21 +260,27 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .qr-frame img{display:block;width:100%;height:auto;border-radius:10px;image-rendering:crisp-edges}
 .qr-actions{display:flex;justify-content:center;margin-top:16px}
 .qr-actions .btn{width:min(100%,340px);padding-left:18px;padding-right:18px}
-.kaspi-direct-choice{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) 22px;align-items:center;gap:13px;width:100%;padding:14px 15px;border:1.5px solid rgba(226,59,32,.20);border-radius:18px;background:#fff;color:var(--ink);text-align:left;box-shadow:0 8px 20px rgba(23,23,20,.06);cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
-.kaspi-direct-choice:hover:not(:disabled){transform:translateY(-1px);border-color:rgba(226,59,32,.38);box-shadow:0 12px 24px rgba(221,53,31,.11)}
-.kaspi-direct-choice:active:not(:disabled){transform:scale(.985)}
-.kaspi-direct-choice:disabled{opacity:.55;box-shadow:none;cursor:default}
-.kaspi-direct-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:#fff;overflow:hidden;box-shadow:0 5px 14px rgba(116,20,9,.12)}
-.kaspi-direct-icon img{display:block;width:100%;height:100%}
-.kaspi-direct-copy{min-width:0}.kaspi-direct-copy strong{display:block;font:800 14.5px/1.3 var(--display)}.kaspi-direct-copy small{display:block;margin-top:3px;color:var(--ink-dim);font:600 11.5px/1.4 var(--body)}
-.kaspi-direct-arrow{font:500 27px/1 var(--body);color:#e0442b;text-align:right}
+.payment-methods{display:flex;flex-direction:column;gap:10px;margin-top:9px}
+.payment-method-card{display:grid;grid-template-columns:48px minmax(0,1fr) 20px;align-items:center;gap:13px;width:100%;min-height:76px;padding:13px 14px;border:1.5px solid var(--line);border-radius:18px;background:#fff;color:var(--ink);text-align:left;font-family:inherit;box-shadow:0 8px 20px rgba(23,23,20,.055);cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.payment-method-card:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 12px 25px rgba(23,23,20,.09)}
+.payment-method-card:active:not(:disabled){transform:scale(.987)}
+.payment-method-card:disabled{opacity:.52;box-shadow:none;cursor:default}
+.payment-method-card.invoice{border-color:rgba(226,59,32,.24);background:linear-gradient(135deg,#fff 0%,#fff8f6 100%)}
+.payment-method-card.unified{border-color:rgba(9,137,107,.22);background:linear-gradient(135deg,#fff 0%,#f5fbf8 100%)}
+.payment-method-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#fff;overflow:hidden;box-shadow:0 5px 14px rgba(23,23,20,.10)}
+.payment-method-icon img{display:block;width:100%;height:100%}
+.payment-method-copy{min-width:0}.payment-method-copy strong{display:block;font:800 14px/1.3 var(--display)}.payment-method-copy small{display:block;margin-top:3px;color:var(--ink-dim);font:600 11.5px/1.35 var(--body)}
+.payment-method-arrow{color:#9b978e;font:700 23px/1 var(--body);text-align:right}
+.payment-method-card.invoice .payment-method-arrow{color:#df462d}.payment-method-card.unified .payment-method-arrow{color:#08795d}
+.bank-strip{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:7px}
+.bank-chip{padding:3px 6px;border-radius:6px;background:#f0eee8;color:#6f6c64;font:750 9px/1.2 var(--body)}
+.bank-chip.halyk{display:inline-flex;align-items:center;gap:4px;background:#eaf7f2;color:#08795d}.bank-chip.halyk img{width:12px;height:12px}
 .kaspi-phone-panel{margin-top:14px;padding:14px;border:1px solid rgba(240,70,43,.14);border-radius:17px;background:rgba(255,248,246,.72)}
 .kaspi-phone-panel-title{margin:0 0 10px;font:800 14.5px/1.35 var(--display);color:var(--ink)}
 .kaspi-phone-panel .phoneinput{min-height:56px;padding:13px 15px;background:#fff}
 .kaspi-phone-panel .phoneinput input{font-size:17px}
 .kaspi-phone-submit{min-height:54px;margin-top:9px;padding:15px 18px}
-.payment-choice-divider{display:flex;align-items:center;gap:12px;margin:11px 2px;color:#99958d;font:700 11px/1 var(--body);text-align:center}
-.payment-choice-divider:before,.payment-choice-divider:after{content:"";height:1px;flex:1;background:rgba(23,23,20,.10)}
+
 .checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 2px;padding:0 3px}
 .checkout-step{position:relative;height:auto;min-width:0;padding-top:26px;background:none!important;overflow:visible;text-align:center;font:700 9px/1.2 var(--body);color:#99968e;font-style:normal}
 .checkout-step:before{content:attr(data-step);position:absolute;z-index:2;left:50%;top:0;width:20px;height:20px;display:grid;place-items:center;transform:translateX(-50%);border:2px solid #ddd9cf;border-radius:50%;background:#f7f5f0;color:#8d8a82;font:800 9px var(--body)}
@@ -375,13 +381,13 @@ const STR = {
   benefits_title:'✨ Преимущества', b1:'Интернет действует 30 дней', b2:'Работает даже при неоплаченном тарифе', b3:'Ваш основной тариф не изменяется', b4:'Подключение занимает всего несколько минут',
   phone_title:'Вы выбрали тариф', phone_label:'Введите номер Beeline', phone_hint:'Укажите номер телефона для подключения выбранного тарифа.', phone_secure:'Мы гарантируем безопасность ваших данных', validity:'Срок действия', days30:'30 дней', continue:'Продолжить',
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
-  receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Выставить счёт в Kaspi', halyk:'Оплатить через Halyk QR', no_fee:'Без комиссии',
+  receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Выставить счёт в Kaspi', kaspi_invoice_hint:'По номеру телефона · счёт на 30 минут', halyk:'Оплатить через Единый QR', unified_qr_hint:'Halyk и другие банки с поддержкой QR', banks_more:'Другие банки', no_fee:'Без комиссии',
   kaspi_phone:'Номер, привязанный к Kaspi', kaspi_phone_hint:'Счёт появится в приложении Kaspi. Номер может отличаться от номера Beeline.', kaspi_not_found:'Этот номер не найден в Kaspi. Проверьте номер и попробуйте снова.',
-  kaspi_phone_title:'Как хотите оплатить?', kaspi_direct:'Оплатить напрямую в Kaspi', kaspi_direct_hint:'Откроем Kaspi — номер вводить не нужно.', kaspi_or_phone:'Получить счёт в приложении Kaspi', kaspi_or:'или', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
+  kaspi_phone_title:'Выставить счёт в Kaspi', kaspi_direct:'Оплатить напрямую в Kaspi', kaspi_direct_hint:'Откроем Kaspi — номер вводить не нужно.', kaspi_or_phone:'Получить счёт в приложении Kaspi', kaspi_or:'или', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
   kaspi_link_title:'Оплата в Kaspi', kaspi_link_desc:'Завершите оплату в приложении Kaspi. Если оно не открылось, нажмите кнопку ниже.', kaspi_link_time_left:'Ссылка действует около 5 минут. Осталось:', open_kaspi:'Открыть Kaspi',
   payment_cancelled_title:'Вы отменили покупку', payment_cancelled_desc:'Счёт в Kaspi был отменён.', payment_expired_title:'Вы не оплатили', payment_expired_desc:'Срок действия счёта истёк.', cancel_purchase:'Отменить покупку', cancel_purchase_confirm:'Отменить выставленный счёт в Kaspi?', cancelling_purchase:'Отменяем счёт…', cancel_purchase_failed:'Не удалось отменить счёт. Проверьте Kaspi или попробуйте ещё раз.',
   checking_title:'Счёт отправлен в Kaspi', checking_desc:'Откройте приложение Kaspi и оплатите выставленный счёт. После оплаты начисление запустится автоматически.', invoice_time_left:'Счёт действует 30 минут. Осталось:', number:'Номер Beeline', paid:'Оплачено',
-  halyk_qr_title:'Оплата через Halyk QR', halyk_qr_desc:'Откройте Halyk, выберите сканер QR и отсканируйте этот код.', halyk_qr_time_left:'QR действует около 5 минут. Осталось:', share_qr:'Поделиться QR', share_qr_text:'QR для оплаты интернет-пакета', qr_share_unavailable:'Этот браузер не поддерживает отправку QR. Откройте страницу в основном браузере телефона.',
+  halyk_qr_title:'Оплата через Единый QR', halyk_qr_desc:'Откройте Halyk или приложение другого банка с поддержкой QR и отсканируйте этот код.', halyk_qr_time_left:'QR действует около 5 минут. Осталось:', share_qr:'Поделиться QR', share_qr_text:'QR для оплаты интернет-пакета', qr_share_unavailable:'Этот браузер не поддерживает отправку QR. Откройте страницу в основном браузере телефона.',
   payment_not_confirmed:'Не видим подтверждения оплаты. Не получилось оплатить?', payment_link_btn:'Попробовать оплатить снова',
   payment_not_found_title:'Оплата не найдена', back_to_menu_btn:'Вернуться в главное меню',
   preparing_otp_title:'Оплата подтверждена', preparing_otp_desc:'Готовим для вас код. Обычно это занимает несколько секунд.',
@@ -407,13 +413,13 @@ const STR = {
   benefits_title:'✨ Артықшылықтар', b1:'Интернет 30 күн жарамды', b2:'Тариф төленбесе де жұмыс істейді', b3:'Негізгі тарифіңіз өзгермейді', b4:'Қосылу бірнеше минутты алады',
   phone_title:'Сіз тарифті таңдадыңыз', phone_label:'Beeline нөмірін енгізіңіз', phone_hint:'Таңдалған тарифті қосу үшін телефон нөмірін көрсетіңіз.', phone_secure:'Деректеріңіздің қауіпсіздігіне кепілдік береміз', validity:'Жарамдылық мерзімі', days30:'30 күн', continue:'Жалғастыру',
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
-  receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi-де шот жіберу', halyk:'Halyk QR арқылы төлеу', no_fee:'Комиссиясыз',
+  receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi-де шот жіберу', kaspi_invoice_hint:'Телефон нөмірі бойынша · шот 30 минутқа', halyk:'Бірыңғай QR арқылы төлеу', unified_qr_hint:'Halyk және QR қолдайтын басқа банктер', banks_more:'Басқа банктер', no_fee:'Комиссиясыз',
   kaspi_phone:'Kaspi-ге тіркелген нөмір', kaspi_phone_hint:'Шот Kaspi қолданбасында пайда болады. Бұл нөмір Beeline нөмірінен өзгеше болуы мүмкін.', kaspi_not_found:'Бұл нөмір Kaspi-де табылмады. Нөмірді тексеріп, қайталап көріңіз.',
-  kaspi_phone_title:'Қалай төлегіңіз келеді?', kaspi_direct:'Kaspi-де тікелей төлеу', kaspi_direct_hint:'Kaspi ашылады — нөмір енгізу қажет емес.', kaspi_or_phone:'Kaspi қолданбасына шот алу', kaspi_or:'немесе', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
+  kaspi_phone_title:'Kaspi-де шот жіберу', kaspi_direct:'Kaspi-де тікелей төлеу', kaspi_direct_hint:'Kaspi ашылады — нөмір енгізу қажет емес.', kaspi_or_phone:'Kaspi қолданбасына шот алу', kaspi_or:'немесе', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
   kaspi_link_title:'Kaspi-де төлеу', kaspi_link_desc:'Төлемді Kaspi қолданбасында аяқтаңыз. Қолданба ашылмаса, төмендегі түймені басыңыз.', kaspi_link_time_left:'Сілтеме шамамен 5 минут жарамды. Қалған уақыт:', open_kaspi:'Kaspi-ді ашу',
   payment_cancelled_title:'Сіз сатып алудан бас тарттыңыз', payment_cancelled_desc:'Kaspi-дегі шот жойылды.', payment_expired_title:'Сіз төлемедіңіз', payment_expired_desc:'Шоттың жарамдылық мерзімі аяқталды.', cancel_purchase:'Сатып алудан бас тарту', cancel_purchase_confirm:'Kaspi-дегі жіберілген шотты жою керек пе?', cancelling_purchase:'Шот жойылуда…', cancel_purchase_failed:'Шотты жою мүмкін болмады. Kaspi-ді тексеріп, қайталап көріңіз.',
   checking_title:'Шот Kaspi-ге жіберілді', checking_desc:'Kaspi қолданбасын ашып, жіберілген шотты төлеңіз. Төлемнен кейін қосу автоматты түрде басталады.', invoice_time_left:'Шот 30 минут жарамды. Қалған уақыт:', number:'Beeline нөмірі', paid:'Төленді',
-  halyk_qr_title:'Halyk QR арқылы төлеу', halyk_qr_desc:'Halyk қолданбасын ашып, QR сканерін таңдаңыз да, осы кодты сканерлеңіз.', halyk_qr_time_left:'QR шамамен 5 минут жарамды. Қалған уақыт:', share_qr:'QR бөлісу', share_qr_text:'Интернет-пакетті төлеуге арналған QR', qr_share_unavailable:'Бұл браузер QR жіберуді қолдамайды. Бетті телефонның негізгі браузерінде ашыңыз.',
+  halyk_qr_title:'Бірыңғай QR арқылы төлеу', halyk_qr_desc:'Halyk немесе QR қолдайтын басқа банк қолданбасын ашып, осы кодты сканерлеңіз.', halyk_qr_time_left:'QR шамамен 5 минут жарамды. Қалған уақыт:', share_qr:'QR бөлісу', share_qr_text:'Интернет-пакетті төлеуге арналған QR', qr_share_unavailable:'Бұл браузер QR жіберуді қолдамайды. Бетті телефонның негізгі браузерінде ашыңыз.',
   payment_not_confirmed:'Төлем растауын көрмей тұрмыз. Төлеу сәтсіз аяқталды ма?', payment_link_btn:'Қайта төлеп көру',
   payment_not_found_title:'Төлем табылмады', back_to_menu_btn:'Басты мәзірге оралу',
   preparing_otp_title:'Төлем расталды', preparing_otp_desc:'Сіз үшін код дайындалуда. Әдетте бұл бірнеше секунд алады.',
@@ -938,10 +944,8 @@ function renderPhone(el){
 function renderReceipt(el){
  const pkg = ctx.selectedPackage;
  // The order created on the phone screen is still unpaid at this point - back cancels it server-side
- // (goBackToPhone) and returns to phone entry for the same package, so a resubmitted phone number
- // starts a genuinely fresh order rather than colliding with the abandoned one. If a payment happens to
- // land in the same instant (rare race), the backend refuses the cancel - refresh and show whatever
- // the real state now is instead of leaving the screen stuck.
+ // and returns the customer to phone entry. Payment creation begins only after one of the three
+ // explicit methods below is selected.
  setBack(true, async ()=>{
   const backBtn = document.getElementById('backBtn'); backBtn.disabled = true;
   try{ ctx = await api('/back-to-phone', {}); }
@@ -958,15 +962,44 @@ function renderReceipt(el){
     <div class="receipt-row"><span class="k">${esc(t('number'))}</span><span class="v">+${esc(ctx.client.phone||'')}</span></div>
    </div>
    <label style="margin-top:4px">${esc(t('method'))}</label>
-   <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
-   <button class="btn btn-kaspi" data-method="KASPI">${esc(t('kaspi'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
-    <button class="btn btn-halyk" data-method="HALYK">${esc(t('halyk'))} <span style="font-weight:500;font-size:12px;opacity:.85">· ${esc(t('no_fee'))}</span></button>
+   <div class="payment-methods">
+    <button class="payment-method-card invoice" data-method="KASPI">
+     <span class="payment-method-icon">${kaspiIcon()}</span>
+     <span class="payment-method-copy"><strong>${esc(t('kaspi'))}</strong><small>${esc(t('kaspi_invoice_hint'))}</small></span>
+     <span class="payment-method-arrow">›</span>
+    </button>
+    <button class="payment-method-card" data-method="KASPI_LINK">
+     <span class="payment-method-icon">${kaspiIcon()}</span>
+     <span class="payment-method-copy"><strong>${esc(t('kaspi_direct'))}</strong><small>${esc(t('kaspi_direct_hint'))}</small></span>
+     <span class="payment-method-arrow">↗</span>
+    </button>
+    <button class="payment-method-card unified" data-method="HALYK">
+     <span class="payment-method-icon"><img src="./halyk-icon.svg" alt="" aria-hidden="true"></span>
+     <span class="payment-method-copy"><strong>${esc(t('halyk'))}</strong><small>${esc(t('unified_qr_hint'))}</small><span class="bank-strip"><i class="bank-chip halyk"><img src="./halyk-icon.svg" alt="" aria-hidden="true">Halyk</i><i class="bank-chip">Forte</i><i class="bank-chip">Freedom</i><i class="bank-chip">Bereke</i><i class="bank-chip">Alatau</i></span></span>
+     <span class="payment-method-arrow">⌗</span>
+    </button>
    </div>
    <div id="paymentMethodError" class="notice error" style="display:none;margin:12px 0 0"></div>
   </div>
   ${footBlock()}
  `;
  el.querySelector('[data-method="KASPI"]').addEventListener('click',()=>showScreen('kaspiPhone'));
+ el.querySelector('[data-method="KASPI_LINK"]').addEventListener('click',async()=>{
+  const buttons=[...el.querySelectorAll('[data-method]')],error=el.querySelector('#paymentMethodError');
+  const paymentTab=window.open('about:blank','_blank');
+  buttons.forEach(button=>button.disabled=true);error.style.display='none';
+  try{
+   const res=await api('/payment-method',{method:'KASPI_LINK'});selectedMethod=res.method;paymentPendingSince=null;
+   await refreshContext();showScreen('checking');
+   const url=res.paymentUrl||ctx.paymentUrl;
+   if(!url)throw new Error('PAYMENT_LINK_NOT_READY');
+   if(paymentTab)paymentTab.location.replace(url);else window.location.assign(url);
+  }catch(e){
+   if(paymentTab)paymentTab.close();
+   if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refreshContext().catch(()=>{});render();return;}
+   error.textContent=t('reconnecting');error.style.display='block';buttons.forEach(button=>button.disabled=false);
+  }
+ });
  el.querySelector('[data-method="HALYK"]').addEventListener('click',async()=>{
   const buttons=[...el.querySelectorAll('[data-method]')],error=el.querySelector('#paymentMethodError');
   buttons.forEach(button=>button.disabled=true);error.style.display='none';
@@ -977,39 +1010,18 @@ function renderReceipt(el){
 
 function renderKaspiPhone(el){
  setBack(true,()=>showScreen('receipt'));
-  el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
+ el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
   ${kaspiHeader(t('no_fee'))}
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
+  <p class="desc" style="margin-bottom:16px">${esc(t('kaspi_phone_hint'))}</p>
   <div class="kaspi-phone-panel">
-   <p class="kaspi-phone-panel-title">${esc(t('kaspi_or_phone'))}</p>
+   <p class="kaspi-phone-panel-title">${esc(t('kaspi_phone'))}</p>
    <div class="phoneinput"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="___ ___-__-__" aria-label="${esc(t('kaspi_phone'))}"></div>
    <div id="paymentError" class="notice error" style="display:none;margin:12px 0 0"></div>
    <button class="btn btn-kaspi kaspi-phone-submit" id="checkKaspiBtn">${esc(t('check_number'))}</button>
   </div>
-  <div class="payment-choice-divider"><span>${esc(t('kaspi_or'))}</span></div>
-  <button class="kaspi-direct-choice" id="payKaspiLinkBtn">
-   <span class="kaspi-direct-icon">${kaspiIcon()}</span>
-   <span class="kaspi-direct-copy"><strong>${esc(t('kaspi_direct'))}</strong><small>${esc(t('kaspi_direct_hint'))}</small></span>
-   <span class="kaspi-direct-arrow">›</span>
-  </button>
  </div>${footBlock()}`;
  const input=el.querySelector('#kaspiPhone');bindPhoneMask(input);
- el.querySelector('#payKaspiLinkBtn').addEventListener('click',async()=>{
-  const btn=el.querySelector('#payKaspiLinkBtn'),phoneBtn=el.querySelector('#checkKaspiBtn'),error=el.querySelector('#paymentError');
-  const paymentTab=window.open('about:blank','_blank');
-  btn.disabled=true;phoneBtn.disabled=true;input.disabled=true;error.style.display='none';
-  try{
-   const res=await api('/payment-method',{method:'KASPI_LINK'});selectedMethod=res.method;paymentPendingSince=null;
-   await refreshContext();showScreen('checking');
-   const url=res.paymentUrl||ctx.paymentUrl;
-   if(!url)throw new Error('PAYMENT_LINK_NOT_READY');
-   if(paymentTab)paymentTab.location.replace(url);else window.location.assign(url);
-  }catch(e){
-   if(paymentTab)paymentTab.close();
-   if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refreshContext().catch(()=>{});render();return;}
-   error.textContent=t('reconnecting');error.style.display='block';btn.disabled=false;phoneBtn.disabled=false;input.disabled=false;
-  }
- });
  el.querySelector('#checkKaspiBtn').addEventListener('click',async()=>{
   const btn=el.querySelector('#checkKaspiBtn'),error=el.querySelector('#paymentError'),digits=normalizePhoneDigits(input.value);
   error.style.display='none';input.style.borderColor='';
