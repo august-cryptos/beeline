@@ -259,6 +259,8 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .qr-frame img{display:block;width:100%;height:auto;border-radius:10px;image-rendering:crisp-edges}
 .qr-actions{display:flex;justify-content:center;margin-top:16px}
 .qr-actions .btn{width:min(100%,340px);padding-left:18px;padding-right:18px}
+.payment-choice-divider{display:flex;align-items:center;gap:12px;margin:19px 0;color:#96938b;font:700 11px/1.3 var(--body);text-align:center}
+.payment-choice-divider:before,.payment-choice-divider:after{content:"";height:1px;flex:1;background:var(--line)}
 .checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 2px;padding:0 3px}
 .checkout-step{position:relative;height:auto;min-width:0;padding-top:26px;background:none!important;overflow:visible;text-align:center;font:700 9px/1.2 var(--body);color:#99968e;font-style:normal}
 .checkout-step:before{content:attr(data-step);position:absolute;z-index:2;left:50%;top:0;width:20px;height:20px;display:grid;place-items:center;transform:translateX(-50%);border:2px solid #ddd9cf;border-radius:50%;background:#f7f5f0;color:#8d8a82;font:800 9px var(--body)}
@@ -361,7 +363,8 @@ const STR = {
   whatnext:'Что дальше?', step1:'Введите ваш номер Beeline', step2:'Нажмите «Продолжить»', step3:'Выберите способ оплаты', step4:'Тариф будет подключён после подтверждения',
   receipt_title:'Проверьте заказ', pkg:'Выбранный пакет', to_pay:'К оплате', method:'Способ оплаты', kaspi:'Выставить счёт в Kaspi', halyk:'Оплатить через Halyk QR', no_fee:'Без комиссии',
   kaspi_phone:'Номер, привязанный к Kaspi', kaspi_phone_hint:'Счёт появится в приложении Kaspi. Номер может отличаться от номера Beeline.', kaspi_not_found:'Этот номер не найден в Kaspi. Проверьте номер и попробуйте снова.',
-  kaspi_phone_title:'Введите номер Kaspi', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
+  kaspi_phone_title:'Выберите способ оплаты в Kaspi', kaspi_direct:'Оплатить напрямую в Kaspi', kaspi_direct_hint:'Без ввода номера — откроем Kaspi для оплаты.', kaspi_or_phone:'или отправьте счёт по номеру', check_number:'Проверить номер', recipient_title:'Проверьте получателя счёта', recipient_name:'Владелец Kaspi', recipient_phone:'Номер Kaspi', send_invoice:'Отправить счёт', change_kaspi_phone:'Изменить номер',
+  kaspi_link_title:'Оплата в Kaspi', kaspi_link_desc:'Завершите оплату в приложении Kaspi. Если оно не открылось, нажмите кнопку ниже.', kaspi_link_time_left:'Ссылка действует около 5 минут. Осталось:', open_kaspi:'Открыть Kaspi',
   payment_cancelled_title:'Вы отменили покупку', payment_cancelled_desc:'Счёт в Kaspi был отменён.', payment_expired_title:'Вы не оплатили', payment_expired_desc:'Срок действия счёта истёк.', cancel_purchase:'Отменить покупку', cancel_purchase_confirm:'Отменить выставленный счёт в Kaspi?', cancelling_purchase:'Отменяем счёт…', cancel_purchase_failed:'Не удалось отменить счёт. Проверьте Kaspi или попробуйте ещё раз.',
   checking_title:'Счёт отправлен в Kaspi', checking_desc:'Откройте приложение Kaspi и оплатите выставленный счёт. После оплаты начисление запустится автоматически.', invoice_time_left:'Счёт действует 30 минут. Осталось:', number:'Номер Beeline', paid:'Оплачено',
   halyk_qr_title:'Оплата через Halyk QR', halyk_qr_desc:'Откройте Halyk, выберите сканер QR и отсканируйте этот код.', halyk_qr_time_left:'QR действует около 5 минут. Осталось:', share_qr:'Поделиться QR', share_qr_text:'QR для оплаты интернет-пакета', qr_share_unavailable:'Этот браузер не поддерживает отправку QR. Откройте страницу в основном браузере телефона.',
@@ -392,7 +395,8 @@ const STR = {
   whatnext:'Әрі қарай не істеу керек?', step1:'Beeline нөміріңізді енгізіңіз', step2:'«Жалғастыру» түймесін басыңыз', step3:'Төлем тәсілін таңдаңыз', step4:'Растаудан кейін тариф қосылады',
   receipt_title:'Тапсырысты тексеріңіз', pkg:'Таңдалған пакет', to_pay:'Төлеуге', method:'Төлем тәсілі', kaspi:'Kaspi-де шот жіберу', halyk:'Halyk QR арқылы төлеу', no_fee:'Комиссиясыз',
   kaspi_phone:'Kaspi-ге тіркелген нөмір', kaspi_phone_hint:'Шот Kaspi қолданбасында пайда болады. Бұл нөмір Beeline нөмірінен өзгеше болуы мүмкін.', kaspi_not_found:'Бұл нөмір Kaspi-де табылмады. Нөмірді тексеріп, қайталап көріңіз.',
-  kaspi_phone_title:'Kaspi нөмірін енгізіңіз', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
+  kaspi_phone_title:'Kaspi арқылы төлеу тәсілін таңдаңыз', kaspi_direct:'Kaspi-де тікелей төлеу', kaspi_direct_hint:'Нөмір енгізудің қажеті жоқ — төлем үшін Kaspi ашылады.', kaspi_or_phone:'немесе нөмірге шот жіберіңіз', check_number:'Нөмірді тексеру', recipient_title:'Шот алушысын тексеріңіз', recipient_name:'Kaspi иесі', recipient_phone:'Kaspi нөмірі', send_invoice:'Шотты жіберу', change_kaspi_phone:'Нөмірді өзгерту',
+  kaspi_link_title:'Kaspi-де төлеу', kaspi_link_desc:'Төлемді Kaspi қолданбасында аяқтаңыз. Қолданба ашылмаса, төмендегі түймені басыңыз.', kaspi_link_time_left:'Сілтеме шамамен 5 минут жарамды. Қалған уақыт:', open_kaspi:'Kaspi-ді ашу',
   payment_cancelled_title:'Сіз сатып алудан бас тарттыңыз', payment_cancelled_desc:'Kaspi-дегі шот жойылды.', payment_expired_title:'Сіз төлемедіңіз', payment_expired_desc:'Шоттың жарамдылық мерзімі аяқталды.', cancel_purchase:'Сатып алудан бас тарту', cancel_purchase_confirm:'Kaspi-дегі жіберілген шотты жою керек пе?', cancelling_purchase:'Шот жойылуда…', cancel_purchase_failed:'Шотты жою мүмкін болмады. Kaspi-ді тексеріп, қайталап көріңіз.',
   checking_title:'Шот Kaspi-ге жіберілді', checking_desc:'Kaspi қолданбасын ашып, жіберілген шотты төлеңіз. Төлемнен кейін қосу автоматты түрде басталады.', invoice_time_left:'Шот 30 минут жарамды. Қалған уақыт:', number:'Beeline нөмірі', paid:'Төленді',
   halyk_qr_title:'Halyk QR арқылы төлеу', halyk_qr_desc:'Halyk қолданбасын ашып, QR сканерін таңдаңыз да, осы кодты сканерлеңіз.', halyk_qr_time_left:'QR шамамен 5 минут жарамды. Қалған уақыт:', share_qr:'QR бөлісу', share_qr_text:'Интернет-пакетті төлеуге арналған QR', qr_share_unavailable:'Бұл браузер QR жіберуді қолдамайды. Бетті телефонның негізгі браузерінде ашыңыз.',
@@ -961,13 +965,32 @@ function renderKaspiPhone(el){
  el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
   ${kaspiHeader(t('kaspi_phone_title'))}
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
-  <p class="desc">${esc(t('kaspi_phone_hint'))}</p>
+  <button class="btn btn-kaspi" id="payKaspiLinkBtn" style="margin-top:18px">${esc(t('kaspi_direct'))}</button>
+  <p class="hint" style="text-align:center;margin-top:9px">${esc(t('kaspi_direct_hint'))}</p>
+  <div class="payment-choice-divider"><span>${esc(t('kaspi_or_phone'))}</span></div>
   <label>${esc(t('kaspi_phone'))}</label>
   <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13"></div>
+  <p class="hint">${esc(t('kaspi_phone_hint'))}</p>
   <div id="paymentError" class="notice error" style="display:none;margin:12px 0"></div>
   <button class="btn btn-kaspi" id="checkKaspiBtn" style="margin-top:16px">${esc(t('check_number'))}</button>
  </div>${footBlock()}`;
  const input=el.querySelector('#kaspiPhone');bindPhoneMask(input);
+ el.querySelector('#payKaspiLinkBtn').addEventListener('click',async()=>{
+  const btn=el.querySelector('#payKaspiLinkBtn'),phoneBtn=el.querySelector('#checkKaspiBtn'),error=el.querySelector('#paymentError');
+  const paymentTab=window.open('about:blank','_blank');
+  btn.disabled=true;phoneBtn.disabled=true;input.disabled=true;error.style.display='none';
+  try{
+   const res=await api('/payment-method',{method:'KASPI_LINK'});selectedMethod=res.method;paymentPendingSince=null;
+   await refreshContext();showScreen('checking');
+   const url=res.paymentUrl||ctx.paymentUrl;
+   if(!url)throw new Error('PAYMENT_LINK_NOT_READY');
+   if(paymentTab)paymentTab.location.replace(url);else window.location.assign(url);
+  }catch(e){
+   if(paymentTab)paymentTab.close();
+   if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refreshContext().catch(()=>{});render();return;}
+   error.textContent=t('reconnecting');error.style.display='block';btn.disabled=false;phoneBtn.disabled=false;input.disabled=false;
+  }
+ });
  el.querySelector('#checkKaspiBtn').addEventListener('click',async()=>{
   const btn=el.querySelector('#checkKaspiBtn'),error=el.querySelector('#paymentError'),digits=normalizePhoneDigits(input.value);
   error.style.display='none';input.style.borderColor='';
@@ -1045,6 +1068,7 @@ function renderPaymentEnded(el){
 function renderChecking(el){
  const pkg = ctx.selectedPackage;
  const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
+ const kaspiLink = stillPending&&ctx.paymentMethod==='KASPI_LINK'&&ctx.paymentUrl;
  setBack(false);
  if(stillPending&&ctx.paymentMethod==='HALYK'&&ctx.paymentQrImage){
   el.innerHTML=`${checkoutSteps(4)}<div class="card center">
@@ -1077,11 +1101,12 @@ function renderChecking(el){
  // irrelevant once payment is already done.
  el.innerHTML = stillPending ? `${checkoutSteps(4)}
   <div class="card center kaspi-card">
-   ${kaspiHeader(t('checking_title'))}
+   ${kaspiHeader(t(kaspiLink?'kaspi_link_title':'checking_title'))}
    <div class="spinner"></div>
-   <h2 class="title">${esc(t('checking_title'))}</h2>
-   <p class="desc" style="margin-bottom:18px">${esc(t('checking_desc'))}</p>
-   ${ctx.paymentExpiresAt?`<div class="hint" style="margin-bottom:16px">${esc(t('invoice_time_left'))} <strong>${paymentTimeLeft()}</strong></div>`:''}
+   <h2 class="title">${esc(t(kaspiLink?'kaspi_link_title':'checking_title'))}</h2>
+   <p class="desc" style="margin-bottom:18px">${esc(t(kaspiLink?'kaspi_link_desc':'checking_desc'))}</p>
+   ${kaspiLink?`<a class="btn btn-kaspi" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener" style="margin-bottom:16px">${esc(t('open_kaspi'))}</a>`:''}
+   ${ctx.paymentExpiresAt?`<div class="hint" style="margin-bottom:16px">${esc(t(kaspiLink?'kaspi_link_time_left':'invoice_time_left'))} <strong>${paymentTimeLeft()}</strong></div>`:''}
    <div class="receipt">
     <div class="receipt-row"><span class="k">${esc(t('pkg'))}</span><span class="v">${pkg?pkg.trafficGb:''} ГБ</span></div>
     <div class="receipt-row"><span class="k">${esc(t('to_pay'))}</span><span class="v">${pkg?money(pkg.price):''} ₸</span></div>
@@ -1091,7 +1116,7 @@ function renderChecking(el){
     <div class="payment-progress-row active"><span class="payment-progress-dot">1</span><span>${esc(t('checking_title'))}</span></div>
     <div class="payment-progress-row"><span class="payment-progress-dot">2</span><span>${esc(t('preparing_otp_title'))}</span></div>
    </div>
-   <button class="btn btn-cancel" id="cancelPaymentBtn">${esc(t('cancel_purchase'))}</button>
+   ${ctx.paymentMethod==='KASPI'?`<button class="btn btn-cancel" id="cancelPaymentBtn">${esc(t('cancel_purchase'))}</button>`:''}
    <div class="error" id="cancelPaymentError" hidden></div>
   </div>
   ${supportBlock()}
