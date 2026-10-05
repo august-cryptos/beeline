@@ -265,13 +265,13 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .payment-method-card:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 12px 25px rgba(23,23,20,.09)}
 .payment-method-card:active:not(:disabled){transform:scale(.987)}
 .payment-method-card:disabled{opacity:.52;box-shadow:none;cursor:default}
-.payment-method-card.invoice{border-color:rgba(226,59,32,.24);background:linear-gradient(135deg,#fff 0%,#fff8f6 100%)}
+.payment-method-card.direct{border-color:rgba(226,59,32,.24);background:linear-gradient(135deg,#fff 0%,#fff8f6 100%)}
 .payment-method-card.unified{border-color:rgba(9,137,107,.22);background:linear-gradient(135deg,#fff 0%,#f5fbf8 100%)}
 .payment-method-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#fff;overflow:hidden;box-shadow:0 5px 14px rgba(23,23,20,.10)}
 .payment-method-icon img{display:block;width:100%;height:100%}
 .payment-method-copy{min-width:0}.payment-method-copy strong{display:block;font:800 14px/1.3 var(--display)}.payment-method-copy small{display:block;margin-top:3px;color:var(--ink-dim);font:600 11.5px/1.35 var(--body)}
 .payment-method-arrow{color:#9b978e;font:700 23px/1 var(--body);text-align:right}
-.payment-method-card.invoice .payment-method-arrow{color:#df462d}.payment-method-card.unified .payment-method-arrow{color:#08795d}
+.payment-method-card.direct .payment-method-arrow{color:#df462d}.payment-method-card.unified .payment-method-arrow{color:#08795d}
 .bank-strip{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:7px}
 .bank-chip{padding:3px 6px;border-radius:6px;background:#f0eee8;color:#6f6c64;font:750 9px/1.2 var(--body)}
 .bank-chip.halyk{display:inline-flex;align-items:center;gap:4px;background:#eaf7f2;color:#08795d}.bank-chip.halyk img{width:12px;height:12px}
@@ -963,15 +963,15 @@ function renderReceipt(el){
    </div>
    <label style="margin-top:4px">${esc(t('method'))}</label>
    <div class="payment-methods">
-    <button class="payment-method-card invoice" data-method="KASPI">
-     <span class="payment-method-icon">${kaspiIcon()}</span>
-     <span class="payment-method-copy"><strong>${esc(t('kaspi'))}</strong><small>${esc(t('kaspi_invoice_hint'))}</small></span>
-     <span class="payment-method-arrow">›</span>
-    </button>
-    <button class="payment-method-card" data-method="KASPI_LINK">
+    <button class="payment-method-card direct" data-method="KASPI_LINK">
      <span class="payment-method-icon">${kaspiIcon()}</span>
      <span class="payment-method-copy"><strong>${esc(t('kaspi_direct'))}</strong><small>${esc(t('kaspi_direct_hint'))}</small></span>
      <span class="payment-method-arrow">↗</span>
+    </button>
+    <button class="payment-method-card" data-method="KASPI">
+     <span class="payment-method-icon">${kaspiIcon()}</span>
+     <span class="payment-method-copy"><strong>${esc(t('kaspi'))}</strong><small>${esc(t('kaspi_invoice_hint'))}</small></span>
+     <span class="payment-method-arrow">›</span>
     </button>
     <button class="payment-method-card unified" data-method="HALYK">
      <span class="payment-method-icon"><img src="./halyk-icon.svg" alt="" aria-hidden="true"></span>
