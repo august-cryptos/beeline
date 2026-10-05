@@ -268,12 +268,11 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .kaspi-direct-icon img{display:block;width:100%;height:100%}
 .kaspi-direct-copy{min-width:0}.kaspi-direct-copy strong{display:block;font:800 14.5px/1.3 var(--display)}.kaspi-direct-copy small{display:block;margin-top:3px;color:var(--ink-dim);font:600 11.5px/1.4 var(--body)}
 .kaspi-direct-arrow{font:500 27px/1 var(--body);color:#e0442b;text-align:right}
-.kaspi-phone-panel{margin-top:14px;padding:13px;border:1px solid rgba(240,70,43,.14);border-radius:17px;background:rgba(255,248,246,.72)}
-.kaspi-phone-panel-title{margin:0 0 5px;font:800 13px/1.35 var(--display);color:var(--ink)}
-.kaspi-phone-panel .hint{margin:0 0 9px;font:550 11px/1.35 var(--body)}
-.kaspi-phone-panel .phoneinput{min-height:50px;padding:10px 13px;background:#fff}
-.kaspi-phone-panel .phoneinput input{font-size:16px}
-.kaspi-phone-submit{min-height:48px;margin-top:9px;padding:12px 16px}
+.kaspi-phone-panel{margin-top:14px;padding:14px;border:1px solid rgba(240,70,43,.14);border-radius:17px;background:rgba(255,248,246,.72)}
+.kaspi-phone-panel-title{margin:0 0 10px;font:800 14.5px/1.35 var(--display);color:var(--ink)}
+.kaspi-phone-panel .phoneinput{min-height:56px;padding:13px 15px;background:#fff}
+.kaspi-phone-panel .phoneinput input{font-size:17px}
+.kaspi-phone-submit{min-height:54px;margin-top:9px;padding:15px 18px}
 .payment-choice-divider{display:flex;align-items:center;gap:12px;margin:11px 2px;color:#99958d;font:700 11px/1 var(--body);text-align:center}
 .payment-choice-divider:before,.payment-choice-divider:after{content:"";height:1px;flex:1;background:rgba(23,23,20,.10)}
 .checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 2px;padding:0 3px}
@@ -983,9 +982,7 @@ function renderKaspiPhone(el){
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
   <div class="kaspi-phone-panel">
    <p class="kaspi-phone-panel-title">${esc(t('kaspi_or_phone'))}</p>
-   <p class="hint">${esc(t('kaspi_phone_hint'))}</p>
-   <label>${esc(t('kaspi_phone'))}</label>
-   <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13"></div>
+   <div class="phoneinput"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="___ ___-__-__" aria-label="${esc(t('kaspi_phone'))}"></div>
    <div id="paymentError" class="notice error" style="display:none;margin:12px 0 0"></div>
    <button class="btn btn-kaspi kaspi-phone-submit" id="checkKaspiBtn">${esc(t('check_number'))}</button>
   </div>
