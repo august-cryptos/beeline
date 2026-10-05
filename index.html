@@ -259,8 +259,19 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .qr-frame img{display:block;width:100%;height:auto;border-radius:10px;image-rendering:crisp-edges}
 .qr-actions{display:flex;justify-content:center;margin-top:16px}
 .qr-actions .btn{width:min(100%,340px);padding-left:18px;padding-right:18px}
-.payment-choice-divider{display:flex;align-items:center;gap:12px;margin:19px 0;color:#96938b;font:700 11px/1.3 var(--body);text-align:center}
-.payment-choice-divider:before,.payment-choice-divider:after{content:"";height:1px;flex:1;background:var(--line)}
+.kaspi-direct-choice{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) 22px;align-items:center;gap:13px;width:100%;margin-top:18px;padding:15px 16px;border:0;border-radius:18px;background:linear-gradient(135deg,#f45b3e 0%,#df3822 100%);color:#fff;text-align:left;box-shadow:0 14px 28px rgba(221,53,31,.22);cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+.kaspi-direct-choice:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 17px 32px rgba(221,53,31,.27);filter:saturate(1.04)}
+.kaspi-direct-choice:active:not(:disabled){transform:scale(.985)}
+.kaspi-direct-choice:disabled{opacity:.55;box-shadow:none;cursor:default}
+.kaspi-direct-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.17);font:900 20px var(--display)}
+.kaspi-direct-copy{min-width:0}.kaspi-direct-copy strong{display:block;font:800 14.5px/1.3 var(--display)}.kaspi-direct-copy small{display:block;margin-top:3px;color:rgba(255,255,255,.82);font:600 11.5px/1.4 var(--body)}
+.kaspi-direct-arrow{font:500 27px/1 var(--body);opacity:.86;text-align:right}
+.kaspi-phone-panel{margin-top:18px;padding:17px;border:1px solid rgba(23,23,20,.08);border-radius:18px;background:rgba(247,245,240,.72)}
+.kaspi-phone-panel-title{margin:0 0 5px;font:800 13px/1.35 var(--display);color:var(--ink)}
+.kaspi-phone-panel .hint{margin:0 0 14px;font-weight:550}
+.kaspi-phone-panel .phoneinput{background:#fff}
+.kaspi-phone-submit{margin-top:12px;border:1.5px solid rgba(226,59,32,.28);background:#fff;color:#d94329;box-shadow:none}
+.kaspi-phone-submit:hover:not(:disabled){box-shadow:0 9px 20px rgba(221,53,31,.10);background:#fffaf8}
 .checkout-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 2px;padding:0 3px}
 .checkout-step{position:relative;height:auto;min-width:0;padding-top:26px;background:none!important;overflow:visible;text-align:center;font:700 9px/1.2 var(--body);color:#99968e;font-style:normal}
 .checkout-step:before{content:attr(data-step);position:absolute;z-index:2;left:50%;top:0;width:20px;height:20px;display:grid;place-items:center;transform:translateX(-50%);border:2px solid #ddd9cf;border-radius:50%;background:#f7f5f0;color:#8d8a82;font:800 9px var(--body)}
@@ -963,16 +974,21 @@ function renderReceipt(el){
 function renderKaspiPhone(el){
  setBack(true,()=>showScreen('receipt'));
  el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
-  ${kaspiHeader(t('kaspi_phone_title'))}
+  ${kaspiHeader(t('no_fee'))}
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
-  <button class="btn btn-kaspi" id="payKaspiLinkBtn" style="margin-top:18px">${esc(t('kaspi_direct'))}</button>
-  <p class="hint" style="text-align:center;margin-top:9px">${esc(t('kaspi_direct_hint'))}</p>
-  <div class="payment-choice-divider"><span>${esc(t('kaspi_or_phone'))}</span></div>
-  <label>${esc(t('kaspi_phone'))}</label>
-  <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13"></div>
-  <p class="hint">${esc(t('kaspi_phone_hint'))}</p>
-  <div id="paymentError" class="notice error" style="display:none;margin:12px 0"></div>
-  <button class="btn btn-kaspi" id="checkKaspiBtn" style="margin-top:16px">${esc(t('check_number'))}</button>
+  <button class="kaspi-direct-choice" id="payKaspiLinkBtn">
+   <span class="kaspi-direct-icon">K</span>
+   <span class="kaspi-direct-copy"><strong>${esc(t('kaspi_direct'))}</strong><small>${esc(t('kaspi_direct_hint'))}</small></span>
+   <span class="kaspi-direct-arrow">›</span>
+  </button>
+  <div class="kaspi-phone-panel">
+   <p class="kaspi-phone-panel-title">${esc(t('kaspi_or_phone'))}</p>
+   <p class="hint">${esc(t('kaspi_phone_hint'))}</p>
+   <label>${esc(t('kaspi_phone'))}</label>
+   <div class="phoneinput" style="margin-top:8px"><span>+7</span><input id="kaspiPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="13"></div>
+   <div id="paymentError" class="notice error" style="display:none;margin:12px 0 0"></div>
+   <button class="btn kaspi-phone-submit" id="checkKaspiBtn">${esc(t('check_number'))}</button>
+  </div>
  </div>${footBlock()}`;
  const input=el.querySelector('#kaspiPhone');bindPhoneMask(input);
  el.querySelector('#payKaspiLinkBtn').addEventListener('click',async()=>{
