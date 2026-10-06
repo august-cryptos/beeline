@@ -652,7 +652,7 @@ function render(){
  // in flight (show 'checking', same as the payment-method button already forces on the very first click -
  // now the poll agrees with it instead of overriding it). Survives a page reload, unlike a client-side-only
  // flag, since it's read straight off the order row.
- if(state==='WAITING_PAYMENT'){ engagedThisSession=true;if(ctx.paymentStatus==='CANCELLED'||ctx.paymentStatus==='PAYMENT_FAILED')return showScreen('paymentEnded');const choosingAgain=sessionStorage.getItem(PAYMENT_CHOICE_OVERRIDE_KEY)==='1'&&ctx.paymentMethod==='KASPI_LINK';return showScreen(choosingAgain||!ctx.paymentMethod?'receipt':'checking'); }
+ if(state==='WAITING_PAYMENT'){engagedThisSession=true;if(ctx.paymentStatus==='CANCELLED'||ctx.paymentStatus==='PAYMENT_FAILED')return showScreen('paymentEnded');const paymentOverride=ctx.paymentMethod==='KASPI_LINK'?sessionStorage.getItem(PAYMENT_CHOICE_OVERRIDE_KEY):null;if(paymentOverride==='invoice')return showScreen('kaspiPhone');if(paymentOverride==='choices'||paymentOverride==='1'||!ctx.paymentMethod)return showScreen('receipt');return showScreen('checking');}
  if(state==='PAYMENT_CONFIRMED'){ engagedThisSession=true; return showScreen('checking'); }
  if(state==='WAITING_OTP'){ engagedThisSession=true; return showScreen('otp'); }
  if(['TRAINING','PROVISIONING'].includes(state)){ engagedThisSession=true; return showScreen('connected'); }
@@ -1007,7 +1007,7 @@ function renderReceipt(el){
   </div>
   ${footBlock()}
  `;
- el.querySelector('[data-method="KASPI"]').addEventListener('click',()=>{if(reusingLink)sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('kaspiPhone');});
+ el.querySelector('[data-method="KASPI"]').addEventListener('click',()=>{if(reusingLink)sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'invoice');showScreen('kaspiPhone');});
  el.querySelector('[data-method="KASPI_LINK"]').addEventListener('click',async()=>{
   if(reusingLink){sessionStorage.removeItem(PAYMENT_CHOICE_OVERRIDE_KEY);rememberKaspiLinkOpen(ctx.paymentUrl);showScreen('checking');window.open(ctx.paymentUrl,'_blank','noopener');return;}
   const buttons=[...el.querySelectorAll('[data-method]')],error=el.querySelector('#paymentMethodError');
@@ -1036,7 +1036,7 @@ function renderReceipt(el){
 }
 
 function renderKaspiPhone(el){
- setBack(true,()=>showScreen('receipt'));
+ setBack(true,()=>{if(ctx.paymentMethod==='KASPI_LINK')sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'choices');showScreen('receipt');});
  el.innerHTML=`${checkoutSteps(3)}<div class="card kaspi-card">
   ${kaspiHeader(t('no_fee'))}
   <h2 class="title">${esc(t('kaspi_phone_title'))}</h2>
@@ -1188,9 +1188,9 @@ function renderChecking(el){
    <button class="btn" id="cancelDirectBtn" style="margin-top:10px;background:transparent;color:var(--ink-dim);box-shadow:none;border:1px solid var(--line)">${esc(t('cancel_direct_method'))}</button>
   </div>${supportBlock()}${footBlock()}`;
   bindSupport();
-  el.querySelector('#switchInvoiceBtn').addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('kaspiPhone');});
+  el.querySelector('#switchInvoiceBtn').addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'invoice');showScreen('kaspiPhone');});
   el.querySelector('#showFallbackQrBtn').addEventListener('click',()=>{if(kaspiFallbackQr())render();});
-  el.querySelector('#cancelDirectBtn').addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('receipt');});
+  el.querySelector('#cancelDirectBtn').addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'choices');showScreen('receipt');});
   return;
  }
  // Owner report (2026-09-09, round 14): confirmed live - correcting the phone number on the OTP screen
@@ -1237,9 +1237,9 @@ function renderChecking(el){
  const fallbackQrBtn=el.querySelector('#showFallbackQrBtn');
  if(fallbackQrBtn)fallbackQrBtn.addEventListener('click',()=>{if(kaspiFallbackQr())render();});
  const switchInvoiceBtn=el.querySelector('#switchInvoiceBtn');
- if(switchInvoiceBtn)switchInvoiceBtn.addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('kaspiPhone');});
+ if(switchInvoiceBtn)switchInvoiceBtn.addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'invoice');showScreen('kaspiPhone');});
  const cancelDirectBtn=el.querySelector('#cancelDirectBtn');
- if(cancelDirectBtn)cancelDirectBtn.addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('receipt');});
+ if(cancelDirectBtn)cancelDirectBtn.addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'choices');showScreen('receipt');});
  const cancelBtn=el.querySelector('#cancelPaymentBtn');
  if(cancelBtn)cancelBtn.addEventListener('click',async()=>{
   if(!window.confirm(t('cancel_purchase_confirm')))return;
