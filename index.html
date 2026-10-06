@@ -479,7 +479,7 @@ function paymentTimeLeft(){
 }const KASPI_LINK_URL_KEY='gm_kaspi_link_url',KASPI_LINK_OPENED_KEY='gm_kaspi_link_opened',KASPI_LINK_QR_KEY='gm_kaspi_link_qr',PAYMENT_CHOICE_OVERRIDE_KEY='gm_payment_choice_override';
 function rememberKaspiLinkOpen(url){sessionStorage.setItem(KASPI_LINK_URL_KEY,url);sessionStorage.setItem(KASPI_LINK_OPENED_KEY,String(Date.now()));sessionStorage.removeItem(KASPI_LINK_QR_KEY);}
 function clearKaspiLinkOpen(){sessionStorage.removeItem(KASPI_LINK_URL_KEY);sessionStorage.removeItem(KASPI_LINK_OPENED_KEY);sessionStorage.removeItem(KASPI_LINK_QR_KEY);}
-function shouldOfferKaspiFallback(){return Boolean(ctx?.paymentMethod==='KASPI_LINK'&&ctx?.paymentUrl&&sessionStorage.getItem(KASPI_LINK_URL_KEY)===ctx.paymentUrl&&Date.now()-Number(sessionStorage.getItem(KASPI_LINK_OPENED_KEY)||0)>=2000);}
+function shouldOfferKaspiFallback(){return Boolean(ctx?.paymentMethod==='KASPI_LINK'&&ctx?.paymentUrl&&sessionStorage.getItem(KASPI_LINK_URL_KEY)===ctx.paymentUrl&&Number(sessionStorage.getItem(KASPI_LINK_OPENED_KEY)||0)>0);}
 function kaspiFallbackQr(){
  const cached=sessionStorage.getItem(KASPI_LINK_QR_KEY);if(cached)return cached;
  if(typeof QRCode!=='function'||!ctx?.paymentUrl)return null;
