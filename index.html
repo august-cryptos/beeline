@@ -1483,7 +1483,11 @@ function renderOtp(el, wrong, justResent, resendFailed){
   // the button just looked stuck, which is exactly what led to a submit-again-while-waiting duplicate.
   confirmBtn.textContent = t('otp_checking');
   try{
-   ctx = await api('/otp', {code: currentCode()});
+   // Owner request (2026-10-06): confirmed live - when Beeline was slow, api()'s 12s timeout + automatic
+   // retry re-sent the SAME code while the first submission was still being processed; the two broke
+   // each other and failed a paid order (TOKEN_EXCHANGE_FAILED). Checking a code is never retried
+   // automatically and gets a much longer wait; on a real network drop the screen just refreshes.
+   ctx = await apiOnce('/otp', {code: currentCode()}, undefined, 45000);
    clearOtpRateLimit();
    pendingOtpAttempts = 3;
    render();
