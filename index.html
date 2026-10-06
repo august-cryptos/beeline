@@ -282,6 +282,10 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .kaspi-fallback-actions .btn{min-height:48px;padding:12px 15px;font-size:13px}
 .kaspi-fallback-qr{width:min(100%,280px);margin:12px auto 0;padding:12px;border:1px solid var(--line);border-radius:18px;background:#fff}
 .kaspi-fallback-qr img{display:block;width:100%;height:auto}
+.kaspi-fallback-primary{text-align:center}
+.kaspi-fallback-primary .kaspi-fallback-actions{margin-top:16px}
+.kaspi-fallback-status{margin:14px 0 0;padding:10px 12px;border-radius:12px;background:#f4f3ef;color:var(--ink-dim);font:600 11.5px/1.45 var(--body)}
+.kaspi-fallback-status strong{color:var(--ink);white-space:nowrap}
 .kaspi-phone-panel{margin-top:14px;padding:14px;border:1px solid rgba(240,70,43,.14);border-radius:17px;background:rgba(255,248,246,.72)}
 .kaspi-phone-panel-title{margin:0 0 10px;font:800 14.5px/1.35 var(--display);color:var(--ink)}
 .kaspi-phone-panel .phoneinput{min-height:56px;padding:13px 15px;background:#fff}
@@ -1168,6 +1172,25 @@ function renderChecking(el){
    catch(error){if(error?.name==='AbortError')return;n.textContent=t('qr_share_unavailable');n.hidden=false;}
   });
   bindSupport();
+  return;
+ }
+ if(kaspiFallback){
+  el.innerHTML=`${checkoutSteps(4)}<div class="card kaspi-card kaspi-fallback-primary">
+   ${kaspiHeader(t('no_fee'))}
+   <h2 class="title">${esc(t('kaspi_return_title'))}</h2>
+   <p class="desc">${esc(t('kaspi_return_desc'))}</p>
+   <div class="kaspi-fallback-actions">
+    <button class="btn btn-kaspi" id="switchInvoiceBtn">${esc(t('retry_invoice'))}</button>
+    <button class="btn btn-halyk" id="showFallbackQrBtn">${esc(t('show_unified_qr'))}</button>
+   </div>
+   ${fallbackQr?`<div class="kaspi-fallback-qr"><img src="${esc(fallbackQr)}" alt="${esc(t('halyk_qr_title'))}"></div>`:''}
+   <div class="kaspi-fallback-status">${esc(t('link_stays_watched'))}${ctx.paymentExpiresAt?` <strong>${paymentTimeLeft()}</strong>`:''}</div>
+   <button class="btn" id="cancelDirectBtn" style="margin-top:10px;background:transparent;color:var(--ink-dim);box-shadow:none;border:1px solid var(--line)">${esc(t('cancel_direct_method'))}</button>
+  </div>${supportBlock()}${footBlock()}`;
+  bindSupport();
+  el.querySelector('#switchInvoiceBtn').addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('kaspiPhone');});
+  el.querySelector('#showFallbackQrBtn').addEventListener('click',()=>{if(kaspiFallbackQr())render();});
+  el.querySelector('#cancelDirectBtn').addEventListener('click',()=>{sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'1');showScreen('receipt');});
   return;
  }
  // Owner report (2026-09-09, round 14): confirmed live - correcting the phone number on the OTP screen
