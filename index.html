@@ -1150,7 +1150,9 @@ function renderChecking(el){
  const pkg = ctx.selectedPackage;
  const stillPending = ctx.paymentStatus==='PAYMENT_PENDING';
  const kaspiLink = stillPending&&ctx.paymentMethod==='KASPI_LINK'&&ctx.paymentUrl;
- const kaspiFallback = kaspiLink&&shouldOfferKaspiFallback();
+ // KASPI_LINK never uses the generic waiting spinner. A browser may lose the local
+ // "opened" marker on navigation/reload, but the server-side payment method remains authoritative.
+ const kaspiFallback = Boolean(kaspiLink);
  const fallbackQr = kaspiFallback?sessionStorage.getItem(KASPI_LINK_QR_KEY):null;
  setBack(false);
  if(stillPending&&ctx.paymentMethod==='HALYK'&&ctx.paymentQrImage){
