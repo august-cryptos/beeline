@@ -255,6 +255,9 @@ label{font:800 12px var(--body);letter-spacing:.01em}
 .btn-primary{background:linear-gradient(135deg,#ffdd3e,#ffc91e);color:#161610}
 .btn-kaspi{background:linear-gradient(135deg,#f75b3d,#dd351f);box-shadow:0 12px 24px rgba(221,53,31,.20)}
 .btn-halyk{background:linear-gradient(135deg,#159553,#08733c)}
+.btn-wa{background:#25D366;color:#fff}
+.ref-link{margin:14px 0 12px;padding:12px 14px;border-radius:14px;background:#f6f5ef;border:1px dashed #d9d4bd;font:600 13px/1.45 var(--body);color:#26251f;word-break:break-all;text-align:left}
+.ref-actions{display:flex;flex-direction:column;gap:10px}
 .btn-cancel{margin-top:14px;border:1px solid rgba(220,73,55,.25);background:var(--danger-bg);color:var(--danger);box-shadow:none}
 .qr-frame{width:min(100%,280px);margin:18px auto;padding:14px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--shadow-sm)}
 .qr-frame img{display:block;width:100%;height:auto;border-radius:10px;image-rendering:crisp-edges}
@@ -405,6 +408,7 @@ const STR = {
   preparing_otp_title:'Оплата подтверждена', preparing_otp_desc:'Готовим для вас код. Обычно это занимает несколько секунд.',
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', otp_expired:'⌛ Срок действия кода истёк — он действует 10 минут. Запросите новый код кнопкой ниже.', otp_rate_limited:'⚠ Слишком частые запросы кода подтверждения. Подождите 15 минут и запросите новый код — кнопка ниже включится сама.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
+  ref_title:'🎁 Пригласите друга — получите 5 ГБ', ref_desc:'Отправьте другу свою ссылку. Когда он купит пакет и тот подключится, мы сами подключим вам 5 ГБ на ваш номер. 5 ГБ за каждого друга!', ref_copy:'Скопировать ссылку', ref_copied:'Ссылка скопирована ✓', ref_share:'Отправить в WhatsApp', ref_share_text:'Подключаю интернет Beeline через GeoMaster — 10 ГБ за 500 ₸ на 30 дней. Попробуй:',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
@@ -437,6 +441,7 @@ const STR = {
   preparing_otp_title:'Төлем расталды', preparing_otp_desc:'Сіз үшін код дайындалуда. Әдетте бұл бірнеше секунд алады.',
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', otp_expired:'⌛ Кодтың мерзімі өтті — ол 10 минут жарамды. Төмендегі батырма арқылы жаңа код сұраңыз.', otp_rate_limited:'⚠ Растау коды тым жиі сұралды. 15 минут күтіп, жаңа код сұраңыз — төмендегі батырма өзі қосылады.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
+  ref_title:'🎁 Досыңызды шақырыңыз — 5 ГБ алыңыз', ref_desc:'Досыңызға сілтемеңізді жіберіңіз. Ол пакет сатып алып, пакеті қосылғанда, біз сіздің нөміріңізге 5 ГБ өзіміз қосамыз. Әр дос үшін 5 ГБ!', ref_copy:'Сілтемені көшіру', ref_copied:'Сілтеме көшірілді ✓', ref_share:'WhatsApp-қа жіберу', ref_share_text:'Beeline интернетін GeoMaster арқылы қосамын — 10 ГБ 500 ₸, 30 күнге. Байқап көр:',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
@@ -585,6 +590,14 @@ async function initSession(){
  if(isInAppBrowser()) showBrowserEscapeOverlay();
  const tg = window.Telegram && window.Telegram.WebApp;
  let body;
+ // Owner request (2026-10-16): opened through a friend's referral link (?ref=) - kept, so it still
+ // counts if the friend comes back later from the same browser; the server records it only once and
+ // only for a customer without a connected package yet.
+ let ref = null;
+ try{
+  ref = new URLSearchParams(location.search).get('ref');
+  if(ref) localStorage.setItem('gm_ref', ref); else ref = localStorage.getItem('gm_ref');
+ }catch(_){}
  if(tg && tg.initData){
   tg.ready(); tg.expand();
   body = {initData: tg.initData, language: lang};
@@ -601,6 +614,7 @@ async function initSession(){
    body = webId ? {webId, language: lang} : {language: lang};
   }
  }
+ if(ref) body.ref = ref;
  try{
   const res = await api('/session', body);
   if(res.paused){ showScreen(res.paused==='MAINTENANCE'?'maintenance':'paused', {message:res.message}); return; }
@@ -1298,6 +1312,15 @@ function renderConnected(el){
     <div>${gb} ${esc(t('gifting'))}</div>
    </div>
   </div>
+  <div class="card center" id="refCard" style="display:none">
+   <h2 class="title" style="font-size:18px">${esc(t('ref_title'))}</h2>
+   <p class="desc">${esc(t('ref_desc'))}</p>
+   <div class="ref-link" id="refLink"></div>
+   <div class="ref-actions">
+    <button class="btn btn-primary" id="refCopyBtn">${esc(t('ref_copy'))}</button>
+    <a class="btn btn-wa" id="refShareBtn" target="_blank" rel="noopener">${esc(t('ref_share'))}</a>
+   </div>
+  </div>
   <div class="card center">
    <h2 class="title" style="font-size:18px">${esc(t('buy_again_title'))}</h2>
    <p class="desc" style="margin-bottom:16px">${esc(t('buy_again_desc'))}</p>
@@ -1313,6 +1336,27 @@ function renderConnected(el){
  // is still made available from this screen (2026-09-04 request), the friendly explanation lives in
  // renderPackages's own catch handler right next to that call.
  document.getElementById('buyAgainBtn').addEventListener('click', ()=>{ engagedThisSession = false; showScreen('packages'); });
+ showReferralCard();
+}
+// Owner request (2026-10-16): the customer's own referral link - 5 GB for every friend whose package
+// gets connected. Fetched once per page load; the card simply stays hidden if it can't be had.
+let referralLinkCache = null;
+async function showReferralCard(){
+ try{
+  if(!referralLinkCache){ const r = await api('/referral', {}); referralLinkCache = r && r.link; }
+  const card = document.getElementById('refCard');
+  if(!referralLinkCache || !card) return;
+  document.getElementById('refLink').textContent = referralLinkCache;
+  document.getElementById('refShareBtn').href = 'https://wa.me/?text=' + encodeURIComponent(t('ref_share_text') + ' ' + referralLinkCache);
+  const copyBtn = document.getElementById('refCopyBtn');
+  copyBtn.addEventListener('click', async ()=>{
+   try{ await navigator.clipboard.writeText(referralLinkCache); }
+   catch(_){ const ta=document.createElement('textarea'); ta.value=referralLinkCache; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(__){} ta.remove(); }
+   copyBtn.textContent = t('ref_copied');
+   setTimeout(()=>{ copyBtn.textContent = t('ref_copy'); }, 2500);
+  });
+  card.style.display = '';
+ }catch(_){}
 }
 
 let otpBoxes = [];
