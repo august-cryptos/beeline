@@ -474,6 +474,7 @@ let kaspiPaymentDraft = null;
 // to order again) - the backend alone can't tell these apart, clientState is ACTIVE either way.
 let engagedThisSession = false;
 
+const BOT_WHATSAPP = '77775949300';
 function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(n){return new Intl.NumberFormat('ru-RU').format(n);}
@@ -587,16 +588,26 @@ async function initSession(){
  // never even gets that far if the FIRST /session call itself silently stalls there (no packages ever
  // render to click). Warning immediately, before any network call, means the customer sees actionable
  // instructions right away instead of a blank page with nothing to click.
- if(isInAppBrowser()) showBrowserEscapeOverlay();
  const tg = window.Telegram && window.Telegram.WebApp;
+ // referral link -> straight to the bot chat (see below) before the in-app-browser warning
+ try{ const r0 = new URLSearchParams(location.search).get('ref'); if(!(r0 && /^ref_[0-9a-f]{10}$/i.test(r0) && !(tg && tg.initData)) && isInAppBrowser()) showBrowserEscapeOverlay(); }catch(_){ if(isInAppBrowser()) showBrowserEscapeOverlay(); }
  let body;
- // Owner request (2026-10-16): opened through a friend's referral link (?ref=) - kept, so it still
- // counts if the friend comes back later from the same browser; the server records it only once and
- // only for a customer without a connected package yet.
+ // Owner request (2026-10-16): opened through a friend's referral link (?ref=). Outside Telegram the
+ // visitor goes straight on to a WhatsApp chat with the bot, the message with the friend's code already
+ // typed in - only a chat he starts himself lets us message him ("пакет подключён" and the rest). The
+ // code is also kept here: if he comes back to the site from this browser it still counts (the server
+ // records it once, only for a customer without a connected package yet).
  let ref = null;
  try{
-  ref = new URLSearchParams(location.search).get('ref');
-  if(ref) localStorage.setItem('gm_ref', ref); else ref = localStorage.getItem('gm_ref');
+  const linkRef = new URLSearchParams(location.search).get('ref');
+  if(linkRef && /^ref_[0-9a-f]{10}$/i.test(linkRef) && !(tg && tg.initData)){
+   localStorage.setItem('gm_ref', linkRef);
+   const text = (lang==='ru' ? 'Привет! Хочу подключить интернет 🙂 Код друга: ' : 'Сәлем! Интернет қосқым келеді 🙂 Досымның коды: ') + linkRef;
+   location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text));
+   return;
+  }
+  ref = linkRef || localStorage.getItem('gm_ref');
+  if(linkRef) localStorage.setItem('gm_ref', linkRef);
  }catch(_){}
  if(tg && tg.initData){
   tg.ready(); tg.expand();
