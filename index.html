@@ -475,6 +475,8 @@ let kaspiPaymentDraft = null;
 let engagedThisSession = false;
 
 const BOT_WHATSAPP = '77775949300';
+// Owner request (2026-10-17): Telegram is the main chat now - the seller account answers via our bot.
+const TG_SELLER = 'Geomaster_kz', TG_BOT = 'GeoMaster1_bot';
 function t(k){return (STR[lang]&&STR[lang][k]) || STR.ru[k] || k;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(n){return new Intl.NumberFormat('ru-RU').format(n);}
@@ -602,8 +604,8 @@ async function initSession(){
   const linkRef = new URLSearchParams(location.search).get('ref');
   if(linkRef && /^ref_[0-9a-f]{10}$/i.test(linkRef) && !(tg && tg.initData)){
    localStorage.setItem('gm_ref', linkRef);
-   const text = (lang==='ru' ? 'Привет! Хочу подключить интернет 🙂 Код друга: ' : 'Сәлем! Интернет қосқым келеді 🙂 Досымның коды: ') + linkRef;
-   location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text));
+   // the friend goes to our Telegram bot with the code (it records who invited him and hands him to the seller)
+   location.replace('https://t.me/' + TG_BOT + '?start=' + encodeURIComponent(linkRef));
    return;
   }
   ref = linkRef || localStorage.getItem('gm_ref');
@@ -810,6 +812,7 @@ function supportBlock(){
   <div class="wa">🆘</div>
   <div class="txt" style="flex:1"><strong>${esc(t('need_help'))}</strong><span>${esc(t('need_help_desc'))}</span></div>
   <div style="display:flex;gap:8px;flex:none">
+   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center;background:#229ED9;color:#fff;border-color:#229ED9" href="https://t.me/${TG_SELLER}" target="_blank" rel="noopener">Telegram</a>
    <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center" href="https://wa.me/77775949300" target="_blank" rel="noopener">${esc(t('open_wa'))}</a>
   </div>
  </div>`;
