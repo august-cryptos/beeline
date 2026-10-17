@@ -595,11 +595,9 @@ async function initSession(){
  const tg = window.Telegram && window.Telegram.WebApp;
  if(isInAppBrowser()) showBrowserEscapeOverlay();
  let body;
- // Owner request (2026-10-16): opened through a friend's referral link (?ref=). Outside Telegram the
- // visitor goes straight on to a WhatsApp chat with the bot, the message with the friend's code already
- // typed in - only a chat he starts himself lets us message him ("пакет подключён" and the rest). The
- // code is also kept here: if he comes back to the site from this browser it still counts (the server
- // records it once, only for a customer without a connected package yet).
+ // Owner request (2026-10-17): opened through a friend's referral link (?ref=) - the friend stays on the
+ // site and buys here; the code is sent with the session (and kept for later visits from this browser),
+ // the server records it once, only for a customer without a connected package yet.
  let ref = null;
  try{
   const linkRef = new URLSearchParams(location.search).get('ref');
