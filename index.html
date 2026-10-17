@@ -416,6 +416,7 @@ const STR = {
   phone_in_progress_title:'На этот номер уже идёт подключение', phone_in_progress_desc:'Дождитесь завершения текущего подключения на этом номере — или укажите другой номер, если хотите оформить ещё один пакет параллельно.', phone_not_allowed_title:'Это номер нашего магазина', phone_not_allowed_desc:'На него нельзя подключить пакет. Укажите свой номер Beeline — тот, на который нужен интернет.',
   change_number_link:'Изменить', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
   fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
+  open_tg:'Написать в Telegram',
   need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
   invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
@@ -449,6 +450,7 @@ const STR = {
   phone_in_progress_title:'Бұл нөмірге қазір қосылу жүріп жатыр', phone_in_progress_desc:'Осы нөмірдегі ағымдағы қосылу аяқталғанша күтіңіз — немесе тағы бір пакетті параллель ресімдегіңіз келсе, басқа нөмір көрсетіңіз.', phone_not_allowed_title:'Бұл біздің дүкеннің нөмірі', phone_not_allowed_desc:'Бұл нөмірге пакет қосылмайды. Интернет керек өз Beeline нөміріңізді енгізіңіз.',
   change_number_link:'Өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
   fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
+  open_tg:'Telegram-ға жазу',
   need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
   invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
@@ -591,8 +593,7 @@ async function initSession(){
  // render to click). Warning immediately, before any network call, means the customer sees actionable
  // instructions right away instead of a blank page with nothing to click.
  const tg = window.Telegram && window.Telegram.WebApp;
- // referral link -> straight to the bot chat (see below) before the in-app-browser warning
- try{ const r0 = new URLSearchParams(location.search).get('ref'); if(!(r0 && /^ref_[0-9a-f]{10}$/i.test(r0) && !(tg && tg.initData)) && isInAppBrowser()) showBrowserEscapeOverlay(); }catch(_){ if(isInAppBrowser()) showBrowserEscapeOverlay(); }
+ if(isInAppBrowser()) showBrowserEscapeOverlay();
  let body;
  // Owner request (2026-10-16): opened through a friend's referral link (?ref=). Outside Telegram the
  // visitor goes straight on to a WhatsApp chat with the bot, the message with the friend's code already
@@ -602,12 +603,6 @@ async function initSession(){
  let ref = null;
  try{
   const linkRef = new URLSearchParams(location.search).get('ref');
-  if(linkRef && /^ref_[0-9a-f]{10}$/i.test(linkRef) && !(tg && tg.initData)){
-   localStorage.setItem('gm_ref', linkRef);
-   // the friend goes to our Telegram bot with the code (it records who invited him and hands him to the seller)
-   location.replace('https://t.me/' + TG_BOT + '?start=' + encodeURIComponent(linkRef));
-   return;
-  }
   ref = linkRef || localStorage.getItem('gm_ref');
   if(linkRef) localStorage.setItem('gm_ref', linkRef);
  }catch(_){}
@@ -812,8 +807,7 @@ function supportBlock(){
   <div class="wa">🆘</div>
   <div class="txt" style="flex:1"><strong>${esc(t('need_help'))}</strong><span>${esc(t('need_help_desc'))}</span></div>
   <div style="display:flex;gap:8px;flex:none">
-   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center;background:#229ED9;color:#fff;border-color:#229ED9" href="https://t.me/${TG_SELLER}" target="_blank" rel="noopener">Telegram</a>
-   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center" href="https://wa.me/77775949300" target="_blank" rel="noopener">${esc(t('open_wa'))}</a>
+   <a class="support-btn" style="text-decoration:none;display:inline-flex;align-items:center;background:#229ED9;color:#fff;border-color:#229ED9" href="https://t.me/${TG_BOT}?start=support" target="_blank" rel="noopener">${esc(t('open_tg'))}</a>
   </div>
  </div>`;
 }
