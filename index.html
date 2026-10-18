@@ -593,14 +593,22 @@ async function initSession(){
  // render to click). Warning immediately, before any network call, means the customer sees actionable
  // instructions right away instead of a blank page with nothing to click.
  const tg = window.Telegram && window.Telegram.WebApp;
- if(isInAppBrowser()) showBrowserEscapeOverlay();
+ // referral link -> straight to the bot's WhatsApp chat (see below), before the in-app-browser warning
+ try{ const r0 = new URLSearchParams(location.search).get('ref'); if(!(r0 && /^ref_[0-9a-f]{10}$/i.test(r0) && !(tg && tg.initData)) && isInAppBrowser()) showBrowserEscapeOverlay(); }catch(_){ if(isInAppBrowser()) showBrowserEscapeOverlay(); }
  let body;
- // Owner request (2026-10-17): opened through a friend's referral link (?ref=) - the friend stays on the
- // site and buys here; the code is sent with the session (and kept for later visits from this browser),
- // the server records it once, only for a customer without a connected package yet.
+ // Owner request (2026-10-18, back to the 16.10 flow): a friend's referral link (?ref=) opens a WhatsApp
+ // chat with the bot, the message with the friend's code already typed in - the AI explains the offer and
+ // sends him the site link, and we can write to him later (he started the chat himself). Inside Telegram
+ // the friend stays here. The code is also kept for later visits from this browser.
  let ref = null;
  try{
   const linkRef = new URLSearchParams(location.search).get('ref');
+  if(linkRef && /^ref_[0-9a-f]{10}$/i.test(linkRef) && !(tg && tg.initData)){
+   localStorage.setItem('gm_ref', linkRef);
+   const text = (lang==='ru' ? 'Привет! Хочу подключить интернет 🙂 Код друга: ' : 'Сәлем! Интернет қосқым келеді 🙂 Досымның коды: ') + linkRef;
+   location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text));
+   return;
+  }
   ref = linkRef || localStorage.getItem('gm_ref');
   if(linkRef) localStorage.setItem('gm_ref', linkRef);
  }catch(_){}
