@@ -605,7 +605,7 @@ async function initSession(){
   const linkRef = new URLSearchParams(location.search).get('ref');
   if(linkRef && /^ref_[0-9a-f]{10}$/i.test(linkRef) && !(tg && tg.initData)){
    localStorage.setItem('gm_ref', linkRef);
-   const text = (lang==='ru' ? 'Привет! Хочу подключить интернет 🙂 Код друга: ' : 'Сәлем! Интернет қосқым келеді 🙂 Досымның коды: ') + linkRef;
+   const text = (lang==='ru' ? 'Привет! Хочу подключить интернет на Билайн 🙂 Код друга: ' : 'Сәлем! Билайнға интернет қосқым келеді 🙂 Досымның коды: ') + linkRef;
    location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text));
    return;
   }
