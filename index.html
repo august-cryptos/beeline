@@ -417,6 +417,7 @@ const STR = {
   change_number_link:'Изменить', change_number_title:'Введите правильный номер', change_number_desc:'Мы отменим старый код и вышлем новый на этот номер.', change_number_btn:'Отправить новый код', change_number_cancel:'Отмена',
   fail_title:'Активация невозможна', fail_desc:'К сожалению, подключение выбранного пакета на указанный номер сейчас невозможно. Мы уже передали ваш запрос специалисту поддержки — он свяжется с вами в ближайшее время.',
   open_tg:'Написать в Telegram',
+  tg_notify_title:'📲 Уведомление в Telegram', tg_notify_otp:'Код не приходит? В нашем Telegram-боте поможем сразу и напишем, когда пакет подключится.', tg_notify_wait:'Можно закрыть страницу — как только пакет подключится, напишем вам в Telegram.', tg_notify_btn:'📲 Получать уведомления в Telegram',
   need_help:'Нужна помощь?', need_help_desc:'Если возникли вопросы — напишите нам, ответим быстро.', open_wa:'Написать в WhatsApp', support_sent:'Обращение отправлено ✓',
   trust1:'Безопасно', trust2:'Быстро', trust3:'Выгодно',
   invalid_phone:'Проверьте номер телефона', pick_kaspi_or_halyk:'Выберите способ оплаты',
@@ -451,6 +452,7 @@ const STR = {
   change_number_link:'Өзгерту', change_number_title:'Дұрыс нөмірді енгізіңіз', change_number_desc:'Ескі кодтан бас тартып, осы нөмірге жаңасын жібереміз.', change_number_btn:'Жаңа код жіберу', change_number_cancel:'Бас тарту',
   fail_title:'Белсендіру мүмкін емес', fail_desc:'Өкінішке орай, таңдалған пакетті көрсетілген нөмірге қазір қосу мүмкін емес. Өтінішіңізді қолдау маманына жібердік — жақын арада хабарласады.',
   open_tg:'Telegram-ға жазу',
+  tg_notify_title:'📲 Telegram-да хабарлама', tg_notify_otp:'Код келмей жатыр ма? Telegram ботымызда бірден көмектесеміз және пакет қосылғанда хабарлаймыз.', tg_notify_wait:'Бетті жабуға болады — пакет қосылған бойда Telegram-ға жазамыз.', tg_notify_btn:'📲 Telegram-да хабарлама алу',
   need_help:'Көмек керек пе?', need_help_desc:'Сұрақтарыңыз болса — бізге жазыңыз, жылдам жауап береміз.', open_wa:'WhatsApp-қа жазу', support_sent:'Өтінім жіберілді ✓',
   trust1:'Қауіпсіз', trust2:'Жылдам', trust3:'Тиімді',
   invalid_phone:'Телефон нөмірін тексеріңіз', pick_kaspi_or_halyk:'Төлем тәсілін таңдаңыз',
@@ -464,6 +466,8 @@ STR.kk.b_all=[STR.kk.b1,STR.kk.b2,STR.kk.b3,STR.kk.b4];
 
 let lang = localStorage.getItem('gm_lang') || 'kk';
 let sessionToken = null;
+// Owner request (2026-10-19): /session hands back the signed start code for the "notify me in Telegram" button
+let telegramStart = null;
 let ctx = null;
 let stack = [];
 let pendingOtpAttempts = 3;
@@ -625,7 +629,7 @@ async function initSession(){
   const res = await api('/session', body);
   if(res.paused){ showScreen(res.paused==='MAINTENANCE'?'maintenance':'paused', {message:res.message}); return; }
   if(res.webId) localStorage.setItem('gm_web_id', res.webId);
-  sessionToken = res.sessionToken; ctx = res.context;
+  sessionToken = res.sessionToken; ctx = res.context; telegramStart = res.telegramStart || null;
   if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
   render();
  }catch(e){ showScreen('noEntry'); }
@@ -643,6 +647,18 @@ function watchedOrderId(){ return localStorage.getItem('gm_watching_order'); }
 function forgetWatchedOrder(){ localStorage.removeItem('gm_watching_order'); }
 
 function screensEl(){ return document.getElementById('screens'); }
+// Owner request (2026-10-19): the bot no longer writes on WhatsApp - this button opens our Telegram bot,
+// which attaches this order to the customer's Telegram, so "пакет подключён" reaches him there. Hidden
+// inside Telegram itself and once the account is linked.
+function telegramNotifyBlock(kind){
+ const inTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+ if(!telegramStart || inTelegram || (ctx && ctx.telegramLinked)) return '';
+ return `<div class="card center" style="border:2px solid #229ED9">
+   <h2 class="title" style="font-size:18px">${esc(t('tg_notify_title'))}</h2>
+   <p class="desc">${esc(t(kind==='otp'?'tg_notify_otp':'tg_notify_wait'))}</p>
+   <a class="btn" style="background:#229ED9;color:#fff;text-decoration:none;display:flex;justify-content:center;align-items:center" href="https://t.me/${TG_BOT}?start=${encodeURIComponent(telegramStart)}" target="_blank" rel="noopener">${esc(t('tg_notify_btn'))}</a>
+  </div>`;
+}
 function setBack(show, handler){
  const b = document.getElementById('backBtn');
  b.hidden = !show;
@@ -1318,6 +1334,7 @@ function renderConnected(el){
     <div>${gb} ${esc(t('gifting'))}</div>
    </div>
   </div>
+  ${telegramNotifyBlock('wait')}
   <div class="card center" id="refCard" style="display:none">
    <h2 class="title" style="font-size:18px">${esc(t('ref_title'))}</h2>
    <p class="desc">${esc(t('ref_desc'))}</p>
@@ -1467,6 +1484,7 @@ function renderOtp(el, wrong, justResent, resendFailed){
     </div>
    </div>
   </div>
+  ${telegramNotifyBlock('otp')}
   ${supportBlock()}
   ${footBlock()}
  `;
