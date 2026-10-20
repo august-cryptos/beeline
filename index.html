@@ -649,6 +649,12 @@ function watchedOrderId(){ return localStorage.getItem('gm_watching_order'); }
 function forgetWatchedOrder(){ localStorage.removeItem('gm_watching_order'); }
 
 function screensEl(){ return document.getElementById('screens'); }
+// Owner request (2026-10-20): inside the Telegram Mini App a Kaspi payment link must be opened through Telegram
+// itself (openLink) - it hands the link to the phone, which opens the Kaspi app; a plain window.open there is unreliable.
+function insideTelegramApp(){ const tg = window.Telegram && window.Telegram.WebApp; return Boolean(tg && tg.initData && typeof tg.openLink === 'function'); }
+function openOutsideTelegram(url){ if(!insideTelegramApp()) return false; try{ window.Telegram.WebApp.openLink(url); return true; }catch(_){ return false; } }
+// the "open Kaspi" button on the waiting screen is a plain link - inside Telegram route it the same way
+document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a.btn-kaspi[href]'); if(a && openOutsideTelegram(a.href)) e.preventDefault(); });
 // Owner request (2026-10-19): the bot no longer writes on WhatsApp - this button opens our Telegram bot,
 // which attaches this order to the customer's Telegram, so "пакет подключён" reaches him there. Hidden
 // inside Telegram itself and once the account is linked.
@@ -1054,9 +1060,9 @@ function renderReceipt(el){
  `;
  el.querySelector('[data-method="KASPI"]').addEventListener('click',()=>{if(reusingLink)sessionStorage.setItem(PAYMENT_CHOICE_OVERRIDE_KEY,'invoice');showScreen('kaspiPhone');});
  el.querySelector('[data-method="KASPI_LINK"]').addEventListener('click',async()=>{
-  if(reusingLink){sessionStorage.removeItem(PAYMENT_CHOICE_OVERRIDE_KEY);rememberKaspiLinkOpen(ctx.paymentUrl);showScreen('checking');window.open(ctx.paymentUrl,'_blank','noopener');return;}
+  if(reusingLink){sessionStorage.removeItem(PAYMENT_CHOICE_OVERRIDE_KEY);rememberKaspiLinkOpen(ctx.paymentUrl);showScreen('checking');if(!openOutsideTelegram(ctx.paymentUrl))window.open(ctx.paymentUrl,'_blank','noopener');return;}
   const buttons=[...el.querySelectorAll('[data-method]')],error=el.querySelector('#paymentMethodError');
-  const paymentTab=window.open('about:blank','_blank');
+  const paymentTab=insideTelegramApp()?null:window.open('about:blank','_blank');
   buttons.forEach(button=>button.disabled=true);error.style.display='none';
   try{
    const res=await api('/payment-method',{method:'KASPI_LINK'});selectedMethod=res.method;paymentPendingSince=null;
@@ -1064,7 +1070,7 @@ function renderReceipt(el){
    const url=res.paymentUrl||ctx.paymentUrl;
    if(!url)throw new Error('PAYMENT_LINK_NOT_READY');
    rememberKaspiLinkOpen(url);
-   if(paymentTab)paymentTab.location.replace(url);else window.location.assign(url);
+   if(openOutsideTelegram(url)){}else if(paymentTab)paymentTab.location.replace(url);else window.location.assign(url);
   }catch(e){
    if(paymentTab)paymentTab.close();
    if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refreshContext().catch(()=>{});render();return;}
