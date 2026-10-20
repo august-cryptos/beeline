@@ -1,6 +1,10 @@
-# Owner request (2026-10-20): short links to the Telegram bot on our own site
-/GeoMaster_AI https://t.me/GeoMaster1_bot 302
-/geomaster_ai https://t.me/GeoMaster1_bot 302
-/ai https://t.me/GeoMaster1_bot 302
-/bot https://t.me/GeoMaster1_bot 302
-/tg https://t.me/GeoMaster1_bot 302
+# Owner request (2026-10-20): short links to the Telegram bot on our own site; each one is counted
+# in the admin statistics as source "<tag>_tg" (the bot reads /start <tag>)
+/GeoMaster_AI https://t.me/GeoMaster1_bot?start=ai 302
+/geomaster_ai https://t.me/GeoMaster1_bot?start=ai 302
+/ai https://t.me/GeoMaster1_bot?start=ai 302
+/bot https://t.me/GeoMaster1_bot?start=bot 302
+/tg https://t.me/GeoMaster1_bot?start=tg 302
+/tt https://t.me/GeoMaster1_bot?start=tiktok 302
+/ig https://t.me/GeoMaster1_bot?start=insta 302
+/wa https://t.me/GeoMaster1_bot?start=wa 302
