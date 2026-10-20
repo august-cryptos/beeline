@@ -625,6 +625,8 @@ async function initSession(){
   }
  }
  if(ref) body.ref = ref;
+ // Owner request (2026-10-20): ad links ?src=<tag> - each open through such a link is counted in the admin statistics
+ try{ const src = new URLSearchParams(location.search).get('src'); if(src && /^[a-z0-9_-]{1,32}$/i.test(src)) body.src = src; }catch(_){}
  try{
   const res = await api('/session', body);
   if(res.paused){ showScreen(res.paused==='MAINTENANCE'?'maintenance':'paused', {message:res.message}); return; }
