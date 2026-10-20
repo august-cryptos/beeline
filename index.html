@@ -603,6 +603,12 @@ async function initSession(){
  // keeps him on the site and buys here; the code is sent with the session (and kept for later visits from
  // this browser), the server records it once, only for a customer without a connected package yet.
  let ref = null;
+ // Owner request (2026-10-20): the Telegram bot is the main channel - an old referral link opened outside
+ // Telegram goes on to the bot with the same code (the bot records the invitation and greets the friend)
+ try{
+  const r1 = new URLSearchParams(location.search).get('ref');
+  if(r1 && /^ref_[0-9a-f]{10}$/i.test(r1) && !(tg && tg.initData)){ location.replace('https://t.me/' + TG_BOT + '?start=' + r1); return; }
+ }catch(_){}
  try{
   const linkRef = new URLSearchParams(location.search).get('ref');
   ref = linkRef || localStorage.getItem('gm_ref');
