@@ -55,6 +55,8 @@ header{display:flex;align-items:center;gap:10px;padding:8px 10px;padding-top:max
 .msg.me.first::before{content:"";position:absolute;right:-8px;top:0;border-left:8px solid var(--out);border-bottom:10px solid transparent}
 .msg a{color:var(--link);text-decoration:none}
 .msg b{font-weight:700}
+.linkbtn{display:block;margin:8px -2px 2px;padding:10px 12px;border-radius:8px;background:var(--green);color:#fff !important;font-weight:700;text-align:center;text-decoration:none}
+.msg.me .linkbtn{background:#fff;color:var(--green) !important}
 .typing{align-self:flex-start;background:var(--in);border-radius:7.5px;border-top-left-radius:0;padding:11px 13px;box-shadow:var(--shadow);display:flex;gap:4px;margin-top:6px}
 .typing i{width:7px;height:7px;border-radius:50%;background:var(--dim);animation:blink 1.2s infinite}
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
@@ -96,46 +98,47 @@ footer{flex:none;display:flex;gap:6px;align-items:flex-end;padding:6px 6px;paddi
  </header>
  <div id="log" role="log" aria-live="polite"></div>
  <footer>
-  <div class="field"><span class="mode" id="mode" hidden></span><textarea id="inp" rows="1" maxlength="1000"></textarea></div>
+  <div class="field"><textarea id="inp" rows="1" maxlength="1000"></textarea></div>
   <button class="send" id="send" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10.2 15 12 3.4 13.8z"/></svg></button>
  </footer>
  <div class="offline" id="offline" hidden></div>
 </div>
 <script>
 'use strict';
+// Owner request (2026-10-21): a plain conversation - the bot writes, the customer writes. The AI answers
+// questions (server); the order steps the customer starts by writing ("10", his number, the SMS code) are
+// done right here and confirmed with a bot message; after payment the server itself writes the next steps.
 const API='/api';
-const TG_BOT='GeoMaster1_bot';
 const STR={
- kk:{sub:'желіде',ph:'Хабарлама жазыңыз…',ph_phone:'Beeline нөмірі: 7XX XXX XX XX',ph_code:'SMS-кодты жазыңыз',m_phone:'НӨМІР',m_code:'КОД',
-  hello:'Сәлеметсіз бе! 👋 GeoMaster — Beeline-ға арзан интернет.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 күн · тариф өзгермейді\n\nТөменнен пакетті таңдаңыз немесе сұрағыңызды жазыңыз 👇',
-  choose:'Пакетті таңдаңыз',choose_p:'30 күн · негізгі тариф өзгермейді · тек Beeline',per:'30 күнге',
-  phone_t:'Қай Beeline нөміріне қосамыз?',phone_p:'Нөмірді төменге жазыңыз 👇',
-  pay_t:'Төлеуге',pay_btn:'Kaspi-де төлеу',pay_again:'Kaspi-ді қайта ашу',pay_wait:'Төлем күтілуде… Kaspi-де төлеген соң осы чатқа қайтыңыз — бәрі осында болады.',pay_change:'Нөмірді өзгерту',
-  otp_t:'✅ Төлем келді!',otp_p:n=>`${n} нөміріне Beeline-нан SMS-код келді.\nКодты осында, төменге жазыңыз 👇`,otp_new:'Жаңа код сұрау',otp_sent:'Жаңа код жіберілді 📩',otp_bad:'Код қате, қайта жазыңыз',otp_wait:s=>`Beeline жаңа кодты ${s} кейін жібереді`,otp_check:'Код тексерілуде…',
-  conn_t:'⏳ Қосылып жатыр…',conn_p:'Әдетте 1–2 минут. Ештеңе істеудің қажеті жоқ.',
-  done_t:g=>`✅ ${g} ГБ қосылды!`,done_p:n=>`${n} нөмірі. Тексеру: *106# немесе Janymda қосымшасы.\nSMS келмеуі мүмкін — ГБ бәрібір түседі.`,more:'Тағы пакет алу',
-  fail_t:'Қосылмады',fail_p:'Уайымдамаңыз — маман тексеріп, өзі хабарласады. Ақшаңыз сақталады.',
-  e_phone:'Нөмір дұрыс емес. 7XX XXX XX XX форматында жазыңыз',e_limit:'Бұл нөмірге бүгінгі лимит бітті. Ертең қайталаңыз немесе басқа нөмір жазыңыз.',e_net:'Байланыс жоқ, қайталап көріңіз',e_beeline:'Тек Beeline нөмірлеріне қосылады',
-  tg:'Telegram-да ыңғайлырақ: хабарламалар өзі келеді',other_pkg:'Басқа пакет',offline:'Байланыс үзілді, қайта қосылуда…',today:'Бүгін',typing:'жазып жатыр…',pick:'📶 Пакетті таңдау'},
- ru:{sub:'в сети',ph:'Напишите сообщение…',ph_phone:'Номер Beeline: 7XX XXX XX XX',ph_code:'Введите SMS-код',m_phone:'НОМЕР',m_code:'КОД',
-  hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nВыберите пакет ниже или напишите вопрос 👇',
-  choose:'Выберите пакет',choose_p:'30 дней · основной тариф не меняется · только Beeline',per:'на 30 дней',
-  phone_t:'На какой номер Beeline подключаем?',phone_p:'Напишите номер ниже 👇',
-  pay_t:'К оплате',pay_btn:'Оплатить в Kaspi',pay_again:'Открыть Kaspi снова',pay_wait:'Ждём оплату… После оплаты в Kaspi вернитесь в этот чат — всё будет здесь.',pay_change:'Изменить номер',
-  otp_t:'✅ Оплата пришла!',otp_p:n=>`На номер ${n} пришёл SMS-код от Beeline.\nНапишите код здесь, внизу 👇`,otp_new:'Запросить новый код',otp_sent:'Новый код отправлен 📩',otp_bad:'Код неверный, введите ещё раз',otp_wait:s=>`Beeline пришлёт новый код через ${s}`,otp_check:'Проверяем код…',
-  conn_t:'⏳ Подключаем…',conn_p:'Обычно 1–2 минуты. Ничего делать не нужно.',
-  done_t:g=>`✅ ${g} ГБ подключено!`,done_p:n=>`Номер ${n}. Проверка: *106# или приложение Janymda.\nSMS может не прийти — ГБ всё равно начислены.`,more:'Купить ещё пакет',
-  fail_t:'Не подключилось',fail_p:'Не переживайте — специалист проверит и сам свяжется. Деньги сохраняются.',
-  e_phone:'Неверный номер. Напишите в формате 7XX XXX XX XX',e_limit:'На этот номер на сегодня лимит. Попробуйте завтра или другой номер.',e_net:'Нет связи, попробуйте ещё раз',e_beeline:'Подключаем только номера Beeline',
-  tg:'В Telegram удобнее: сообщения приходят сами',other_pkg:'Другой пакет',offline:'Связь прервалась, переподключаемся…',today:'Сегодня',typing:'печатает…',pick:'📶 Выбрать пакет'}
+ kk:{sub:'желіде',typing:'жазып жатыр…',ph:'Хабарлама',today:'Бүгін',offline:'Байланыс үзілді, қайта қосылуда…',
+  hello:'Сәлеметсіз бе! 👋 GeoMaster — Beeline-ға арзан интернет.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 күн · тариф өзгермейді\n\nҚай пакетті қосамыз? Осында *10* немесе *20* деп жазыңыз 🙂',
+  ask_phone:(g,p)=>`Жарайды, ${g} ГБ — ${p} ₸ 👍\nҚай Beeline нөміріне қосамыз? Нөмірді жазыңыз.`,
+  pay:(g,ph)=>`${g} ГБ → ${ph} ✅\nТөлеу үшін төмендегі сілтемені басыңыз 👇\nKaspi-де төлеген соң осы чатқа қайтыңыз — қалғаны осында.`,
+  pay_btn:p=>`💳 Kaspi-де төлеу — ${p} ₸`,pay_fail:'Төлем сілтемесі дайындалмады 😕 «төлеу» деп жазыңыз — қайта жіберемін.',
+  bad_phone:'Нөмір дұрыс емес сияқты. Beeline нөмірін толық жазыңыз, мысалы: 7771234567',
+  limit:'Бұл нөмірге бүгінгі лимит бітті. Ертең қайталаңыз немесе басқа нөмір жазыңыз.',
+  code_bad:'Код қате 😕 SMS-ті тексеріп, қайта жазыңыз.',code_resent:'Код сәйкес келмеді — Beeline жаңа код жіберді 📩 Жаңа кодты жазыңыз.',
+  code_wait:m=>`Beeline жаңа кодты ${m} минуттан кейін жібереді. Сол кезде «жаңа код» деп жазыңыз.`,
+  new_code:'Жаңа код жіберілді 📩 SMS келген соң кодты осында жазыңыз.',net:'Байланыс жоқ, қайта жазып көріңіз 🙏',
+  pick:'📶 Пакет таңдау',pick_txt:'Қай пакет? Осында *10* немесе *20* деп жазыңыз 🙂'},
+ ru:{sub:'в сети',typing:'печатает…',ph:'Сообщение',today:'Сегодня',offline:'Связь прервалась, переподключаемся…',
+  hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nКакой пакет подключаем? Напишите здесь *10* или *20* 🙂',
+  ask_phone:(g,p)=>`Хорошо, ${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем? Напишите номер.`,
+  pay:(g,ph)=>`${g} ГБ → ${ph} ✅\nДля оплаты нажмите на ссылку ниже 👇\nПосле оплаты в Kaspi вернитесь в этот чат — дальше всё здесь.`,
+  pay_btn:p=>`💳 Оплатить в Kaspi — ${p} ₸`,pay_fail:'Не получилось подготовить ссылку на оплату 😕 Напишите «оплата» — пришлю снова.',
+  bad_phone:'Похоже, номер неверный. Напишите номер Beeline полностью, например: 7771234567',
+  limit:'На этот номер на сегодня лимит. Попробуйте завтра или напишите другой номер.',
+  code_bad:'Код неверный 😕 Проверьте SMS и напишите ещё раз.',code_resent:'Код не подошёл — Beeline прислал новый 📩 Напишите новый код.',
+  code_wait:m=>`Beeline пришлёт новый код через ${m} мин. Тогда напишите «новый код».`,
+  new_code:'Новый код отправлен 📩 Как придёт SMS — напишите код здесь.',net:'Нет связи, попробуйте написать ещё раз 🙏',
+  pick:'📶 Выбрать пакет',pick_txt:'Какой пакет? Напишите здесь *10* или *20* 🙂'}
 };
-let lang=(()=>{try{return localStorage.getItem('gm_lang')||'kk'}catch(_){return 'kk'}})();
-if(!STR[lang])lang='kk';
-const t=(k,...a)=>{const v=STR[lang][k];return typeof v==='function'?v(...a):v;};
-let token=null,ctx=null,lastId=0,waitingReply=false,waitSince=0,cardKey='',otpError='',otpNote='',busy=false,doneShownFor=null;
-const $=id=>document.getElementById(id);
-const log=$('log'),inp=$('inp'),sendBtn=$('send'),modeEl=$('mode');
 const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
+let lang=store.get('gm_lang');if(!STR[lang])lang='kk';
+const t=(k,...a)=>{const v=STR[lang][k];return typeof v==='function'?v(...a):v;};
+const $=id=>document.getElementById(id);
+const log=$('log'),inp=$('inp');
+let token=null,ctx=null,webId=null,lastId=0,server=[],local=[],waiting=false,waitSince=0,busy=false;
 
 async function api(path,body,method){
  const o={method:method||(body!==undefined?'POST':'GET'),headers:{'content-type':'application/json'}};
@@ -148,197 +151,170 @@ async function api(path,body,method){
  return j;
 }
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const SITE_LINK=/https?:\/\/(?:www\.)?(?:geomasterkz\.com|beeline\.pages\.dev)\/?\S*/gi;
+const SITE_LINK=/https?:\/\/(?:www\.)?(?:geomasterkz\.com|beeline\.pages\.dev)\/?[^\s]*/gi;
+// text -> html: *bold*, links; a link to our own site becomes a "choose a package" button (ordering happens here)
 function fmt(text){
- let s=esc(String(text||'').replace(SITE_LINK,'⟦PICK⟧'));
+ let s=esc(String(text||'').replace(SITE_LINK,'\u0001'));
  s=s.replace(/\*([^*\n]+)\*/g,'<b>$1</b>');
  s=s.replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\//,'')}</a>`);
- s=s.replace(/\n?⟦PICK⟧/g,'');
+ s=s.replace(/\n?\u0001/g,`<a class="linkbtn" href="#" data-pick>${esc(t('pick'))}</a>`);
  return s.trim();
 }
 const hhmm=d=>{const x=new Date(d);return isNaN(x)?'':x.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Almaty'});};
 const phone8=p=>{const d=String(p||'').replace(/\D/g,'').slice(-10);return d?'8'+d:'';};
-const pkgGb=id=>{const p=(ctx?.availablePackages||[]).find(x=>x.id===id);return p?p.trafficGb:(String(id).match(/\d+/)||[''])[0];};
+const money=n=>Number(n||0).toLocaleString('ru-RU');
+const pkgOf=id=>(ctx?.availablePackages||[]).find(x=>x.id===id)||null;
 
-function addMsg(role,text,at,opts={}){
- const el=document.createElement('div');el.className='msg '+(role==='user'?'me':'bot');
- el.innerHTML=fmt(text)+`<span class="tm">${esc(hhmm(at||Date.now()))}</span>`;
- const card=log.querySelector('.card'),typing=log.querySelector('.typing'),before=typing||card||null;
- // the first bubble of a run gets the little tail, like in the messenger
- const prev=(before?before.previousElementSibling:log.lastElementChild);
- if(!prev||!prev.classList.contains('msg')||prev.classList.contains('me')!==(role==='user'))el.classList.add('first');
- log.insertBefore(el,before);
- return el;
+// ---------- messages: the server transcript + this chat's own step messages, by time ----------
+const LKEY='gm_chat_local';
+function loadLocal(){try{const j=JSON.parse(store.get(LKEY)||'{}');local=j.w===webId?j.m||[]:[];}catch(_){local=[];}}
+function saveLocal(){store.set(LKEY,JSON.stringify({w:webId,m:local.slice(-80)}));}
+function say(text,extra={},key){ // a bot step message, once per key
+ if(key&&local.some(m=>m.key===key))return;
+ local.push({role:'assistant',text,at:Date.now(),key:key||null,...extra});saveLocal();draw();
 }
-function scrollEnd(){requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight;});}
-function setTyping(on){
- let el=log.querySelector('.typing');
- if(on&&!el){el=document.createElement('div');el.className='typing';el.innerHTML='<i></i><i></i><i></i>';log.insertBefore(el,log.querySelector('.card'));$('sub').textContent=t('typing');scrollEnd();}
- if(!on&&el){el.remove();$('sub').textContent=t('sub');}
+function mine(text){local.push({role:'user',text,at:Date.now(),local:true});saveLocal();draw();}
+function draw(){
+ const all=[...server.map(m=>({...m,at:new Date(m.at).getTime()})),...local].sort((a,b)=>a.at-b.at);
+ let h=`<div class="day">${esc(t('today'))}</div><div class="msg bot first">${fmt(t('hello'))}<span class="tm"></span></div>`,prev='assistant';
+ for(const m of all){
+  const me=m.role==='user';
+  const first=(me?'user':'assistant')!==prev;prev=me?'user':'assistant';
+  const btn=m.href?`<a class="linkbtn" href="${esc(m.href)}" target="_blank" rel="noopener">${esc(m.btn)}</a>`:'';
+  h+=`<div class="msg ${me?'me':'bot'}${first?' first':''}">${fmt(m.text)}${btn}<span class="tm">${esc(hhmm(m.at))}</span></div>`;
+ }
+ if(waiting)h+='<div class="typing"><i></i><i></i><i></i></div>';
+ const atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<80;
+ log.innerHTML=h;$('sub').textContent=waiting?t('typing'):t('sub');
+ if(atBottom||waiting)requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight;});
 }
+log.addEventListener('click',e=>{const a=e.target.closest('[data-pick]');if(!a)return;e.preventDefault();say(t('pick_txt'));inp.focus();});
 
-// ---------- the live order card ----------
-function activeOrder(){
- const os=ctx?.orders||[];const mine=store.get('gm_watching_order');
- return (mine&&os.find(o=>o.orderId===mine))||os.find(o=>['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus)||o.jobStatus==='WAITING_OTP')||null;
-}
+// ---------- where the order is ----------
+function liveOrder(){const os=ctx?.orders||[];const w=store.get('gm_watching_order');return(w&&os.find(o=>o.orderId===w))||os.find(o=>['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus)||o.jobStatus==='WAITING_OTP')||null;}
 function stage(){
- if(!ctx)return'loading';
- const s=ctx.clientState,o=activeOrder();
- if(o&&(o.jobStatus==='WAITING_OTP'||s==='WAITING_OTP'))return'otp';
- if(s==='WAITING_OTP')return'otp';
+ if(!ctx)return'';
+ const s=ctx.clientState,o=liveOrder();
+ if(s==='WAITING_OTP'||o?.jobStatus==='WAITING_OTP')return'otp';
  if(s==='WAITING_PHONE')return'phone';
  if(s==='WAITING_PAYMENT'||s==='PAYMENT_PENDING')return'pay';
- if(o&&['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus))return'conn';
- if(['TRAINING','PROVISIONING','PAYMENT_CONFIRMED'].includes(s))return'conn';
- const mine=store.get('gm_watching_order'),lo=ctx.lastOrder;
- if(mine&&lo&&lo.id===mine){if(lo.status==='COMPLETED')return'done';if(['TRAINING_FAILED','AUTH_FAILED','MANUAL_REVIEW','PAYMENT_FAILED'].includes(lo.status))return'fail';}
- return'choose';
+ if(o)return'busy';
+ return'free';
 }
-function renderCard(force){
- const st=stage(),o=activeOrder();
- const key=[st,lang,ctx?.paymentUrl||'',o?.orderId||'',o?.targetPhone||'',otpError,otpNote,busy].join('|');
- if(!force&&key===cardKey)return;cardKey=key;
- let el=log.querySelector('.card');if(!el){el=document.createElement('div');el.className='card';log.appendChild(el);}
- const pk=ctx?.availablePackages||[];
- // a bot message (body) with its reply buttons underneath (acts)
- let body='',acts='';
- const errLine=otpError?`<div class="err">${esc(otpError)}</div>`:'';
- if(st==='choose'){
-  body=`<h3>${esc(t('choose'))}</h3><p>${esc(t('choose_p'))}</p>`;
-  acts=pk.map(p=>`<button class="btn${p.trafficGb>=20?' main':''}" data-pkg="${esc(p.id)}">${p.trafficGb>=20?'🔥':'🚀'} ${esc(p.trafficGb)} ГБ — ${esc(Number(p.price).toLocaleString('ru-RU'))} ₸</button>`).join('');
- }else if(st==='phone'){
-  const sp=ctx.selectedPackage;body=`<h3>${esc(t('phone_t'))}</h3><p>${sp?esc(pkgGb(sp.id||sp)+' ГБ — '+Number(sp.price||0).toLocaleString('ru-RU')+' ₸\n'):''}${esc(t('phone_p'))}</p>${errLine}`;
-  acts=`<button class="btn" data-backpkg>${esc(t('other_pkg'))}</button>`;
- }else if(st==='pay'){
-  const sp=ctx.selectedPackage,amt=sp?.price||'',ph=phone8(ctx.lastOrder?.targetPhone||ctx.client?.phone);
-  body=`<p>${esc(t('pay_t'))}</p><div class="big">${esc(Number(amt).toLocaleString('ru-RU'))} ₸</div><p>${esc((sp?pkgGb(sp.id||sp)+' ГБ → ':'')+ph)}</p>${ctx.paymentUrl?`<p>${esc(t('pay_wait'))}</p>`:''}${errLine}`;
-  acts=(ctx.paymentUrl?`<a class="btn kaspi" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener">${esc(t('pay_again'))}</a>`:`<button class="btn kaspi" data-pay ${busy?'disabled':''}>${esc(t('pay_btn'))}</button>`)+`<button class="btn" data-backphone>${esc(t('pay_change'))}</button>`;
- }else if(st==='otp'){
-  const ph=phone8(o?.targetPhone||ctx.client?.phone);
-  body=`<h3>${esc(t('otp_t'))}</h3><p>${esc(t('otp_p',ph))}</p>${otpNote?`<div class="okline">${esc(otpNote)}</div>`:''}${errLine}`;
-  acts=`<button class="btn" data-resend ${busy?'disabled':''}>${esc(t('otp_new'))}</button>`;
- }else if(st==='conn'){
-  body=`<h3>${esc(t('conn_t'))}</h3><p>${esc(t('conn_p'))}</p>`;
- }else if(st==='done'){
-  const lo=ctx.lastOrder;body=`<h3 class="okline">${esc(t('done_t',pkgGb(lo.packageId)))}</h3><p>${esc(t('done_p',phone8(lo.targetPhone)))}</p>`;
-  acts=`<button class="btn main" data-more>${esc(t('more'))}</button>`;
- }else if(st==='fail'){
-  body=`<h3>${esc(t('fail_t'))}</h3><p>${esc(t('fail_p'))}</p>`;
-  acts=`<button class="btn" data-more>${esc(t('more'))}</button>`;
- }
- if(body&&!ctx?.telegramLinked&&ctx?.telegramStart&&['otp','conn','pay'].includes(st))acts+=`<a class="btn" href="https://t.me/${TG_BOT}?start=${encodeURIComponent(ctx.telegramStart)}" target="_blank" rel="noopener">✈️ ${esc(t('tg'))}</a>`;
- el.innerHTML=body?`<div class="body">${body}</div>${acts?`<div class="acts">${acts}</div>`:''}`:'';el.hidden=!body;
- // composer mode follows the card
- const m=st==='phone'?'phone':st==='otp'?'code':'';
- modeEl.hidden=!m;modeEl.textContent=m==='phone'?t('m_phone'):m==='code'?t('m_code'):'';
- inp.placeholder=m==='phone'?t('ph_phone'):m==='code'?t('ph_code'):t('ph');
- inp.inputMode=m?'numeric':'text';
- scrollEnd();
-}
-log.addEventListener('click',async e=>{
- const b=e.target.closest('button,a');if(!b)return;
- if(b.dataset.pkg){await act(()=>api('/package',{packageId:b.dataset.pkg}));}
- else if(b.hasAttribute('data-pay')){await pay();}
- else if(b.hasAttribute('data-backphone')){await act(()=>api('/back-to-phone',{}));}
- else if(b.hasAttribute('data-backpkg')){await act(()=>api('/back-to-packages',{}));}
- else if(b.hasAttribute('data-resend')){otpError='';otpNote='';busy=true;renderCard();try{await api('/otp-resend',{});otpNote=t('otp_sent');}catch(err){otpError=err.code==='OTP_RATE_LIMITED'?t('otp_wait',mins(err.retryAfterSeconds)):t('e_net');}busy=false;renderCard();}
- else if(b.hasAttribute('data-more')){store.del('gm_watching_order');doneShownFor=null;if(['ACTIVE','COMPLETED'].includes(ctx.clientState)){renderCard(true);}else await refresh();cardKey='';renderCard(true);}
- else if(b.hasAttribute('data-pick')){renderCard(true);}
-});
-const mins=s=>{s=Number(s)||60;return s>=60?Math.ceil(s/60)+(lang==='ru'?' мин':' мин'):s+(lang==='ru'?' сек':' сек');};
-async function act(fn){if(busy)return;busy=true;otpError='';renderCard();try{const r=await fn();if(r&&r.clientState)ctx={...ctx,...r};else await refresh();}catch(e){otpError=errText(e);await refresh().catch(()=>{});}busy=false;renderCard(true);}
-function errText(e){if(e.code==='DAILY_PHONE_LIMIT')return t('e_limit');if(['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code))return t('e_phone');if(e.code==='NOT_BEELINE'||e.code==='PHONE_NOT_BEELINE')return t('e_beeline');return t('e_net');}
-async function pay(){
- if(busy)return;busy=true;otpError='';renderCard();
- const tab=window.open('about:blank','_blank');
+// the Kaspi link appears as soon as the order is waiting for payment
+let payAsked='';
+async function ensurePayLink(){
+ if(stage()!=='pay'||busy)return;
+ const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),key='pay:'+(o?.id||'');
+ if(ctx.paymentUrl){say(t('pay',sp?.trafficGb||'',phone8(o?.targetPhone)),{href:ctx.paymentUrl,btn:t('pay_btn',money(sp?.price))},key+':'+ctx.paymentUrl);return;}
+ if(payAsked===key)return;payAsked=key;busy=true;
  try{const r=await api('/payment-method',{method:'KASPI_LINK'});await refresh();const url=r.paymentUrl||ctx.paymentUrl;if(!url)throw new Error('NO_LINK');
-  if(tab)tab.location.replace(url);else location.assign(url);}
- catch(e){if(tab)tab.close();if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refresh().catch(()=>{});}else otpError=t('e_net');}
- busy=false;renderCard(true);
-}
-async function submitPhone(digits){
- await act(async()=>{const r=await api('/phone',{phone:'7'+digits});if(r.orderId)store.set('gm_watching_order',r.orderId);return r;});
-}
-async function submitCode(code){
- if(busy)return;busy=true;otpError='';otpNote=t('otp_check');renderCard();
- try{const r=await api('/otp',{code});ctx={...ctx,...r};otpNote='';}
- catch(e){otpNote='';if(e.code==='OTP_NOT_EXPECTED'){}else if(e.code==='OTP_RATE_LIMITED')otpError=t('otp_wait',mins(e.retryAfterSeconds));else if(e.code==='OTP_REJECTED_RESENT'){otpNote=t('otp_sent');otpError=t('otp_bad');}else if(e.code==='OTP_REJECTED'||e.code==='INVALID_OTP_FORMAT')otpError=t('otp_bad');else otpError=t('e_net');await refresh().catch(()=>{});}
- busy=false;renderCard(true);
+  say(t('pay',sp?.trafficGb||'',phone8(ctx.lastOrder?.targetPhone||o?.targetPhone)),{href:url,btn:t('pay_btn',money(sp?.price))},key+':'+url);}
+ catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED')await refresh().catch(()=>{});else say(t('pay_fail'));}
+ busy=false;
 }
 
-// ---------- composer ----------
-function autosize(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
-inp.addEventListener('input',autosize);
-inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!/Mobi|Android/i.test(navigator.userAgent)){e.preventDefault();send();}});
-sendBtn.addEventListener('click',send);
+// ---------- the customer writes ----------
+const PKG=/^\s*(?:(10|20)\s*(?:гб|gb|гиг\S*|г)?|(?:гб|gb)\s*(10|20))\s*(?:керек|алам\S*|давай|пожалуйста|please)?\s*[.!)]*\s*$/i;
+const NEW_CODE=/(жаңа|жана|новый|еще|ещё|қайта)\s*(код|code)|код\s*(келмед|келмей|не приш|нет)/i;
+const PAY_AGAIN=/^(төлеу|толеу|оплата|оплатить|kaspi|каспи)\s*[.!]*$/i;
 async function send(){
  const text=inp.value.trim();if(!text||!token)return;
- const st=stage(),digits=text.replace(/\D/g,'');
- // a phone number while we wait for one, an SMS code while we wait for it - everything else goes to the AI
- if(st==='phone'&&digits.length>=10&&digits.length<=12&&!/[a-zа-яәіңғүұқөһ]/i.test(text)){inp.value='';autosize();addMsg('user',text);await submitPhone(digits.slice(-10));return;}
- if(st==='otp'&&/^\d{4,8}$/.test(digits)&&digits.length===text.replace(/\s/g,'').length){inp.value='';autosize();addMsg('user',text);await submitCode(digits);return;}
  inp.value='';autosize();
- const el=addMsg('user',text);el.dataset.local='1';scrollEnd();
- waitingReply=true;waitSince=Date.now();setTimeout(()=>{if(waitingReply)setTyping(true);},900);
- try{await api('/chat',{text});}catch(e){waitingReply=false;setTyping(false);el.style.opacity='.55';el.title=t('e_net');}
+ const st=stage(),digits=text.replace(/\D/g,''),onlyDigits=/^[\d\s()+-]+$/.test(text);
+ if(st==='otp'&&onlyDigits&&digits.length>=4&&digits.length<=8){mine(text);return submitCode(digits);}
+ if(st==='otp'&&NEW_CODE.test(text)){mine(text);return resendCode();}
+ if(st==='phone'&&onlyDigits&&digits.length>=10&&digits.length<=12){mine(text);return submitPhone(digits.slice(-10));}
+ if(st==='pay'&&PAY_AGAIN.test(text)){mine(text);payAsked='';ctx.paymentUrl=null;local=local.filter(m=>!String(m.key||'').startsWith('pay:'));saveLocal();return ensurePayLink();}
+ const pm=text.match(PKG);
+ if(pm&&['free','phone'].includes(st)){mine(text);return choosePackage(pm[1]==='20'||pm[2]==='20'?20:10);}
+ return askAi(text);
+}
+async function askAi(text){
+ local.push({role:'user',text,at:Date.now(),local:true,pending:true});saveLocal();
+ waiting=true;waitSince=Date.now();draw();
+ try{await api('/chat',{text});}catch(e){waiting=false;say(t('net'));}
  schedule(1500);
+}
+async function choosePackage(gb){
+ const p=(ctx?.availablePackages||[]).find(x=>Number(x.trafficGb)===gb);if(!p)return askAi(String(gb));
+ busy=true;
+ try{
+  if(ctx.clientState!=='CHOOSING_PACKAGE'&&ctx.clientState!=='ACTIVE'&&ctx.clientState!=='COMPLETED'&&ctx.clientState!=='NEW')await api('/back-to-packages',{}).catch(()=>{});
+  ctx={...ctx,...await api('/package',{packageId:p.id})};
+  say(t('ask_phone',p.trafficGb,money(p.price)));
+ }catch(e){say(t('net'));await refresh().catch(()=>{});}
+ busy=false;
+}
+async function submitPhone(d){
+ busy=true;
+ try{const r=await api('/phone',{phone:'7'+d});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};busy=false;await ensurePayLink();}
+ catch(e){busy=false;say(e.code==='DAILY_PHONE_LIMIT'?t('limit'):['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code)?t('bad_phone'):t('net'));await refresh().catch(()=>{});}
+}
+async function submitCode(code){
+ busy=true;waiting=true;draw();
+ try{ctx={...ctx,...await api('/otp',{code})};}
+ catch(e){
+  if(e.code==='OTP_NOT_EXPECTED'){}
+  else if(e.code==='OTP_REJECTED'||e.code==='INVALID_OTP_FORMAT')say(t('code_bad'));
+  else if(e.code==='OTP_REJECTED_RESENT')say(t('code_resent'));
+  else if(e.code==='OTP_RATE_LIMITED')say(t('code_wait',Math.max(1,Math.ceil((e.retryAfterSeconds||60)/60))));
+  else say(t('net'));
+  await refresh().catch(()=>{});
+ }
+ busy=false;waiting=false;draw();schedule(1500);
+}
+async function resendCode(){
+ try{await api('/otp-resend',{});say(t('new_code'));}
+ catch(e){say(e.code==='OTP_RATE_LIMITED'?t('code_wait',Math.max(1,Math.ceil((e.retryAfterSeconds||60)/60))):t('net'));}
 }
 
 // ---------- polling ----------
-let pollT=null,failCount=0;
+let pollT=null,fails=0;
 function schedule(ms){clearTimeout(pollT);pollT=setTimeout(tick,ms);}
-async function pullMessages(){
- const r=await api('/chat?after='+lastId,undefined,'GET');
+async function pull(){
+ const r=await api('/chat?after='+lastId,undefined,'GET');let changed=false;
  for(const m of r.messages||[]){
   lastId=Math.max(lastId,m.id);
-  if(m.role==='user'){const local=[...log.querySelectorAll('.msg.me[data-local="1"]')].find(x=>x.textContent.startsWith(m.text.trim().slice(0,40)));if(local){local.dataset.local='0';continue;}
-   if(/^\d{4,8}$/.test(m.text.trim()))continue;}
-  if(m.role==='assistant'){waitingReply=false;setTyping(false);}
-  addMsg(m.role,m.text,m.at);
+  if(m.role==='user'){const i=local.findIndex(x=>x.pending&&x.text.trim()===m.text.trim());if(i>=0){local.splice(i,1);saveLocal();}}
+  if(m.role==='assistant')waiting=false;
+  server.push(m);changed=true;
  }
- if((r.messages||[]).length)scrollEnd();
+ if(changed)draw();
 }
-async function refresh(){ctx=await api('/status',undefined,'GET');}
+async function refresh(){const ts=ctx?.telegramStart;ctx=await api('/status',undefined,'GET');if(ts)ctx.telegramStart=ts;}
 async function tick(){
- try{await Promise.all([pullMessages(),refresh()]);failCount=0;$('offline').hidden=true;renderCard();}
- catch(e){if(e.status===401){await start();return;}failCount++;if(failCount>2){$('offline').textContent=t('offline');$('offline').hidden=false;}}
- if(waitingReply&&Date.now()-waitSince>45000){waitingReply=false;setTyping(false);}
- const st=stage(),fast=waitingReply||['pay','otp','conn'].includes(st);
+ try{await Promise.all([pull(),refresh()]);fails=0;$('offline').hidden=true;await ensurePayLink();}
+ catch(e){if(e.status===401){return start();}if(++fails>2){$('offline').textContent=t('offline');$('offline').hidden=false;}}
+ if(waiting&&Date.now()-waitSince>45000){waiting=false;draw();}
+ const st=stage(),fast=waiting||['pay','otp','busy'].includes(st);
  schedule(document.hidden?15000:fast?2500:6000);
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(100);});
 
-// ---------- start ----------
+// ---------- composer, language, start ----------
+function autosize(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
+inp.addEventListener('input',autosize);
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!/Mobi|Android/i.test(navigator.userAgent)){e.preventDefault();send();}});
+$('send').addEventListener('click',send);
 function applyLang(){
- document.documentElement.lang=lang;$('sub').textContent=t('sub');
- document.querySelectorAll('#langBox button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
- const hello=log.querySelector('[data-hello]');if(hello)hello.innerHTML=fmt(t('hello'))+'<span class="tm"></span>';
- renderCard(true);
+ document.documentElement.lang=lang;inp.placeholder=t('ph');
+ document.querySelectorAll('#langBox button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));draw();
 }
-$('langBox').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||b.dataset.l===lang)return;lang=b.dataset.l;store.set('gm_lang',lang);applyLang();if(token)api('/language',{language:lang}).catch(()=>{});});
+$('langBox').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.l===lang)return;lang=b.dataset.l;store.set('gm_lang',lang);applyLang();if(token)api('/language',{language:lang}).catch(()=>{});});
 async function start(){
  const q=new URLSearchParams(location.search),body={language:lang};
  const tk=q.get('t');if(tk)body.token=tk;else{const w=store.get('gm_web_id');if(w)body.webId=w;}
- const src=q.get('src');if(src&&/^[a-z0-9_-]{1,32}$/i.test(src))body.src=src;else body.src='chat';
+ const src=q.get('src');body.src=src&&/^[a-z0-9_-]{1,32}$/i.test(src)?src:'chat';
  try{
   const r=await api('/session',body);
-  if(r.webId)store.set('gm_web_id',r.webId);
+  if(r.webId)store.set('gm_web_id',r.webId);webId=r.webId||store.get('gm_web_id')||'t';
   token=r.sessionToken;ctx=r.context;ctx.telegramStart=r.telegramStart||null;
-  if(ctx.client?.language&&STR[ctx.client.language]&&!store.get('gm_lang')){lang=ctx.client.language;}
-  if(r.telegramStart)ctx.telegramStart=r.telegramStart;
-  applyLang();
-  await pullMessages().catch(()=>{});
-  renderCard(true);schedule(2500);
+  loadLocal();server=[];lastId=0;
+  await pull().catch(()=>{});draw();schedule(800);
  }catch(e){$('offline').textContent=t('offline');$('offline').hidden=false;setTimeout(start,4000);}
 }
-(function boot(){
- const d=document.createElement('div');d.className='day';d.textContent=t('today');log.appendChild(d);
- const h=document.createElement('div');h.className='msg bot first';h.dataset.hello='1';h.innerHTML=fmt(t('hello'))+'<span class="tm"></span>';log.appendChild(h);
- applyLang();start();
-})();
-// keep telegramStart across status refreshes
-const _refresh=refresh;refresh=async function(){const ts=ctx?.telegramStart;await _refresh();if(ctx&&ts&&!ctx.telegramStart)ctx.telegramStart=ts;};
+applyLang();start();
 </script>
 </body>
 </html>
