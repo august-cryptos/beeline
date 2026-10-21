@@ -120,7 +120,13 @@ const STR={
   code_bad:'Код қате 😕 SMS-ті тексеріп, қайта жазыңыз.',code_resent:'Код сәйкес келмеді — Beeline жаңа код жіберді 📩 Жаңа кодты жазыңыз.',
   code_wait:m=>`Beeline жаңа кодты ${m} минуттан кейін жібереді. Сол кезде «жаңа код» деп жазыңыз.`,
   new_code:'Жаңа код жіберілді 📩 SMS келген соң кодты осында жазыңыз.',net:'Байланыс жоқ, қайта жазып көріңіз 🙏',
-  pick:'📶 Пакет таңдау',pick_txt:'Қай пакет? Осында *10* немесе *20* деп жазыңыз 🙂'},
+  pick:'📶 Пакет таңдау',pick_txt:'Қай пакет? Осында *10* немесе *20* деп жазыңыз 🙂',
+  ask_kaspi:ph=>`Нөмір: ${ph} ✅\nТөлем — Kaspi шоты арқылы. Шотты қай Kaspi нөміріне жіберейін? Нөмірді жазыңыз.\n(Осы нөмір болса — «осы» деп жазыңыз)`,
+  confirm:(n,k)=>`Kaspi: *${n}* (${k})\nДұрыс па? «иә» немесе «жоқ» деп жазыңыз.`,
+  inv_sent:(k,a)=>`Шот жіберілді ✅ ${k} нөміріне, ${a} ₸.\nKaspi қосымшасы → Төлемдер → Шоттар → төлеңіз. Шот 30 минут жарамды.\nТөлеген соң осы чатқа қайтыңыз 🙂`,
+  kaspi_nf:'Бұл нөмірге Kaspi табылмады 😕 Kaspi тіркелген нөмірді жазыңыз.',kaspi_bad:'Kaspi нөмірі дұрыс емес. Толық жазыңыз, мысалы: 7771234567',ask_again:'Жарайды 👍 Kaspi нөмірін қайта жазыңыз.',
+  not_coming:ph=>`Код ${ph} нөміріне келеді. Нөмір дұрыс па?\n• Дұрыс болса — 1–2 минут күтіп, «жаңа код» деп жазыңыз.\n• Қате болса — дұрыс Beeline нөмірін осында жазыңыз.`,
+  phone_changed:ph=>`Нөмір ${ph} болып өзгертілді ✅ Код енді осы нөмірге келеді — осында жазыңыз.`},
  ru:{sub:'в сети',typing:'печатает…',ph:'Сообщение',today:'Сегодня',offline:'Связь прервалась, переподключаемся…',
   hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nКакой пакет подключаем? Напишите здесь *10* или *20* 🙂',
   ask_phone:(g,p)=>`Хорошо, ${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем? Напишите номер.`,
@@ -131,7 +137,13 @@ const STR={
   code_bad:'Код неверный 😕 Проверьте SMS и напишите ещё раз.',code_resent:'Код не подошёл — Beeline прислал новый 📩 Напишите новый код.',
   code_wait:m=>`Beeline пришлёт новый код через ${m} мин. Тогда напишите «новый код».`,
   new_code:'Новый код отправлен 📩 Как придёт SMS — напишите код здесь.',net:'Нет связи, попробуйте написать ещё раз 🙏',
-  pick:'📶 Выбрать пакет',pick_txt:'Какой пакет? Напишите здесь *10* или *20* 🙂'}
+  pick:'📶 Выбрать пакет',pick_txt:'Какой пакет? Напишите здесь *10* или *20* 🙂',
+  ask_kaspi:ph=>`Номер: ${ph} ✅\nОплата — счётом в Kaspi. На какой номер Kaspi отправить счёт? Напишите номер.\n(Если этот же — напишите «этот»)`,
+  confirm:(n,k)=>`Kaspi: *${n}* (${k})\nВсё верно? Напишите «да» или «нет».`,
+  inv_sent:(k,a)=>`Счёт отправлен ✅ на ${k}, ${a} ₸.\nПриложение Kaspi → Платежи → Счета → оплатите. Счёт действует 30 минут.\nПосле оплаты вернитесь в этот чат 🙂`,
+  kaspi_nf:'На этот номер Kaspi не найден 😕 Напишите номер, на который зарегистрирован Kaspi.',kaspi_bad:'Неверный номер Kaspi. Напишите полностью, например: 7771234567',ask_again:'Хорошо 👍 Напишите номер Kaspi ещё раз.',
+  not_coming:ph=>`Код приходит на номер ${ph}. Номер верный?\n• Если верный — подождите 1–2 минуты и напишите «новый код».\n• Если нет — напишите здесь правильный номер Beeline.`,
+  phone_changed:ph=>`Номер изменён на ${ph} ✅ Код теперь придёт на этот номер — напишите его здесь.`}
 };
 const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let lang=store.get('gm_lang');if(!STR[lang])lang='kk';
@@ -201,31 +213,57 @@ function stage(){
  if(o)return'busy';
  return'free';
 }
-// the Kaspi link appears as soon as the order is waiting for payment
-let payAsked='';
-async function ensurePayLink(){
+// payment: a Kaspi invoice to the number the customer names (checked by name first); a Kaspi link on request
+let pendingKaspi=null;
+const targetOf=()=>ctx?.lastOrder?.targetPhone||liveOrder()?.targetPhone||ctx?.client?.phone;
+async function ensurePayStep(){
  if(stage()!=='pay'||busy)return;
- const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),key='pay:'+(o?.id||'');
- if(ctx.paymentUrl){say(t('pay',sp?.trafficGb||'',phone8(o?.targetPhone)),{href:ctx.paymentUrl,btn:t('pay_btn',money(sp?.price))},key+':'+ctx.paymentUrl);return;}
- if(payAsked===key)return;payAsked=key;busy=true;
- try{const r=await api('/payment-method',{method:'KASPI_LINK'});await refresh();const url=r.paymentUrl||ctx.paymentUrl;if(!url)throw new Error('NO_LINK');
-  say(t('pay',sp?.trafficGb||'',phone8(ctx.lastOrder?.targetPhone||o?.targetPhone)),{href:url,btn:t('pay_btn',money(sp?.price))},key+':'+url);}
+ const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),oid=o?.id||'';
+ if(ctx.paymentStatus==='PAYMENT_PENDING'&&ctx.paymentMethod==='KASPI'){say(t('inv_sent',phone8(ctx.paymentPhone||pendingKaspi?.phone||''),money(sp?.price||o?.amount)),{},'inv:'+oid);return;}
+ if(ctx.paymentStatus==='PAYMENT_PENDING'&&ctx.paymentMethod==='KASPI_LINK'&&ctx.paymentUrl){say(t('pay',sp?.trafficGb||'',phone8(o?.targetPhone)),{href:ctx.paymentUrl,btn:t('pay_btn',money(sp?.price))},'pay:'+oid+':'+ctx.paymentUrl);return;}
+ say(t('ask_kaspi',phone8(targetOf())),{},'askk:'+oid);
+}
+async function previewKaspi(d){
+ busy=true;
+ try{const r=await api('/payment-recipient',{method:'KASPI',paymentPhone:'7'+d});pendingKaspi={phone:'7'+d,name:r.clientName||''};say(t('confirm',pendingKaspi.name||'—',phone8(pendingKaspi.phone)));}
+ catch(e){say(e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_nf'):e.code==='INVALID_KASPI_PHONE'?t('kaspi_bad'):t('net'));}
+ busy=false;
+}
+async function sendInvoice(){
+ const k=pendingKaspi;if(!k)return;busy=true;
+ try{await api('/payment-method',{method:'KASPI',paymentPhone:k.phone});pendingKaspi=null;await refresh();const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId);say(t('inv_sent',phone8(k.phone),money(sp?.price||o?.amount)),{},'inv:'+(o?.id||''));}
+ catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED')await refresh().catch(()=>{});else say(e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_nf'):t('net'));}
+ busy=false;
+}
+async function payByLink(){
+ busy=true;
+ try{const r=await api('/payment-method',{method:'KASPI_LINK'});await refresh();const url=r.paymentUrl||ctx.paymentUrl;if(!url)throw new Error('NO_LINK');const sp=ctx.selectedPackage||pkgOf(ctx.lastOrder?.packageId);
+  say(t('pay',sp?.trafficGb||'',phone8(targetOf())),{href:url,btn:t('pay_btn',money(sp?.price))},'pay:'+(ctx.lastOrder?.id||'')+':'+url);}
  catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED')await refresh().catch(()=>{});else say(t('pay_fail'));}
  busy=false;
 }
 
 // ---------- the customer writes ----------
 const PKG=/^\s*(?:(10|20)\s*(?:гб|gb|гиг\S*|г)?|(?:гб|gb)\s*(10|20))\s*(?:керек|алам\S*|давай|пожалуйста|please)?\s*[.!)]*\s*$/i;
-const NEW_CODE=/(жаңа|жана|новый|еще|ещё|қайта)\s*(код|code)|код\s*(келмед|келмей|не приш|нет)/i;
-const PAY_AGAIN=/^(төлеу|толеу|оплата|оплатить|kaspi|каспи)\s*[.!]*$/i;
+const NEW_CODE=/(жаңа|жана|новый|еще|ещё|қайта)\s*(код|code)/i;
+const NOT_COMING=/(келмед|келмей|келген жоқ|не приш|не прих|нет\s*код|код\s*жоқ|код\s*жок)/i;
+const LINK_ASK=/(сілтеме|силтеме|ссылк|link)/i;
+const YES=/^\s*(иә|ия|иа|ыя|да|ага|ок|ok|дұрыс|дурыс|верно|правильно|\+|👍)/i,NO=/^\s*(жоқ|жок|нет|не\s|не$|қате|кате|неправильно|неверно)/i;
+const SAME=/^\s*(осы|осы нөмір|сол|этот|тот же|этот же)\s*[.!]*\s*$/i;
 async function send(){
  const text=inp.value.trim();if(!text||!token)return;
  inp.value='';autosize();
  const st=stage(),digits=text.replace(/\D/g,''),onlyDigits=/^[\d\s()+-]+$/.test(text);
  if(st==='otp'&&onlyDigits&&digits.length>=4&&digits.length<=8){mine(text);return submitCode(digits);}
+ if(st==='otp'&&onlyDigits&&digits.length>=10&&digits.length<=12){mine(text);return changePhone(digits.slice(-10));}
  if(st==='otp'&&NEW_CODE.test(text)){mine(text);return resendCode();}
+ if(st==='otp'&&NOT_COMING.test(text)){mine(text);return say(t('not_coming',phone8(targetOf())));}
  if(st==='phone'&&onlyDigits&&digits.length>=10&&digits.length<=12){mine(text);return submitPhone(digits.slice(-10));}
- if(st==='pay'&&PAY_AGAIN.test(text)){mine(text);payAsked='';ctx.paymentUrl=null;local=local.filter(m=>!String(m.key||'').startsWith('pay:'));saveLocal();return ensurePayLink();}
+ if(st==='pay'&&pendingKaspi&&YES.test(text)){mine(text);return sendInvoice();}
+ if(st==='pay'&&pendingKaspi&&NO.test(text)){mine(text);pendingKaspi=null;return say(t('ask_again'));}
+ if(st==='pay'&&onlyDigits&&digits.length>=10&&digits.length<=12){mine(text);return previewKaspi(digits.slice(-10));}
+ if(st==='pay'&&SAME.test(text)){mine(text);return previewKaspi(String(targetOf()||'').replace(/\D/g,'').slice(-10));}
+ if(st==='pay'&&LINK_ASK.test(text)){mine(text);return payByLink();}
  const pm=text.match(PKG);
  if(pm&&['free','phone'].includes(st)){mine(text);return choosePackage(pm[1]==='20'||pm[2]==='20'?20:10);}
  return askAi(text);
@@ -248,7 +286,7 @@ async function choosePackage(gb){
 }
 async function submitPhone(d){
  busy=true;
- try{const r=await api('/phone',{phone:'7'+d});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};busy=false;await ensurePayLink();}
+ try{const r=await api('/phone',{phone:'7'+d});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};busy=false;await ensurePayStep();}
  catch(e){busy=false;say(e.code==='DAILY_PHONE_LIMIT'?t('limit'):['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code)?t('bad_phone'):t('net'));await refresh().catch(()=>{});}
 }
 async function submitCode(code){
@@ -263,6 +301,12 @@ async function submitCode(code){
   await refresh().catch(()=>{});
  }
  busy=false;waiting=false;draw();schedule(1500);
+}
+async function changePhone(d){
+ busy=true;
+ try{const r=await api('/change-phone',{phone:'7'+d});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};say(t('phone_changed',phone8('7'+d)));}
+ catch(e){say(e.code==='DAILY_PHONE_LIMIT'?t('limit'):['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code)?t('bad_phone'):t('net'));await refresh().catch(()=>{});}
+ busy=false;
 }
 async function resendCode(){
  try{await api('/otp-resend',{});say(t('new_code'));}
@@ -284,7 +328,7 @@ async function pull(){
 }
 async function refresh(){const ts=ctx?.telegramStart;ctx=await api('/status',undefined,'GET');if(ts)ctx.telegramStart=ts;}
 async function tick(){
- try{await Promise.all([pull(),refresh()]);fails=0;$('offline').hidden=true;await ensurePayLink();}
+ try{await Promise.all([pull(),refresh()]);fails=0;$('offline').hidden=true;await ensurePayStep();}
  catch(e){if(e.status===401){return start();}if(++fails>2){$('offline').textContent=t('offline');$('offline').hidden=false;}}
  if(waiting&&Date.now()-waitSince>45000){waiting=false;draw();}
  const st=stage(),fast=waiting||['pay','otp','busy'].includes(st);
