@@ -118,7 +118,7 @@ const STR={
   done_t:g=>`✅ ${g} ГБ қосылды!`,done_p:n=>`${n} нөмірі. Тексеру: *106# немесе Janymda қосымшасы.\nSMS келмеуі мүмкін — ГБ бәрібір түседі.`,more:'Тағы пакет алу',
   fail_t:'Қосылмады',fail_p:'Уайымдамаңыз — маман тексеріп, өзі хабарласады. Ақшаңыз сақталады.',
   e_phone:'Нөмір дұрыс емес. 7XX XXX XX XX форматында жазыңыз',e_limit:'Бұл нөмірге бүгінгі лимит бітті. Ертең қайталаңыз немесе басқа нөмір жазыңыз.',e_net:'Байланыс жоқ, қайталап көріңіз',e_beeline:'Тек Beeline нөмірлеріне қосылады',
-  tg:'Telegram-да ыңғайлырақ: хабарламалар өзі келеді',offline:'Байланыс үзілді, қайта қосылуда…',today:'Бүгін',typing:'жазып жатыр…',pick:'📶 Пакетті таңдау'},
+  tg:'Telegram-да ыңғайлырақ: хабарламалар өзі келеді',other_pkg:'Басқа пакет',offline:'Байланыс үзілді, қайта қосылуда…',today:'Бүгін',typing:'жазып жатыр…',pick:'📶 Пакетті таңдау'},
  ru:{sub:'онлайн · отвечает сразу',ph:'Напишите сообщение…',ph_phone:'Номер Beeline: 7XX XXX XX XX',ph_code:'Введите SMS-код',m_phone:'НОМЕР',m_code:'КОД',
   hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nВыберите пакет ниже или напишите вопрос 👇',
   choose:'Выберите пакет',choose_p:'30 дней · основной тариф не меняется · только Beeline',per:'на 30 дней',
@@ -129,7 +129,7 @@ const STR={
   done_t:g=>`✅ ${g} ГБ подключено!`,done_p:n=>`Номер ${n}. Проверка: *106# или приложение Janymda.\nSMS может не прийти — ГБ всё равно начислены.`,more:'Купить ещё пакет',
   fail_t:'Не подключилось',fail_p:'Не переживайте — специалист проверит и сам свяжется. Деньги сохраняются.',
   e_phone:'Неверный номер. Напишите в формате 7XX XXX XX XX',e_limit:'На этот номер на сегодня лимит. Попробуйте завтра или другой номер.',e_net:'Нет связи, попробуйте ещё раз',e_beeline:'Подключаем только номера Beeline',
-  tg:'В Telegram удобнее: сообщения приходят сами',offline:'Связь прервалась, переподключаемся…',today:'Сегодня',typing:'печатает…',pick:'📶 Выбрать пакет'}
+  tg:'В Telegram удобнее: сообщения приходят сами',other_pkg:'Другой пакет',offline:'Связь прервалась, переподключаемся…',today:'Сегодня',typing:'печатает…',pick:'📶 Выбрать пакет'}
 };
 let lang=(()=>{try{return localStorage.getItem('gm_lang')||'kk'}catch(_){return 'kk'}})();
 if(!STR[lang])lang='kk';
@@ -206,7 +206,7 @@ function renderCard(force){
  else if(st==='choose'){
   h=`<h3>${esc(t('choose'))}</h3><p>${esc(t('choose_p'))}</p><div class="pk">`+pk.map(p=>`<button class="btn pkb${p.trafficGb>=20?'':' alt'}" data-pkg="${esc(p.id)}"><b>${esc(p.trafficGb)} ГБ</b>${esc(Number(p.price).toLocaleString('ru-RU'))} ₸ <small>${esc(t('per'))}</small></button>`).join('')+'</div>';
  }else if(st==='phone'){
-  const sp=ctx.selectedPackage;h=`<h3>${esc(t('phone_t'))}</h3><p>${sp?esc(pkgGb(sp.id||sp)+' ГБ · '+Number(sp.price||0).toLocaleString('ru-RU')+' ₸ · '):''}${esc(t('phone_p'))}</p>${otpError?`<div class="err">${esc(otpError)}</div>`:''}`;
+  const sp=ctx.selectedPackage;h=`<h3>${esc(t('phone_t'))}</h3><p>${sp?esc(pkgGb(sp.id||sp)+' ГБ · '+Number(sp.price||0).toLocaleString('ru-RU')+' ₸ · '):''}${esc(t('phone_p'))}</p>${otpError?`<div class="err">${esc(otpError)}</div>`:''}<button class="btn alt" data-backpkg>${esc(t('other_pkg'))}</button>`;
  }else if(st==='pay'){
   const sp=ctx.selectedPackage,amt=sp?.price||'',ph=phone8(ctx.lastOrder?.targetPhone||ctx.client?.phone);
   h=`<p>${esc(t('pay_t'))}</p><div class="big">${esc(Number(amt).toLocaleString('ru-RU'))} ₸</div><p>${esc((sp?pkgGb(sp.id||sp)+' ГБ → ':'')+ph)}</p>`+
@@ -236,6 +236,7 @@ log.addEventListener('click',async e=>{
  if(b.dataset.pkg){await act(()=>api('/package',{packageId:b.dataset.pkg}));}
  else if(b.hasAttribute('data-pay')){await pay();}
  else if(b.hasAttribute('data-backphone')){await act(()=>api('/back-to-phone',{}));}
+ else if(b.hasAttribute('data-backpkg')){await act(()=>api('/back-to-packages',{}));}
  else if(b.hasAttribute('data-resend')){otpError='';otpNote='';busy=true;renderCard();try{await api('/otp-resend',{});otpNote=t('otp_sent');}catch(err){otpError=err.code==='OTP_RATE_LIMITED'?t('otp_wait',mins(err.retryAfterSeconds)):t('e_net');}busy=false;renderCard();}
  else if(b.hasAttribute('data-more')){store.del('gm_watching_order');doneShownFor=null;if(['ACTIVE','COMPLETED'].includes(ctx.clientState)){renderCard(true);}else await refresh();cardKey='';renderCard(true);}
  else if(b.hasAttribute('data-pick')){renderCard(true);}
