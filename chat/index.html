@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<title>GeoMaster чат</title>
+<meta name="description" content="GeoMaster — Beeline-ға арзан интернет. Чатта жазыңыз, бот бірден жауап береді.">
+<meta name="theme-color" content="#171714">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Owner request (2026-10-21): our own web chat - the same AI seller as the Telegram bot, nothing to ban.
+   Lives next to the site (/chat/), shares its browser identity, so an order started on the site shows here too. */
+:root{
+ --bg:#efeee8;--wall:#e9e7df;--ink:#171714;--dim:#6f6d66;--line:#dedbd1;
+ --me:#ffd528;--me-ink:#171714;--bot:#ffffff;--bot-ink:#171714;
+ --bar:#171714;--bar-ink:#ffffff;--accent:#ffd528;--ok:#169b62;--bad:#d4442c;--chip:#ffffff;
+ --shadow:0 1px 1.5px rgba(23,23,20,.10);
+}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){
+  --bg:#0f0f0d;--wall:#141412;--ink:#f1efe8;--dim:#a19e95;--line:#2c2b27;
+  --me:#e9c21f;--me-ink:#141410;--bot:#1f1f1c;--bot-ink:#f1efe8;
+  --bar:#1b1b18;--bar-ink:#f6f4ec;--chip:#1f1f1c;--shadow:0 1px 1.5px rgba(0,0,0,.4);
+ }
+}
+:root[data-theme="dark"]{
+ --bg:#0f0f0d;--wall:#141412;--ink:#f1efe8;--dim:#a19e95;--line:#2c2b27;
+ --me:#e9c21f;--me-ink:#141410;--bot:#1f1f1c;--bot-ink:#f1efe8;
+ --bar:#1b1b18;--bar-ink:#f6f4ec;--chip:#1f1f1c;--shadow:0 1px 1.5px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:500 15px/1.4 Manrope,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.app{display:flex;flex-direction:column;height:100dvh;max-width:560px;margin:0 auto;background:var(--wall);position:relative}
+header{display:flex;align-items:center;gap:11px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));background:var(--bar);color:var(--bar-ink);flex:none}
+.ava{width:40px;height:40px;border-radius:50%;background:var(--accent);display:grid;place-items:center;flex:none}
+.ava svg{width:58%;height:58%;fill:#171714}
+.who{flex:1;min-width:0}.who b{display:block;font:800 16px/1.2 Manrope,sans-serif}
+.who small{display:block;font:600 12.5px/1.3 Manrope,sans-serif;opacity:.72}
+.lang{display:flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;color:var(--bar-ink);font:800 11.5px Manrope,sans-serif;letter-spacing:.04em;padding:6px 9px;border-radius:999px;cursor:pointer;opacity:.7}
+.lang button.on{background:var(--accent);color:#171714;opacity:1}
+#log{flex:1;overflow-y:auto;padding:12px 10px 6px;display:flex;flex-direction:column;gap:4px;overscroll-behavior:contain}
+.day{align-self:center;background:var(--chip);color:var(--dim);font:700 11.5px Manrope,sans-serif;padding:4px 10px;border-radius:8px;margin:6px 0;box-shadow:var(--shadow)}
+.msg{max-width:84%;padding:7px 10px 6px;border-radius:12px;box-shadow:var(--shadow);white-space:pre-wrap;overflow-wrap:anywhere;position:relative}
+.msg .tm{display:block;text-align:right;font:600 10.5px Manrope,sans-serif;color:var(--dim);margin-top:2px}
+.msg.bot{align-self:flex-start;background:var(--bot);color:var(--bot-ink);border-top-left-radius:4px}
+.msg.me{align-self:flex-end;background:var(--me);color:var(--me-ink);border-top-right-radius:4px}
+.msg.me .tm{color:rgba(23,23,20,.6)}
+.msg + .msg.bot,.msg.me + .msg.me{margin-top:0}
+.msg.bot + .msg.me,.msg.me + .msg.bot{margin-top:6px}
+.msg a{color:inherit;font-weight:700}
+.msg b{font-weight:800}
+.typing{align-self:flex-start;background:var(--bot);border-radius:12px;border-top-left-radius:4px;padding:10px 12px;box-shadow:var(--shadow);display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--dim);animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+/* the live order card - always the last thing in the chat */
+.card{align-self:stretch;margin:6px 2px 2px;background:var(--bot);color:var(--bot-ink);border-radius:14px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+.card h3{font:800 15px/1.3 Manrope,sans-serif}
+.card p{color:var(--dim);font-weight:600;font-size:13.5px}
+.card .big{font:800 22px/1.2 Manrope,sans-serif;letter-spacing:.02em;color:var(--ink)}
+.pk{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{appearance:none;border:0;border-radius:12px;padding:12px 12px;font:800 14.5px/1.2 Manrope,sans-serif;cursor:pointer;background:var(--accent);color:#171714;text-align:center;text-decoration:none;display:block;width:100%}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.kaspi{background:#f14635;color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.btn small{display:block;font-weight:700;font-size:12px;opacity:.75;margin-top:2px}
+.pkb{padding:12px 10px;text-align:left}
+.pkb b{display:block;font-size:19px}
+.err{color:var(--bad);font-weight:700;font-size:13px}
+.okline{color:var(--ok);font-weight:800}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-self:flex-start;margin:2px 0}
+.chip{border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:6px 11px;font:700 13px Manrope,sans-serif;cursor:pointer}
+footer{flex:none;display:flex;gap:8px;align-items:flex-end;padding:8px 10px;padding-bottom:max(8px,env(safe-area-inset-bottom));background:var(--wall)}
+.field{flex:1;background:var(--bot);border-radius:22px;box-shadow:var(--shadow);display:flex;align-items:center;padding:0 6px 0 14px;min-height:44px}
+.field textarea{flex:1;border:0;outline:0;background:transparent;color:var(--ink);font:600 15.5px/1.35 Manrope,sans-serif;resize:none;max-height:120px;padding:11px 0}
+.field textarea::placeholder{color:var(--dim)}
+.mode{font:800 11px Manrope,sans-serif;letter-spacing:.04em;color:#171714;background:var(--accent);border-radius:999px;padding:4px 8px;margin-right:4px;white-space:nowrap}
+.send{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent);display:grid;place-items:center;cursor:pointer;flex:none}
+.send svg{width:21px;height:21px;fill:#171714}
+.send:disabled{opacity:.45}
+:where(button,a,textarea):focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.offline{position:absolute;top:64px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);font:700 12.5px Manrope,sans-serif;padding:6px 12px;border-radius:999px;z-index:3}
+@media (prefers-reduced-motion:reduce){.typing i{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header>
+  <div class="ava" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="6" y="19" width="4" height="7" rx="1.5"/><rect x="12" y="15" width="4" height="11" rx="1.5"/><rect x="18" y="10" width="4" height="16" rx="1.5"/><rect x="24" y="5" width="4" height="21" rx="1.5"/></svg></div>
+  <div class="who"><b>GeoMaster</b><small id="sub">онлайн · бірден жауап береді</small></div>
+  <div class="lang" id="langBox"><button data-l="kk">ҚАЗ</button><button data-l="ru">РУС</button></div>
+ </header>
+ <div id="log" role="log" aria-live="polite"></div>
+ <footer>
+  <div class="field"><span class="mode" id="mode" hidden></span><textarea id="inp" rows="1" maxlength="1000"></textarea></div>
+  <button class="send" id="send" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10.2 15 12 3.4 13.8z"/></svg></button>
+ </footer>
+ <div class="offline" id="offline" hidden></div>
+</div>
+<script>
+'use strict';
+const API='/api';
+const TG_BOT='GeoMaster1_bot';
+const STR={
+ kk:{sub:'онлайн · бірден жауап береді',ph:'Хабарлама жазыңыз…',ph_phone:'Beeline нөмірі: 7XX XXX XX XX',ph_code:'SMS-кодты жазыңыз',m_phone:'НӨМІР',m_code:'КОД',
+  hello:'Сәлеметсіз бе! 👋 GeoMaster — Beeline-ға арзан интернет.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 күн · тариф өзгермейді\n\nТөменнен пакетті таңдаңыз немесе сұрағыңызды жазыңыз 👇',
+  choose:'Пакетті таңдаңыз',choose_p:'30 күн · негізгі тариф өзгермейді · тек Beeline',per:'30 күнге',
+  phone_t:'Қай Beeline нөміріне қосамыз?',phone_p:'Нөмірді төменге жазыңыз 👇',
+  pay_t:'Төлеуге',pay_btn:'Kaspi-де төлеу',pay_again:'Kaspi-ді қайта ашу',pay_wait:'Төлем күтілуде… Kaspi-де төлеген соң осы чатқа қайтыңыз — бәрі осында болады.',pay_change:'Нөмірді өзгерту',
+  otp_t:'✅ Төлем келді!',otp_p:n=>`${n} нөміріне Beeline-нан SMS-код келді.\nКодты осында, төменге жазыңыз 👇`,otp_new:'Жаңа код сұрау',otp_sent:'Жаңа код жіберілді 📩',otp_bad:'Код қате, қайта жазыңыз',otp_wait:s=>`Beeline жаңа кодты ${s} кейін жібереді`,otp_check:'Код тексерілуде…',
+  conn_t:'⏳ Қосылып жатыр…',conn_p:'Әдетте 1–2 минут. Ештеңе істеудің қажеті жоқ.',
+  done_t:g=>`✅ ${g} ГБ қосылды!`,done_p:n=>`${n} нөмірі. Тексеру: *106# немесе Janymda қосымшасы.\nSMS келмеуі мүмкін — ГБ бәрібір түседі.`,more:'Тағы пакет алу',
+  fail_t:'Қосылмады',fail_p:'Уайымдамаңыз — маман тексеріп, өзі хабарласады. Ақшаңыз сақталады.',
+  e_phone:'Нөмір дұрыс емес. 7XX XXX XX XX форматында жазыңыз',e_limit:'Бұл нөмірге бүгінгі лимит бітті. Ертең қайталаңыз немесе басқа нөмір жазыңыз.',e_net:'Байланыс жоқ, қайталап көріңіз',e_beeline:'Тек Beeline нөмірлеріне қосылады',
+  tg:'Telegram-да ыңғайлырақ: хабарламалар өзі келеді',offline:'Байланыс үзілді, қайта қосылуда…',today:'Бүгін',typing:'жазып жатыр…',pick:'📶 Пакетті таңдау'},
+ ru:{sub:'онлайн · отвечает сразу',ph:'Напишите сообщение…',ph_phone:'Номер Beeline: 7XX XXX XX XX',ph_code:'Введите SMS-код',m_phone:'НОМЕР',m_code:'КОД',
+  hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nВыберите пакет ниже или напишите вопрос 👇',
+  choose:'Выберите пакет',choose_p:'30 дней · основной тариф не меняется · только Beeline',per:'на 30 дней',
+  phone_t:'На какой номер Beeline подключаем?',phone_p:'Напишите номер ниже 👇',
+  pay_t:'К оплате',pay_btn:'Оплатить в Kaspi',pay_again:'Открыть Kaspi снова',pay_wait:'Ждём оплату… После оплаты в Kaspi вернитесь в этот чат — всё будет здесь.',pay_change:'Изменить номер',
+  otp_t:'✅ Оплата пришла!',otp_p:n=>`На номер ${n} пришёл SMS-код от Beeline.\nНапишите код здесь, внизу 👇`,otp_new:'Запросить новый код',otp_sent:'Новый код отправлен 📩',otp_bad:'Код неверный, введите ещё раз',otp_wait:s=>`Beeline пришлёт новый код через ${s}`,otp_check:'Проверяем код…',
+  conn_t:'⏳ Подключаем…',conn_p:'Обычно 1–2 минуты. Ничего делать не нужно.',
+  done_t:g=>`✅ ${g} ГБ подключено!`,done_p:n=>`Номер ${n}. Проверка: *106# или приложение Janymda.\nSMS может не прийти — ГБ всё равно начислены.`,more:'Купить ещё пакет',
+  fail_t:'Не подключилось',fail_p:'Не переживайте — специалист проверит и сам свяжется. Деньги сохраняются.',
+  e_phone:'Неверный номер. Напишите в формате 7XX XXX XX XX',e_limit:'На этот номер на сегодня лимит. Попробуйте завтра или другой номер.',e_net:'Нет связи, попробуйте ещё раз',e_beeline:'Подключаем только номера Beeline',
+  tg:'В Telegram удобнее: сообщения приходят сами',offline:'Связь прервалась, переподключаемся…',today:'Сегодня',typing:'печатает…',pick:'📶 Выбрать пакет'}
+};
+let lang=(()=>{try{return localStorage.getItem('gm_lang')||'kk'}catch(_){return 'kk'}})();
+if(!STR[lang])lang='kk';
+const t=(k,...a)=>{const v=STR[lang][k];return typeof v==='function'?v(...a):v;};
+let token=null,ctx=null,lastId=0,waitingReply=false,waitSince=0,cardKey='',otpError='',otpNote='',busy=false,doneShownFor=null;
+const $=id=>document.getElementById(id);
+const log=$('log'),inp=$('inp'),sendBtn=$('send'),modeEl=$('mode');
+const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
+
+async function api(path,body,method){
+ const o={method:method||(body!==undefined?'POST':'GET'),headers:{'content-type':'application/json'}};
+ if(token)o.headers.authorization='Bearer '+token;
+ if(body!==undefined)o.body=JSON.stringify(body);
+ const c=new AbortController(),tm=setTimeout(()=>c.abort(),path==='/otp'?45000:15000);o.signal=c.signal;
+ let r;try{r=await fetch(API+path,o);}catch(e){throw Object.assign(new Error('NET'),{code:'NETWORK_ERROR'});}finally{clearTimeout(tm);}
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok)throw Object.assign(new Error(j.error||'ERR'),{code:j.error,status:r.status,retryAfterSeconds:j.retryAfterSeconds});
+ return j;
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SITE_LINK=/https?:\/\/(?:www\.)?(?:geomasterkz\.com|beeline\.pages\.dev)\/?\S*/gi;
+function fmt(text){
+ let s=esc(String(text||'').replace(SITE_LINK,'⟦PICK⟧'));
+ s=s.replace(/\*([^*\n]+)\*/g,'<b>$1</b>');
+ s=s.replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\//,'')}</a>`);
+ s=s.replace(/\n?⟦PICK⟧/g,'');
+ return s.trim();
+}
+const hhmm=d=>{const x=new Date(d);return isNaN(x)?'':x.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Almaty'});};
+const phone8=p=>{const d=String(p||'').replace(/\D/g,'').slice(-10);return d?'8'+d:'';};
+const pkgGb=id=>{const p=(ctx?.availablePackages||[]).find(x=>x.id===id);return p?p.trafficGb:(String(id).match(/\d+/)||[''])[0];};
+
+function addMsg(role,text,at,opts={}){
+ const el=document.createElement('div');el.className='msg '+(role==='user'?'me':'bot');
+ el.innerHTML=fmt(text)+`<span class="tm">${esc(hhmm(at||Date.now()))}</span>`;
+ const card=log.querySelector('.card'),typing=log.querySelector('.typing');
+ log.insertBefore(el,typing||card||null);
+ if(opts.pickChip&&SITE_LINK.test(String(text))){SITE_LINK.lastIndex=0;}
+ return el;
+}
+function scrollEnd(){requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight;});}
+function setTyping(on){
+ let el=log.querySelector('.typing');
+ if(on&&!el){el=document.createElement('div');el.className='typing';el.innerHTML='<i></i><i></i><i></i>';log.insertBefore(el,log.querySelector('.card'));$('sub').textContent=t('typing');scrollEnd();}
+ if(!on&&el){el.remove();$('sub').textContent=t('sub');}
+}
+
+// ---------- the live order card ----------
+function activeOrder(){
+ const os=ctx?.orders||[];const mine=store.get('gm_watching_order');
+ return (mine&&os.find(o=>o.orderId===mine))||os.find(o=>['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus)||o.jobStatus==='WAITING_OTP')||null;
+}
+function stage(){
+ if(!ctx)return'loading';
+ const s=ctx.clientState,o=activeOrder();
+ if(o&&(o.jobStatus==='WAITING_OTP'||s==='WAITING_OTP'))return'otp';
+ if(s==='WAITING_OTP')return'otp';
+ if(s==='WAITING_PHONE')return'phone';
+ if(s==='WAITING_PAYMENT'||s==='PAYMENT_PENDING')return'pay';
+ if(o&&['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus))return'conn';
+ if(['TRAINING','PROVISIONING','PAYMENT_CONFIRMED'].includes(s))return'conn';
+ const mine=store.get('gm_watching_order'),lo=ctx.lastOrder;
+ if(mine&&lo&&lo.id===mine){if(lo.status==='COMPLETED')return'done';if(['TRAINING_FAILED','AUTH_FAILED','MANUAL_REVIEW','PAYMENT_FAILED'].includes(lo.status))return'fail';}
+ return'choose';
+}
+function renderCard(force){
+ const st=stage(),o=activeOrder();
+ const key=[st,lang,ctx?.paymentUrl||'',o?.orderId||'',o?.targetPhone||'',otpError,otpNote,busy].join('|');
+ if(!force&&key===cardKey)return;cardKey=key;
+ let el=log.querySelector('.card');if(!el){el=document.createElement('div');el.className='card';log.appendChild(el);}
+ const pk=ctx?.availablePackages||[];
+ let h='';
+ if(st==='loading'){h='';}
+ else if(st==='choose'){
+  h=`<h3>${esc(t('choose'))}</h3><p>${esc(t('choose_p'))}</p><div class="pk">`+pk.map(p=>`<button class="btn pkb${p.trafficGb>=20?'':' alt'}" data-pkg="${esc(p.id)}"><b>${esc(p.trafficGb)} ГБ</b>${esc(Number(p.price).toLocaleString('ru-RU'))} ₸ <small>${esc(t('per'))}</small></button>`).join('')+'</div>';
+ }else if(st==='phone'){
+  const sp=ctx.selectedPackage;h=`<h3>${esc(t('phone_t'))}</h3><p>${sp?esc(pkgGb(sp.id||sp)+' ГБ · '+Number(sp.price||0).toLocaleString('ru-RU')+' ₸ · '):''}${esc(t('phone_p'))}</p>${otpError?`<div class="err">${esc(otpError)}</div>`:''}`;
+ }else if(st==='pay'){
+  const sp=ctx.selectedPackage,amt=sp?.price||'',ph=phone8(ctx.lastOrder?.targetPhone||ctx.client?.phone);
+  h=`<p>${esc(t('pay_t'))}</p><div class="big">${esc(Number(amt).toLocaleString('ru-RU'))} ₸</div><p>${esc((sp?pkgGb(sp.id||sp)+' ГБ → ':'')+ph)}</p>`+
+   (ctx.paymentUrl?`<a class="btn kaspi" href="${esc(ctx.paymentUrl)}" target="_blank" rel="noopener" data-paylink>${esc(t('pay_again'))}</a><p>${esc(t('pay_wait'))}</p>`:`<button class="btn kaspi" data-pay ${busy?'disabled':''}>${esc(t('pay_btn'))}</button>`)+
+   `<button class="btn alt" data-backphone>${esc(t('pay_change'))}</button>${otpError?`<div class="err">${esc(otpError)}</div>`:''}`;
+ }else if(st==='otp'){
+  const ph=phone8(o?.targetPhone||ctx.client?.phone);
+  h=`<h3>${esc(t('otp_t'))}</h3><p style="white-space:pre-line">${esc(t('otp_p',ph))}</p>${otpNote?`<div class="okline">${esc(otpNote)}</div>`:''}${otpError?`<div class="err">${esc(otpError)}</div>`:''}<button class="btn alt" data-resend ${busy?'disabled':''}>${esc(t('otp_new'))}</button>`;
+ }else if(st==='conn'){
+  h=`<h3>${esc(t('conn_t'))}</h3><p>${esc(t('conn_p'))}</p>`;
+ }else if(st==='done'){
+  const lo=ctx.lastOrder;h=`<h3 class="okline">${esc(t('done_t',pkgGb(lo.packageId)))}</h3><p style="white-space:pre-line">${esc(t('done_p',phone8(lo.targetPhone)))}</p><button class="btn" data-more>${esc(t('more'))}</button>`;
+ }else if(st==='fail'){
+  h=`<h3>${esc(t('fail_t'))}</h3><p>${esc(t('fail_p'))}</p><button class="btn alt" data-more>${esc(t('more'))}</button>`;
+ }
+ if(st!=='loading'&&!ctx?.telegramLinked&&ctx?.telegramStart&&['otp','conn','pay'].includes(st))h+=`<a class="btn alt" style="border-color:#229ED9" href="https://t.me/${TG_BOT}?start=${encodeURIComponent(ctx.telegramStart)}" target="_blank" rel="noopener">✈️ ${esc(t('tg'))}</a>`;
+ el.innerHTML=h;el.hidden=!h;
+ // composer mode follows the card
+ const m=st==='phone'?'phone':st==='otp'?'code':'';
+ modeEl.hidden=!m;modeEl.textContent=m==='phone'?t('m_phone'):m==='code'?t('m_code'):'';
+ inp.placeholder=m==='phone'?t('ph_phone'):m==='code'?t('ph_code'):t('ph');
+ inp.inputMode=m?'numeric':'text';
+ scrollEnd();
+}
+log.addEventListener('click',async e=>{
+ const b=e.target.closest('button,a');if(!b)return;
+ if(b.dataset.pkg){await act(()=>api('/package',{packageId:b.dataset.pkg}));}
+ else if(b.hasAttribute('data-pay')){await pay();}
+ else if(b.hasAttribute('data-backphone')){await act(()=>api('/back-to-phone',{}));}
+ else if(b.hasAttribute('data-resend')){otpError='';otpNote='';busy=true;renderCard();try{await api('/otp-resend',{});otpNote=t('otp_sent');}catch(err){otpError=err.code==='OTP_RATE_LIMITED'?t('otp_wait',mins(err.retryAfterSeconds)):t('e_net');}busy=false;renderCard();}
+ else if(b.hasAttribute('data-more')){store.del('gm_watching_order');doneShownFor=null;if(['ACTIVE','COMPLETED'].includes(ctx.clientState)){renderCard(true);}else await refresh();cardKey='';renderCard(true);}
+ else if(b.hasAttribute('data-pick')){renderCard(true);}
+});
+const mins=s=>{s=Number(s)||60;return s>=60?Math.ceil(s/60)+(lang==='ru'?' мин':' мин'):s+(lang==='ru'?' сек':' сек');};
+async function act(fn){if(busy)return;busy=true;otpError='';renderCard();try{const r=await fn();if(r&&r.clientState)ctx={...ctx,...r};else await refresh();}catch(e){otpError=errText(e);await refresh().catch(()=>{});}busy=false;renderCard(true);}
+function errText(e){if(e.code==='DAILY_PHONE_LIMIT')return t('e_limit');if(['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code))return t('e_phone');if(e.code==='NOT_BEELINE'||e.code==='PHONE_NOT_BEELINE')return t('e_beeline');return t('e_net');}
+async function pay(){
+ if(busy)return;busy=true;otpError='';renderCard();
+ const tab=window.open('about:blank','_blank');
+ try{const r=await api('/payment-method',{method:'KASPI_LINK'});await refresh();const url=r.paymentUrl||ctx.paymentUrl;if(!url)throw new Error('NO_LINK');
+  if(tab)tab.location.replace(url);else location.assign(url);}
+ catch(e){if(tab)tab.close();if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refresh().catch(()=>{});}else otpError=t('e_net');}
+ busy=false;renderCard(true);
+}
+async function submitPhone(digits){
+ await act(async()=>{const r=await api('/phone',{phone:'7'+digits});if(r.orderId)store.set('gm_watching_order',r.orderId);return r;});
+}
+async function submitCode(code){
+ if(busy)return;busy=true;otpError='';otpNote=t('otp_check');renderCard();
+ try{const r=await api('/otp',{code});ctx={...ctx,...r};otpNote='';}
+ catch(e){otpNote='';if(e.code==='OTP_NOT_EXPECTED'){}else if(e.code==='OTP_RATE_LIMITED')otpError=t('otp_wait',mins(e.retryAfterSeconds));else if(e.code==='OTP_REJECTED_RESENT'){otpNote=t('otp_sent');otpError=t('otp_bad');}else if(e.code==='OTP_REJECTED'||e.code==='INVALID_OTP_FORMAT')otpError=t('otp_bad');else otpError=t('e_net');await refresh().catch(()=>{});}
+ busy=false;renderCard(true);
+}
+
+// ---------- composer ----------
+function autosize(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
+inp.addEventListener('input',autosize);
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!/Mobi|Android/i.test(navigator.userAgent)){e.preventDefault();send();}});
+sendBtn.addEventListener('click',send);
+async function send(){
+ const text=inp.value.trim();if(!text||!token)return;
+ const st=stage(),digits=text.replace(/\D/g,'');
+ // a phone number while we wait for one, an SMS code while we wait for it - everything else goes to the AI
+ if(st==='phone'&&digits.length>=10&&digits.length<=12&&!/[a-zа-яәіңғүұқөһ]/i.test(text)){inp.value='';autosize();addMsg('user',text);await submitPhone(digits.slice(-10));return;}
+ if(st==='otp'&&/^\d{4,8}$/.test(digits)&&digits.length===text.replace(/\s/g,'').length){inp.value='';autosize();addMsg('user',text);await submitCode(digits);return;}
+ inp.value='';autosize();
+ const el=addMsg('user',text);el.dataset.local='1';scrollEnd();
+ waitingReply=true;waitSince=Date.now();setTimeout(()=>{if(waitingReply)setTyping(true);},900);
+ try{await api('/chat',{text});}catch(e){waitingReply=false;setTyping(false);el.style.opacity='.55';el.title=t('e_net');}
+ schedule(1500);
+}
+
+// ---------- polling ----------
+let pollT=null,failCount=0;
+function schedule(ms){clearTimeout(pollT);pollT=setTimeout(tick,ms);}
+async function pullMessages(){
+ const r=await api('/chat?after='+lastId,undefined,'GET');
+ for(const m of r.messages||[]){
+  lastId=Math.max(lastId,m.id);
+  if(m.role==='user'){const local=[...log.querySelectorAll('.msg.me[data-local="1"]')].find(x=>x.textContent.startsWith(m.text.trim().slice(0,40)));if(local){local.dataset.local='0';continue;}
+   if(/^\d{4,8}$/.test(m.text.trim()))continue;}
+  if(m.role==='assistant'){waitingReply=false;setTyping(false);}
+  addMsg(m.role,m.text,m.at);
+ }
+ if((r.messages||[]).length)scrollEnd();
+}
+async function refresh(){ctx=await api('/status',undefined,'GET');}
+async function tick(){
+ try{await Promise.all([pullMessages(),refresh()]);failCount=0;$('offline').hidden=true;renderCard();}
+ catch(e){if(e.status===401){await start();return;}failCount++;if(failCount>2){$('offline').textContent=t('offline');$('offline').hidden=false;}}
+ if(waitingReply&&Date.now()-waitSince>45000){waitingReply=false;setTyping(false);}
+ const st=stage(),fast=waitingReply||['pay','otp','conn'].includes(st);
+ schedule(document.hidden?15000:fast?2500:6000);
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(100);});
+
+// ---------- start ----------
+function applyLang(){
+ document.documentElement.lang=lang;$('sub').textContent=t('sub');
+ document.querySelectorAll('#langBox button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
+ const hello=log.querySelector('[data-hello]');if(hello)hello.innerHTML=fmt(t('hello'))+'<span class="tm"></span>';
+ renderCard(true);
+}
+$('langBox').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||b.dataset.l===lang)return;lang=b.dataset.l;store.set('gm_lang',lang);applyLang();if(token)api('/language',{language:lang}).catch(()=>{});});
+async function start(){
+ const q=new URLSearchParams(location.search),body={language:lang};
+ const tk=q.get('t');if(tk)body.token=tk;else{const w=store.get('gm_web_id');if(w)body.webId=w;}
+ const src=q.get('src');if(src&&/^[a-z0-9_-]{1,32}$/i.test(src))body.src=src;else body.src='chat';
+ try{
+  const r=await api('/session',body);
+  if(r.webId)store.set('gm_web_id',r.webId);
+  token=r.sessionToken;ctx=r.context;ctx.telegramStart=r.telegramStart||null;
+  if(ctx.client?.language&&STR[ctx.client.language]&&!store.get('gm_lang')){lang=ctx.client.language;}
+  if(r.telegramStart)ctx.telegramStart=r.telegramStart;
+  applyLang();
+  await pullMessages().catch(()=>{});
+  renderCard(true);schedule(2500);
+ }catch(e){$('offline').textContent=t('offline');$('offline').hidden=false;setTimeout(start,4000);}
+}
+(function boot(){
+ const d=document.createElement('div');d.className='day';d.textContent=t('today');log.appendChild(d);
+ const h=document.createElement('div');h.className='msg bot';h.dataset.hello='1';h.innerHTML=fmt(t('hello'))+'<span class="tm"></span>';log.appendChild(h);
+ applyLang();start();
+})();
+// keep telegramStart across status refreshes
+const _refresh=refresh;refresh=async function(){const ts=ctx?.telegramStart;await _refresh();if(ctx&&ts&&!ctx.telegramStart)ctx.telegramStart=ts;};
+</script>
+</body>
+</html>
