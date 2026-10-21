@@ -129,7 +129,8 @@ const STR={
   phone_changed:ph=>`Нөмір ${ph} болып өзгертілді ✅ Код енді осы нөмірге келеді — осында жазыңыз.`,
   in_progress:'Бұл нөмірге тапсырыс әлі жүріп жатыр ⏳ Алдымен соны аяқтайық — немесе басқа Beeline нөмірін жазыңыз.',
   inv_already:'Бұл тапсырысқа Kaspi шоты бұрын жіберілген ✅ Kaspi қосымшасы → Төлемдер → Шоттар → төлеңіз.',
-  oops:'Бір нәрсе дұрыс болмады 😕 Қайта жазып көріңіз.'},
+  oops:'Бір нәрсе дұрыс болмады 😕 Қайта жазып көріңіз.',
+  renew:'Алдыңғы төлемнің уақыты өтіп кетті — жаңасын жасаймын ⏳'},
  ru:{sub:'в сети',typing:'печатает…',ph:'Сообщение',today:'Сегодня',offline:'Связь прервалась, переподключаемся…',
   hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nКакой пакет подключаем? Напишите здесь *10* или *20* 🙂',
   ask_phone:(g,p)=>`Хорошо, ${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем? Напишите номер.`,
@@ -149,7 +150,8 @@ const STR={
   phone_changed:ph=>`Номер изменён на ${ph} ✅ Код теперь придёт на этот номер — напишите его здесь.`,
   in_progress:'На этот номер заказ ещё идёт ⏳ Давайте сначала завершим его — или напишите другой номер Beeline.',
   inv_already:'Счёт Kaspi по этому заказу уже отправлен ✅ Приложение Kaspi → Платежи → Счета → оплатите.',
-  oops:'Что-то пошло не так 😕 Попробуйте написать ещё раз.'}
+  oops:'Что-то пошло не так 😕 Попробуйте написать ещё раз.',
+  renew:'Время прошлой оплаты истекло — создаю новую ⏳'}
 };
 const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let lang=store.get('gm_lang');if(!STR[lang])lang='kk';
@@ -225,6 +227,14 @@ const targetOf=()=>ctx?.lastOrder?.targetPhone||liveOrder()?.targetPhone||ctx?.c
 async function ensurePayStep(){
  if(stage()!=='pay'||busy)return;
  const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),oid=o?.id||'';
+ if(['CANCELLED','PAYMENT_FAILED'].includes(ctx.paymentStatus)||['CANCELLED','PAYMENT_FAILED'].includes(o?.status)){
+  const tp=String(targetOf()||'').replace(/\D/g,'').slice(-10);
+  if(!tp||local.some(m=>m.key==='renew:'+oid))return;
+  say(t('renew'),{},'renew:'+oid);busy=true;
+  try{await api('/back-to-phone',{});const r=await api('/phone',{phone:'7'+tp});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};}
+  catch(e){say(errSay(e));await refresh().catch(()=>{});}
+  busy=false;return ensurePayStep();
+ }
  if(invoiceSent()){say(t('inv_sent',phone8(ctx.paymentPhone||pendingKaspi?.phone||''),money(sp?.price||o?.amount)),{},'inv:'+oid);return;}
  say(t('ask_kaspi',phone8(targetOf())),{},'askk:'+oid);
 }
