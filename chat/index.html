@@ -235,19 +235,10 @@ async function sendInvoice(){
  catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED')await refresh().catch(()=>{});else say(e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_nf'):t('net'));}
  busy=false;
 }
-async function payByLink(){
- busy=true;
- try{const r=await api('/payment-method',{method:'KASPI_LINK'});await refresh();const url=r.paymentUrl||ctx.paymentUrl;if(!url)throw new Error('NO_LINK');const sp=ctx.selectedPackage||pkgOf(ctx.lastOrder?.packageId);
-  say(t('pay',sp?.trafficGb||'',phone8(targetOf())),{href:url,btn:t('pay_btn',money(sp?.price))},'pay:'+(ctx.lastOrder?.id||'')+':'+url);}
- catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED')await refresh().catch(()=>{});else say(t('pay_fail'));}
- busy=false;
-}
-
 // ---------- the customer writes ----------
 const PKG=/^\s*(?:(10|20)\s*(?:гб|gb|гиг\S*|г)?|(?:гб|gb)\s*(10|20))\s*(?:керек|алам\S*|давай|пожалуйста|please)?\s*[.!)]*\s*$/i;
 const NEW_CODE=/(жаңа|жана|новый|еще|ещё|қайта)\s*(код|code)/i;
 const NOT_COMING=/(келмед|келмей|келген жоқ|не приш|не прих|нет\s*код|код\s*жоқ|код\s*жок)/i;
-const LINK_ASK=/(сілтеме|силтеме|ссылк|link)/i;
 const YES=/^\s*(иә|ия|иа|ыя|да|ага|ок|ok|дұрыс|дурыс|верно|правильно|\+|👍)/i,NO=/^\s*(жоқ|жок|нет|не\s|не$|қате|кате|неправильно|неверно)/i;
 const SAME=/^\s*(осы|осы нөмір|сол|этот|тот же|этот же)\s*[.!]*\s*$/i;
 async function send(){
@@ -263,7 +254,6 @@ async function send(){
  if(st==='pay'&&pendingKaspi&&NO.test(text)){mine(text);pendingKaspi=null;return say(t('ask_again'));}
  if(st==='pay'&&onlyDigits&&digits.length>=10&&digits.length<=12){mine(text);return previewKaspi(digits.slice(-10));}
  if(st==='pay'&&SAME.test(text)){mine(text);return previewKaspi(String(targetOf()||'').replace(/\D/g,'').slice(-10));}
- if(st==='pay'&&LINK_ASK.test(text)){mine(text);return payByLink();}
  const pm=text.match(PKG);
  if(pm&&['free','phone'].includes(st)){mine(text);return choosePackage(pm[1]==='20'||pm[2]==='20'?20:10);}
  return askAi(text);
