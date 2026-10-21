@@ -264,7 +264,7 @@ async function send(){
  const text=inp.value.trim();if(!text||!token)return;
  inp.value='';autosize();
  const st=stage(),digits=text.replace(/\D/g,''),onlyDigits=/^[\d\s()+-]+$/.test(text);
- if(CHANGE_NUM.test(text)&&['pay','phone','otp'].includes(st)){
+ if(CHANGE_NUM.test(text)&&!/kaspi|каспи/i.test(text)&&['pay','phone','otp'].includes(st)){
   mine(text);
   if(st==='pay'&&invoiceSent())return say(t('change_after'));
   if(st==='pay'){pendingKaspi=null;busy=true;try{ctx={...ctx,...await api('/back-to-phone',{})};}catch(e){await refresh().catch(()=>{});}busy=false;}
