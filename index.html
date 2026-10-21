@@ -629,6 +629,9 @@ async function initSession(){
  if(tg && tg.initData){
   tg.ready(); tg.expand();
   body = {initData: tg.initData, language: lang};
+  // Owner report (2026-10-21): when Telegram's sign-in doesn't check out on the server, it goes on by the
+  // link's own code / this browser's id instead of refusing - so both are sent along
+  try{ const tk0 = new URLSearchParams(location.search).get('t'); if(tk0) body.token = tk0; const w0 = localStorage.getItem('gm_web_id'); if(w0) body.webId = w0; }catch(_){}
  } else {
   const params = new URLSearchParams(location.search);
   const token = params.get('t');
