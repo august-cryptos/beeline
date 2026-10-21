@@ -130,7 +130,9 @@ const STR={
   in_progress:'Бұл нөмірге тапсырыс әлі жүріп жатыр ⏳ Алдымен соны аяқтайық — немесе басқа Beeline нөмірін жазыңыз.',
   inv_already:'Бұл тапсырысқа Kaspi шоты бұрын жіберілген ✅ Kaspi қосымшасы → Төлемдер → Шоттар → төлеңіз.',
   oops:'Бір нәрсе дұрыс болмады 😕 Қайта жазып көріңіз.',
-  renew:'Шот жабылды ❌ Қайта жіберу үшін Kaspi нөмірін жазыңыз.'},
+  renew:'Шот жабылды ❌ Қайта жіберу үшін Kaspi нөмірін жазыңыз.',
+  new_target:'Жарайды 👍 Жаңа Beeline нөмірін жазыңыз.',
+  change_after:'Шот жіберіліп қойған. Төлегеннен кейін, код келмесе, дұрыс Beeline нөмірін осында жазыңыз — ауыстырамын 👍'},
  ru:{sub:'в сети',typing:'печатает…',ph:'Сообщение',today:'Сегодня',offline:'Связь прервалась, переподключаемся…',
   hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nКакой пакет подключаем? Напишите здесь *10* или *20* 🙂',
   ask_phone:(g,p)=>`${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем?`,
@@ -151,7 +153,9 @@ const STR={
   in_progress:'На этот номер заказ ещё идёт ⏳ Давайте сначала завершим его — или напишите другой номер Beeline.',
   inv_already:'Счёт Kaspi по этому заказу уже отправлен ✅ Приложение Kaspi → Платежи → Счета → оплатите.',
   oops:'Что-то пошло не так 😕 Попробуйте написать ещё раз.',
-  renew:'Счёт закрыт ❌ Чтобы отправить заново, напишите номер Kaspi.'}
+  renew:'Счёт закрыт ❌ Чтобы отправить заново, напишите номер Kaspi.',
+  new_target:'Хорошо 👍 Напишите новый номер Beeline.',
+  change_after:'Счёт уже отправлен. После оплаты, если код не придёт, напишите здесь правильный номер Beeline — заменю 👍'}
 };
 const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let lang=store.get('gm_lang');if(!STR[lang])lang='kk';
@@ -254,11 +258,18 @@ const PKG=/^\s*(?:(10|20)\s*(?:гб|gb|гиг\S*|г)?|(?:гб|gb)\s*(10|20))\s*(
 const NEW_CODE=/(жаңа|жана|новый|еще|ещё|қайта)\s*(код|code)/i;
 const NOT_COMING=/(келмед|келмей|келген жоқ|не приш|не прих|нет\s*код|код\s*жоқ|код\s*жок)/i;
 const YES=/^\s*(иә|ия|иа|ыя|да|ага|ок|ok|дұрыс|дурыс|верно|правильно|\+|👍)/i,NO=/^\s*(жоқ|жок|нет|не\s|не$|қате|кате|неправильно|неверно)/i;
+const CHANGE_NUM=/((нөмір|номер)\S*\s.{0,25}(өзгерт|ауыстыр|поменя|измен|друг|басқа|баска|жаңа|жана|нов))|((өзгерт|ауыстыр|поменя|измен|басқа|баска|друг|жаңа|жана|нов)\S*\s.{0,25}(нөмір|номер))/i;
 const SAME=/^\s*(осы|осы нөмір|сол|этот|тот же|этот же)\s*[.!]*\s*$/i;
 async function send(){
  const text=inp.value.trim();if(!text||!token)return;
  inp.value='';autosize();
  const st=stage(),digits=text.replace(/\D/g,''),onlyDigits=/^[\d\s()+-]+$/.test(text);
+ if(CHANGE_NUM.test(text)&&['pay','phone','otp'].includes(st)){
+  mine(text);
+  if(st==='pay'&&invoiceSent())return say(t('change_after'));
+  if(st==='pay'){pendingKaspi=null;busy=true;try{ctx={...ctx,...await api('/back-to-phone',{})};}catch(e){await refresh().catch(()=>{});}busy=false;}
+  return say(t('new_target'));
+ }
  if(st==='otp'&&onlyDigits&&digits.length>=4&&digits.length<=8){mine(text);return submitCode(digits);}
  if(st==='otp'&&onlyDigits&&digits.length>=10&&digits.length<=12){mine(text);return changePhone(digits.slice(-10));}
  if(st==='otp'&&NEW_CODE.test(text)){mine(text);return resendCode();}
