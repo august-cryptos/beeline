@@ -126,7 +126,10 @@ const STR={
   inv_sent:(k,a)=>`Шот жіберілді ✅ ${k} нөміріне, ${a} ₸.\nKaspi қосымшасы → Төлемдер → Шоттар → төлеңіз. Шот 30 минут жарамды.\nТөлеген соң осы чатқа қайтыңыз 🙂`,
   kaspi_nf:'Бұл нөмірге Kaspi табылмады 😕 Kaspi тіркелген нөмірді жазыңыз.',kaspi_bad:'Kaspi нөмірі дұрыс емес. Толық жазыңыз, мысалы: 7771234567',ask_again:'Жарайды 👍 Kaspi нөмірін қайта жазыңыз.',
   not_coming:ph=>`Код ${ph} нөміріне келеді. Нөмір дұрыс па?\n• Дұрыс болса — 1–2 минут күтіп, «жаңа код» деп жазыңыз.\n• Қате болса — дұрыс Beeline нөмірін осында жазыңыз.`,
-  phone_changed:ph=>`Нөмір ${ph} болып өзгертілді ✅ Код енді осы нөмірге келеді — осында жазыңыз.`},
+  phone_changed:ph=>`Нөмір ${ph} болып өзгертілді ✅ Код енді осы нөмірге келеді — осында жазыңыз.`,
+  in_progress:'Бұл нөмірге тапсырыс әлі жүріп жатыр ⏳ Алдымен соны аяқтайық — немесе басқа Beeline нөмірін жазыңыз.',
+  inv_already:'Бұл тапсырысқа Kaspi шоты бұрын жіберілген ✅ Kaspi қосымшасы → Төлемдер → Шоттар → төлеңіз.',
+  oops:'Бір нәрсе дұрыс болмады 😕 Қайта жазып көріңіз.'},
  ru:{sub:'в сети',typing:'печатает…',ph:'Сообщение',today:'Сегодня',offline:'Связь прервалась, переподключаемся…',
   hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nКакой пакет подключаем? Напишите здесь *10* или *20* 🙂',
   ask_phone:(g,p)=>`Хорошо, ${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем? Напишите номер.`,
@@ -143,7 +146,10 @@ const STR={
   inv_sent:(k,a)=>`Счёт отправлен ✅ на ${k}, ${a} ₸.\nПриложение Kaspi → Платежи → Счета → оплатите. Счёт действует 30 минут.\nПосле оплаты вернитесь в этот чат 🙂`,
   kaspi_nf:'На этот номер Kaspi не найден 😕 Напишите номер, на который зарегистрирован Kaspi.',kaspi_bad:'Неверный номер Kaspi. Напишите полностью, например: 7771234567',ask_again:'Хорошо 👍 Напишите номер Kaspi ещё раз.',
   not_coming:ph=>`Код приходит на номер ${ph}. Номер верный?\n• Если верный — подождите 1–2 минуты и напишите «новый код».\n• Если нет — напишите здесь правильный номер Beeline.`,
-  phone_changed:ph=>`Номер изменён на ${ph} ✅ Код теперь придёт на этот номер — напишите его здесь.`}
+  phone_changed:ph=>`Номер изменён на ${ph} ✅ Код теперь придёт на этот номер — напишите его здесь.`,
+  in_progress:'На этот номер заказ ещё идёт ⏳ Давайте сначала завершим его — или напишите другой номер Beeline.',
+  inv_already:'Счёт Kaspi по этому заказу уже отправлен ✅ Приложение Kaspi → Платежи → Счета → оплатите.',
+  oops:'Что-то пошло не так 😕 Попробуйте написать ещё раз.'}
 };
 const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let lang=store.get('gm_lang');if(!STR[lang])lang='kk';
@@ -219,19 +225,19 @@ const targetOf=()=>ctx?.lastOrder?.targetPhone||liveOrder()?.targetPhone||ctx?.c
 async function ensurePayStep(){
  if(stage()!=='pay'||busy)return;
  const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),oid=o?.id||'';
- if(ctx.paymentStatus==='PAYMENT_PENDING'&&ctx.paymentMethod==='KASPI'){say(t('inv_sent',phone8(ctx.paymentPhone||pendingKaspi?.phone||''),money(sp?.price||o?.amount)),{},'inv:'+oid);return;}
+ if(invoiceSent()){say(t('inv_sent',phone8(ctx.paymentPhone||pendingKaspi?.phone||''),money(sp?.price||o?.amount)),{},'inv:'+oid);return;}
  say(t('ask_kaspi',phone8(targetOf())),{},'askk:'+oid);
 }
 async function previewKaspi(d){
  busy=true;
  try{const r=await api('/payment-recipient',{method:'KASPI',paymentPhone:'7'+d});pendingKaspi={phone:'7'+d,name:r.clientName||''};say(t('confirm',pendingKaspi.name||'—',phone8(pendingKaspi.phone)));}
- catch(e){say(e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_nf'):e.code==='INVALID_KASPI_PHONE'?t('kaspi_bad'):t('net'));}
+ catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refresh().catch(()=>{});say(invoiceSent()?t('inv_already'):t('oops'));}else say(errSay(e));}
  busy=false;
 }
 async function sendInvoice(){
  const k=pendingKaspi;if(!k)return;busy=true;
  try{await api('/payment-method',{method:'KASPI',paymentPhone:k.phone});pendingKaspi=null;await refresh();const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId);say(t('inv_sent',phone8(k.phone),money(sp?.price||o?.amount)),{},'inv:'+(o?.id||''));}
- catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED')await refresh().catch(()=>{});else say(e.code==='KASPI_CLIENT_NOT_FOUND'?t('kaspi_nf'):t('net'));}
+ catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refresh().catch(()=>{});if(invoiceSent())say(t('inv_already'));}else say(errSay(e));}
  busy=false;
 }
 // ---------- the customer writes ----------
@@ -270,13 +276,13 @@ async function choosePackage(gb){
   if(ctx.clientState!=='CHOOSING_PACKAGE'&&ctx.clientState!=='ACTIVE'&&ctx.clientState!=='COMPLETED'&&ctx.clientState!=='NEW')await api('/back-to-packages',{}).catch(()=>{});
   ctx={...ctx,...await api('/package',{packageId:p.id})};
   say(t('ask_phone',p.trafficGb,money(p.price)));
- }catch(e){say(t('net'));await refresh().catch(()=>{});}
+ }catch(e){say(errSay(e));await refresh().catch(()=>{});}
  busy=false;
 }
 async function submitPhone(d){
  busy=true;
  try{const r=await api('/phone',{phone:'7'+d});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};busy=false;await ensurePayStep();}
- catch(e){busy=false;say(e.code==='DAILY_PHONE_LIMIT'?t('limit'):['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code)?t('bad_phone'):t('net'));await refresh().catch(()=>{});}
+ catch(e){busy=false;say(errSay(e));await refresh().catch(()=>{});}
 }
 async function submitCode(code){
  busy=true;waiting=true;draw();
@@ -286,7 +292,7 @@ async function submitCode(code){
   else if(e.code==='OTP_REJECTED'||e.code==='INVALID_OTP_FORMAT')say(t('code_bad'));
   else if(e.code==='OTP_REJECTED_RESENT')say(t('code_resent'));
   else if(e.code==='OTP_RATE_LIMITED')say(t('code_wait',Math.max(1,Math.ceil((e.retryAfterSeconds||60)/60))));
-  else say(t('net'));
+  else say(errSay(e));
   await refresh().catch(()=>{});
  }
  busy=false;waiting=false;draw();schedule(1500);
@@ -294,13 +300,24 @@ async function submitCode(code){
 async function changePhone(d){
  busy=true;
  try{const r=await api('/change-phone',{phone:'7'+d});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};say(t('phone_changed',phone8('7'+d)));}
- catch(e){say(e.code==='DAILY_PHONE_LIMIT'?t('limit'):['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code)?t('bad_phone'):t('net'));await refresh().catch(()=>{});}
+ catch(e){say(errSay(e));await refresh().catch(()=>{});}
  busy=false;
 }
 async function resendCode(){
  try{await api('/otp-resend',{});say(t('new_code'));}
- catch(e){say(e.code==='OTP_RATE_LIMITED'?t('code_wait',Math.max(1,Math.ceil((e.retryAfterSeconds||60)/60))):t('net'));}
+ catch(e){say(e.code==='OTP_RATE_LIMITED'?t('code_wait',Math.max(1,Math.ceil((e.retryAfterSeconds||60)/60))):errSay(e));}
 }
+
+function errSay(e){
+ if(e.code==='NETWORK_ERROR')return t('net');
+ if(e.code==='DAILY_PHONE_LIMIT')return t('limit');
+ if(e.code==='PHONE_ALREADY_IN_PROGRESS')return t('in_progress');
+ if(['INVALID_PHONE','PHONE_NOT_ALLOWED'].includes(e.code))return t('bad_phone');
+ if(e.code==='KASPI_CLIENT_NOT_FOUND')return t('kaspi_nf');
+ if(e.code==='INVALID_KASPI_PHONE')return t('kaspi_bad');
+ return t('oops');
+}
+const invoiceSent=()=>{const o=ctx?.lastOrder;return ctx?.paymentStatus==='PAYMENT_PENDING'&&(ctx?.paymentMethod==='KASPI'||o?.paymentMethod==='KASPI'||o?.fallbackPaymentMethod==='KASPI');};
 
 // ---------- polling ----------
 let pollT=null,fails=0;
