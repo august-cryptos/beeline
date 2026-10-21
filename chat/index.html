@@ -112,7 +112,7 @@ const API='/api';
 const STR={
  kk:{sub:'желіде',typing:'жазып жатыр…',ph:'Хабарлама',today:'Бүгін',offline:'Байланыс үзілді, қайта қосылуда…',
   hello:'Сәлеметсіз бе! 👋 GeoMaster — Beeline-ға арзан интернет.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 күн · тариф өзгермейді\n\nҚай пакетті қосамыз? Осында *10* немесе *20* деп жазыңыз 🙂',
-  ask_phone:(g,p)=>`Жарайды, ${g} ГБ — ${p} ₸ 👍\nҚай Beeline нөміріне қосамыз? Нөмірді жазыңыз.`,
+  ask_phone:(g,p)=>`${g} ГБ — ${p} ₸ 👍\nҚай Beeline нөміріне қосамыз?`,
   pay:(g,ph)=>`${g} ГБ → ${ph} ✅\nТөлеу үшін төмендегі сілтемені басыңыз 👇\nKaspi-де төлеген соң осы чатқа қайтыңыз — қалғаны осында.`,
   pay_btn:p=>`💳 Kaspi-де төлеу — ${p} ₸`,pay_fail:'Төлем сілтемесі дайындалмады 😕 «төлеу» деп жазыңыз — қайта жіберемін.',
   bad_phone:'Нөмір дұрыс емес сияқты. Beeline нөмірін толық жазыңыз, мысалы: 7771234567',
@@ -121,19 +121,19 @@ const STR={
   code_wait:m=>`Beeline жаңа кодты ${m} минуттан кейін жібереді. Сол кезде «жаңа код» деп жазыңыз.`,
   new_code:'Жаңа код жіберілді 📩 SMS келген соң кодты осында жазыңыз.',net:'Байланыс жоқ, қайта жазып көріңіз 🙏',
   pick:'📶 Пакет таңдау',pick_txt:'Қай пакет? Осында *10* немесе *20* деп жазыңыз 🙂',
-  ask_kaspi:ph=>`Нөмір: ${ph} ✅\nТөлем — Kaspi шоты арқылы. Шотты қай Kaspi нөміріне жіберейін? Нөмірді жазыңыз.\n(Осы нөмір болса — «осы» деп жазыңыз)`,
-  confirm:(n,k)=>`Kaspi: *${n}* (${k})\nДұрыс па? «иә» немесе «жоқ» деп жазыңыз.`,
-  inv_sent:(k,a)=>`Шот жіберілді ✅ ${k} нөміріне, ${a} ₸.\nKaspi қосымшасы → Төлемдер → Шоттар → төлеңіз. Шот 30 минут жарамды.\nТөлеген соң осы чатқа қайтыңыз 🙂`,
+  ask_kaspi:ph=>`Нөмір: ${ph} ✅\nШотты қай Kaspi нөміріне жіберейін?`,
+  confirm:(n,k)=>`Kaspi: *${n}* — дұрыс па?`,
+  inv_sent:(k,a)=>`Шот жіберілді ✅\nKaspi → Шоттар → ${a} ₸ төлеңіз`,
   kaspi_nf:'Бұл нөмірге Kaspi табылмады 😕 Kaspi тіркелген нөмірді жазыңыз.',kaspi_bad:'Kaspi нөмірі дұрыс емес. Толық жазыңыз, мысалы: 7771234567',ask_again:'Жарайды 👍 Kaspi нөмірін қайта жазыңыз.',
   not_coming:ph=>`Код ${ph} нөміріне келеді. Нөмір дұрыс па?\n• Дұрыс болса — 1–2 минут күтіп, «жаңа код» деп жазыңыз.\n• Қате болса — дұрыс Beeline нөмірін осында жазыңыз.`,
   phone_changed:ph=>`Нөмір ${ph} болып өзгертілді ✅ Код енді осы нөмірге келеді — осында жазыңыз.`,
   in_progress:'Бұл нөмірге тапсырыс әлі жүріп жатыр ⏳ Алдымен соны аяқтайық — немесе басқа Beeline нөмірін жазыңыз.',
   inv_already:'Бұл тапсырысқа Kaspi шоты бұрын жіберілген ✅ Kaspi қосымшасы → Төлемдер → Шоттар → төлеңіз.',
   oops:'Бір нәрсе дұрыс болмады 😕 Қайта жазып көріңіз.',
-  renew:'Алдыңғы төлемнің уақыты өтіп кетті — жаңасын жасаймын ⏳'},
+  renew:'Шот жабылды ❌ Қайта жіберу үшін Kaspi нөмірін жазыңыз.'},
  ru:{sub:'в сети',typing:'печатает…',ph:'Сообщение',today:'Сегодня',offline:'Связь прервалась, переподключаемся…',
   hello:'Здравствуйте! 👋 GeoMaster — дешёвый интернет на Beeline.\n\n🚀 10 ГБ — 500 ₸\n🔥 20 ГБ — 1 000 ₸\n📅 30 дней · тариф не меняется\n\nКакой пакет подключаем? Напишите здесь *10* или *20* 🙂',
-  ask_phone:(g,p)=>`Хорошо, ${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем? Напишите номер.`,
+  ask_phone:(g,p)=>`${g} ГБ — ${p} ₸ 👍\nНа какой номер Beeline подключаем?`,
   pay:(g,ph)=>`${g} ГБ → ${ph} ✅\nДля оплаты нажмите на ссылку ниже 👇\nПосле оплаты в Kaspi вернитесь в этот чат — дальше всё здесь.`,
   pay_btn:p=>`💳 Оплатить в Kaspi — ${p} ₸`,pay_fail:'Не получилось подготовить ссылку на оплату 😕 Напишите «оплата» — пришлю снова.',
   bad_phone:'Похоже, номер неверный. Напишите номер Beeline полностью, например: 7771234567',
@@ -142,16 +142,16 @@ const STR={
   code_wait:m=>`Beeline пришлёт новый код через ${m} мин. Тогда напишите «новый код».`,
   new_code:'Новый код отправлен 📩 Как придёт SMS — напишите код здесь.',net:'Нет связи, попробуйте написать ещё раз 🙏',
   pick:'📶 Выбрать пакет',pick_txt:'Какой пакет? Напишите здесь *10* или *20* 🙂',
-  ask_kaspi:ph=>`Номер: ${ph} ✅\nОплата — счётом в Kaspi. На какой номер Kaspi отправить счёт? Напишите номер.\n(Если этот же — напишите «этот»)`,
-  confirm:(n,k)=>`Kaspi: *${n}* (${k})\nВсё верно? Напишите «да» или «нет».`,
-  inv_sent:(k,a)=>`Счёт отправлен ✅ на ${k}, ${a} ₸.\nПриложение Kaspi → Платежи → Счета → оплатите. Счёт действует 30 минут.\nПосле оплаты вернитесь в этот чат 🙂`,
+  ask_kaspi:ph=>`Номер: ${ph} ✅\nНа какой номер Kaspi отправить счёт?`,
+  confirm:(n,k)=>`Kaspi: *${n}* — верно?`,
+  inv_sent:(k,a)=>`Счёт отправлен ✅\nKaspi → Счета → оплатите ${a} ₸`,
   kaspi_nf:'На этот номер Kaspi не найден 😕 Напишите номер, на который зарегистрирован Kaspi.',kaspi_bad:'Неверный номер Kaspi. Напишите полностью, например: 7771234567',ask_again:'Хорошо 👍 Напишите номер Kaspi ещё раз.',
   not_coming:ph=>`Код приходит на номер ${ph}. Номер верный?\n• Если верный — подождите 1–2 минуты и напишите «новый код».\n• Если нет — напишите здесь правильный номер Beeline.`,
   phone_changed:ph=>`Номер изменён на ${ph} ✅ Код теперь придёт на этот номер — напишите его здесь.`,
   in_progress:'На этот номер заказ ещё идёт ⏳ Давайте сначала завершим его — или напишите другой номер Beeline.',
   inv_already:'Счёт Kaspi по этому заказу уже отправлен ✅ Приложение Kaspi → Платежи → Счета → оплатите.',
   oops:'Что-то пошло не так 😕 Попробуйте написать ещё раз.',
-  renew:'Время прошлой оплаты истекло — создаю новую ⏳'}
+  renew:'Счёт закрыт ❌ Чтобы отправить заново, напишите номер Kaspi.'}
 };
 const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let lang=store.get('gm_lang');if(!STR[lang])lang='kk';
@@ -227,20 +227,19 @@ const targetOf=()=>ctx?.lastOrder?.targetPhone||liveOrder()?.targetPhone||ctx?.c
 async function ensurePayStep(){
  if(stage()!=='pay'||busy)return;
  const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),oid=o?.id||'';
- if(['CANCELLED','PAYMENT_FAILED'].includes(ctx.paymentStatus)||['CANCELLED','PAYMENT_FAILED'].includes(o?.status)){
-  const tp=String(targetOf()||'').replace(/\D/g,'').slice(-10);
-  if(!tp||local.some(m=>m.key==='renew:'+oid))return;
-  say(t('renew'),{},'renew:'+oid);busy=true;
-  try{await api('/back-to-phone',{});const r=await api('/phone',{phone:'7'+tp});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};}
-  catch(e){say(errSay(e));await refresh().catch(()=>{});}
-  busy=false;return ensurePayStep();
- }
+ if(payClosed()){say(t('renew'),{},'renew:'+oid);return;}
  if(invoiceSent()){say(t('inv_sent',phone8(ctx.paymentPhone||pendingKaspi?.phone||''),money(sp?.price||o?.amount)),{},'inv:'+oid);return;}
  say(t('ask_kaspi',phone8(targetOf())),{},'askk:'+oid);
 }
+const payClosed=()=>['CANCELLED','PAYMENT_FAILED'].includes(ctx?.paymentStatus)||['CANCELLED','PAYMENT_FAILED'].includes(ctx?.lastOrder?.status);
+// reopen the order on the same Beeline number (the site does the same) before a new invoice
+async function reopenOrder(){
+ const tp=String(targetOf()||'').replace(/\D/g,'').slice(-10);if(!tp)throw Object.assign(new Error('NO_TARGET'),{code:'NO_TARGET'});
+ await api('/back-to-phone',{});const r=await api('/phone',{phone:'7'+tp});if(r.orderId)store.set('gm_watching_order',r.orderId);ctx={...ctx,...r};
+}
 async function previewKaspi(d){
  busy=true;
- try{const r=await api('/payment-recipient',{method:'KASPI',paymentPhone:'7'+d});pendingKaspi={phone:'7'+d,name:r.clientName||''};say(t('confirm',pendingKaspi.name||'—',phone8(pendingKaspi.phone)));}
+ try{if(payClosed())await reopenOrder();const r=await api('/payment-recipient',{method:'KASPI',paymentPhone:'7'+d});pendingKaspi={phone:'7'+d,name:r.clientName||''};say(t('confirm',pendingKaspi.name||'—',phone8(pendingKaspi.phone)));}
  catch(e){if(e.code==='PAYMENT_METHOD_NOT_EXPECTED'){await refresh().catch(()=>{});say(invoiceSent()?t('inv_already'):t('oops'));}else say(errSay(e));}
  busy=false;
 }
