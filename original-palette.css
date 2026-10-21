@@ -1,0 +1,30 @@
+/* Preview v2: familiar warm palette, while retaining the independent GeoMaster design. */
+:root{
+ --bg:#f5f4ef;--panel:#fff;--panel-soft:#faf9f5;--line:#e8e5dc;
+ --ink:#171714;--ink-dim:#706f68;--yellow:#ffd528;--yellow-deep:#efb900;
+ --black:#171714;--blue:#2563eb;--green:#169b62;--green-deep:#0c5b3a;
+ --shadow-sm:0 10px 28px rgba(23,23,20,.07);--shadow-md:0 24px 70px rgba(23,23,20,.11)
+}
+html{background:#f3f2ed}
+body{background:radial-gradient(circle at 8% -5%,rgba(255,213,40,.30),transparent 27rem),radial-gradient(circle at 105% 22%,rgba(37,99,235,.09),transparent 25rem),linear-gradient(180deg,#fbfaf6 0%,#f1f0ea 100%);color:var(--ink)}
+body:before{background-image:linear-gradient(rgba(23,23,20,.026) 1px,transparent 1px),linear-gradient(90deg,rgba(23,23,20,.026) 1px,transparent 1px)}
+.langtoggle{border-color:rgba(23,23,20,.09);box-shadow:0 8px 24px rgba(23,23,20,.06)}
+.langtoggle button{color:#88867f}.langtoggle button.active{background:#171714;color:#fff;box-shadow:0 7px 18px rgba(23,23,20,.20)}
+.brand .mark.gm{background:linear-gradient(145deg,#171714,#34342d);box-shadow:0 16px 34px rgba(23,23,20,.22),inset 0 1px 0 rgba(255,255,255,.14)}
+.brand .mark.gm:after{border-color:#f8f7f2;background:#ffd528}.brand .mark.gm svg{fill:#ffd528}
+.brand h1{color:#171714}.brand .tag{color:#85837b}
+.brand .only-beeline{border-color:rgba(23,23,20,.10);background:rgba(255,255,255,.75);color:#272720;box-shadow:0 8px 24px rgba(23,23,20,.055)}
+.brand .only-beeline:before{background:#ffd528;box-shadow:0 0 0 4px rgba(255,213,40,.18)}
+.card,.benefits{border-color:rgba(23,23,20,.075);background:rgba(255,255,255,.93);box-shadow:var(--shadow-md)}
+.home-heading h2{color:#171714}.home-heading p{color:#74726b}
+.pkg{border-color:rgba(23,23,20,.10);background:linear-gradient(145deg,#fff,#fffcf1);box-shadow:0 12px 32px rgba(23,23,20,.075)}
+.pkg:before{background:radial-gradient(circle,rgba(255,213,40,.23),transparent 68%)}.pkg:hover{border-color:rgba(239,185,0,.42);box-shadow:0 18px 42px rgba(23,23,20,.12)}
+.pkg.std{border-color:rgba(37,99,235,.19);background:linear-gradient(145deg,#fff 12%,#f4f7ff 100%)}.pkg.std:before{background:radial-gradient(circle,rgba(37,99,235,.15),transparent 68%)}.pkg.std:after{background:#2563eb}
+.pkg.lite .icon{background:#fff3b5}.pkg.std .icon{background:#e7efff}.pkg .gb{color:#171714}.pkg.std .gb{color:#1d54c7}.pkg .name{color:#74726b}
+.pkg .price{background:#ffd528;color:#171714}.pkg.std .price{background:#e3ebff;color:#1d54c7}
+.benefits{background:rgba(255,255,255,.78)}.benefits li{color:#53524d}.benefits li .e{background:#eff8f3;color:#169b62}
+.phoneinput{border-color:#ddd9cf}.phoneinput:focus-within{border-color:#d6a800;box-shadow:0 0 0 4px rgba(255,213,40,.18)}
+.btn-primary{background:linear-gradient(135deg,#ffdd3e,#ffc91e);color:#161610;box-shadow:0 12px 26px rgba(239,185,0,.18)}
+.checkout-step:before{border-color:#ddd9cf;background:#f7f5f0}.checkout-step:after{background:#ddd9cf}.checkout-step.done:before{border-color:#171714;background:#171714}.checkout-step.done:after{background:#171714}.checkout-step.active:before{border-color:#efb900;background:#ffd528;box-shadow:0 0 0 5px rgba(255,213,40,.18)}
+.spinner{border-color:#eee8d9;border-top-color:#efb900;box-shadow:0 0 0 7px rgba(255,213,40,.08)}.payment-progress-row.active .payment-progress-dot{background:#ffd528;box-shadow:0 0 0 4px rgba(255,213,40,.16)}
+.trust div{border-color:rgba(23,23,20,.07)}.trust div span{color:#74726b}.foot{color:#aaa79e}:where(button,a,input):focus-visible{outline-color:rgba(37,99,235,.32)}
