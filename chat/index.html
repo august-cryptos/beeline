@@ -220,7 +220,6 @@ async function ensurePayStep(){
  if(stage()!=='pay'||busy)return;
  const o=ctx.lastOrder,sp=ctx.selectedPackage||pkgOf(o?.packageId),oid=o?.id||'';
  if(ctx.paymentStatus==='PAYMENT_PENDING'&&ctx.paymentMethod==='KASPI'){say(t('inv_sent',phone8(ctx.paymentPhone||pendingKaspi?.phone||''),money(sp?.price||o?.amount)),{},'inv:'+oid);return;}
- if(ctx.paymentStatus==='PAYMENT_PENDING'&&ctx.paymentMethod==='KASPI_LINK'&&ctx.paymentUrl){say(t('pay',sp?.trafficGb||'',phone8(o?.targetPhone)),{href:ctx.paymentUrl,btn:t('pay_btn',money(sp?.price))},'pay:'+oid+':'+ctx.paymentUrl);return;}
  say(t('ask_kaspi',phone8(targetOf())),{},'askk:'+oid);
 }
 async function previewKaspi(d){
