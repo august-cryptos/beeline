@@ -655,7 +655,12 @@ async function initSession(){
   sessionToken = res.sessionToken; ctx = res.context; telegramStart = res.telegramStart || null;
   if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
   render();
- }catch(e){ showScreen('noEntry'); }
+ }catch(e){
+  // Owner report (2026-10-22): an old "Пакетті таңдау" button (no personal code) whose Telegram sign-in the
+  // server can't check - not a network problem: ask the customer to get a fresh button from the bot
+  if(e && e.code==='INVALID_TELEGRAM_INIT_DATA'){ showScreen('staleTelegram'); return; }
+  showScreen('noEntry');
+ }
 }
 
 async function refreshContext(){ ctx = await api('/status', undefined, 'GET'); }
@@ -816,6 +821,11 @@ function showScreen(name, extra){
  document.querySelector('.brand').hidden = !['packages','connected','maintenance'].includes(name);
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
+ else if(name==='staleTelegram'){
+  el.innerHTML = tplMessage(lang==='kk'?'Сілтеме ескірді 🙏':'Ссылка устарела 🙏', lang==='kk' ? 'Ботқа «сілтеме» деп жазыңыз — жаңа батырма жібереміз, тапсырысыңыз сол жерде.' : 'Напишите боту «ссылка» — пришлём новую кнопку, ваш заказ будет там.', '', '🔗');
+  const tgw = window.Telegram && window.Telegram.WebApp;
+  if(tgw && typeof tgw.close==='function'){ const b=document.createElement('button'); b.className='btn'; b.style.marginTop='14px'; b.textContent = lang==='kk'?'Ботқа оралу':'Вернуться в бот'; b.onclick=()=>{ try{ tgw.close(); }catch(_){} }; el.appendChild(b); }
+ }
  else if(name==='maintenance') el.innerHTML = tplMessage(t('maintenance_title'), t('maintenance_desc'), '', '🛠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
  else if(name==='packages') renderPackages(el);
