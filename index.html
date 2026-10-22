@@ -660,6 +660,8 @@ async function initSession(){
   // server can't check - not a network problem: ask the customer to get a fresh button from the bot
   if(e && e.code==='INVALID_TELEGRAM_INIT_DATA'){ showScreen('staleTelegram'); return; }
   showScreen('noEntry');
+  // 2026-10-22: a small error code under the message - a screenshot then tells what really failed
+  try{ const el=screensEl(); const d=document.createElement('div'); d.style.cssText='margin-top:10px;font:600 11px monospace;color:#999;text-align:center;word-break:break-all'; d.textContent='код: '+(e&&e.code||'?')+(e&&e.status?' / '+e.status:'')+' / '+((window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData)?'tg-app':'web')+' / '+location.host; el.appendChild(d); }catch(_){}
  }
 }
 

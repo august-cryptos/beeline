@@ -22,6 +22,9 @@ export async function onRequest(context) {
  if (contentType) init.headers['content-type'] = contentType;
  const authorization = request.headers.get('authorization');
  if (authorization) init.headers['authorization'] = authorization;
+ // 2026-10-22: pass the visitor's browser name on, so the server log shows which app a request came from
+ const ua = request.headers.get('user-agent');
+ if (ua) init.headers['user-agent'] = ua.slice(0, 300);
  if (request.method !== 'GET' && request.method !== 'HEAD') {
   init.body = await request.arrayBuffer();
  }
