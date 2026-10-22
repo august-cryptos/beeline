@@ -592,11 +592,14 @@ async function api(path, body, method){
  // server answers (confirmed live: well under a second for every working request today), so this
  // timeout is a ceiling for an ALREADY-broken connection, never an artificial delay on a working one.
  let lastErr;
- for(let attempt=0; attempt<3; attempt++){
+ for(let attempt=0; attempt<4; attempt++){
   try{ return await apiOnce(path, body, method, 12000); }
   catch(e){
    lastErr = e;
-   if(e.code!=='NETWORK_ERROR') throw e; // a real answer from the server - retrying won't change it
+   // 2026-10-22: the server restarting for ~15 s answers 502/503/504 - wait a moment and try again too
+   const restarting = e.status===502 || e.status===503 || e.status===504 || e.code==='UPSTREAM_UNREACHABLE';
+   if(e.code!=='NETWORK_ERROR' && !restarting) throw e; // a real answer from the server - retrying won't change it
+   if(restarting) await new Promise(r=>setTimeout(r, 4000*(attempt+1)));
   }
  }
  throw lastErr;
