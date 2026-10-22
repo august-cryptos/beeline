@@ -826,7 +826,8 @@ function showScreen(name, extra){
   const tgw = window.Telegram && window.Telegram.WebApp;
   if(tgw && typeof tgw.close==='function'){ const b=document.createElement('button'); b.className='btn'; b.style.marginTop='14px'; b.textContent = lang==='kk'?'Ботқа оралу':'Вернуться в бот'; b.onclick=()=>{ try{ tgw.close(); }catch(_){} }; el.appendChild(b); }
  }
- else if(name==='maintenance') el.innerHTML = tplMessage(t('maintenance_title'), t('maintenance_desc'), '', '🛠️');
+ // 2026-10-22: a short pause note (the prep-restart "come back in 2 minutes") is shown as is
+ else if(name==='maintenance') el.innerHTML = (ctx&&ctx.maintenanceMessage&&String(ctx.maintenanceMessage).length<200) ? tplMessage('⏳', String(ctx.maintenanceMessage), '', '🔄') : tplMessage(t('maintenance_title'), t('maintenance_desc'), '', '🛠️');
  else if(name==='paused') el.innerHTML = tplMessage(t('fail_title'), (extra&&extra.message) || '', 'err', '⏸');
  else if(name==='packages') renderPackages(el);
  else if(name==='phone') renderPhone(el);
