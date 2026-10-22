@@ -1358,13 +1358,14 @@ function renderConnected(el){
  // order's own package/phone from ctx.orders first (still genuinely in flight); once it completes and
  // drops out of ctx.orders, fall back to ctx.lastCompletedOrder (a real, already-terminal order row).
  const mine = watchedOrderId();
- const mineEntry = mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null;
+ // 2026-10-22: opened by the link in another browser (nothing remembered here) - the order that is in flight now
+ const mineEntry = (mine && Array.isArray(ctx.orders) ? ctx.orders.find(o => o.orderId === mine) : null) || (Array.isArray(ctx.orders) ? ctx.orders.find(o => ['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus)) : null);
  const completedPkgId = ctx.lastCompletedOrder && ctx.lastCompletedOrder.packageId;
  const pkg = mineEntry
   ? (ctx.availablePackages||[]).find(p => p.id === mineEntry.packageId)
-  : (ctx.selectedPackage || (ctx.availablePackages||[]).find(p => p.id === completedPkgId) || null);
+  : (ctx.selectedPackage || (ctx.availablePackages||[]).find(p => p.id === completedPkgId) || (ctx.lastOrder && (ctx.availablePackages||[]).find(p => p.id === ctx.lastOrder.packageId)) || null);
  const gb = pkg ? (pkg.trafficGb || '') : '';
- const phone = mineEntry ? mineEntry.targetPhone : ((ctx.lastCompletedOrder && ctx.lastCompletedOrder.targetPhone) || ctx.client.phone);
+ const phone = mineEntry ? mineEntry.targetPhone : ((ctx.lastCompletedOrder && ctx.lastCompletedOrder.targetPhone) || (ctx.lastOrder && ctx.lastOrder.targetPhone) || ctx.client.phone);
  el.innerHTML = `
   <div class="card center">
    <div class="icon-circle ok">⏳</div>
