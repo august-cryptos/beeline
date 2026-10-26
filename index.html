@@ -479,6 +479,7 @@ let lang = localStorage.getItem('gm_lang') || 'kk';
 let sessionToken = null;
 // Owner request (2026-10-19): /session hands back the signed start code for the "notify me in Telegram" button
 let telegramStart = null;
+let contactOnly = false; // 2026-10-26: bare visit -> "write to us" screen instead of the order form
 let ctx = null;
 let stack = [];
 let pendingOtpAttempts = 3;
@@ -622,7 +623,8 @@ async function initSession(){
  // Telegram goes on to the bot with the same code (the bot records the invitation and greets the friend)
  try{
   const r1 = new URLSearchParams(location.search).get('ref');
-  if(r1 && /^ref_[0-9a-f]{10}$/i.test(r1) && !(tg && tg.initData)){ location.replace('https://t.me/' + TG_BOT + '?start=' + r1); return; }
+  // Owner request (2026-10-26): a friend's referral link opens our WhatsApp again, the code already typed in
+  if(r1 && /^ref_[0-9a-f]{10}$/i.test(r1) && !(tg && tg.initData)){ const text = (lang==='ru' ? 'Привет! Хочу подключить интернет 🙂 Код друга: ' : 'Сәлем! Интернет қосқым келеді 🙂 Досымның коды: ') + r1; location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text)); return; }
  }catch(_){}
  try{
   const linkRef = new URLSearchParams(location.search).get('ref');
@@ -640,6 +642,9 @@ async function initSession(){
   const token = params.get('t');
   if(token){ body = {token, language: lang}; }
   else{
+   // Owner request (2026-10-26): a bare visit (no personal link) is sent to write to us first - Telegram or
+   // WhatsApp - so every buyer has a chat we can reach; an order already in progress still shows as before
+   contactOnly = true;
    // Live-run UX fix (2026-09-04): a bare visit (no WhatsApp/Telegram link at all) is now a fully
    // supported, standalone entry point - not an error. First time, there's no stored webId yet, so
    // the backend mints one and hands it back (see the res.webId branch below); every later visit from
@@ -712,6 +717,7 @@ function render(){
  // visible so maintenance can never strand somebody after money has been sent.
  const activeOrder=(ctx.orders||[]).some(o=>['PAID','TRAINING','PROVISIONING'].includes(o.orderStatus));
  const maintenanceEntryState=['NEW','CHOOSING_PACKAGE','WAITING_PHONE'].includes(state)||(['ACTIVE','COMPLETED'].includes(state)&&!activeOrder);
+ if(contactOnly&&maintenanceEntryState)return showScreen('contactUs');
  if(ctx.maintenanceMode&&maintenanceEntryState)return showScreen('maintenance');
  if(['NEW','CHOOSING_PACKAGE'].includes(state)) return showScreen('packages');
  if(state==='WAITING_PHONE'){ engagedThisSession=true; return showScreen('phone'); }
@@ -826,6 +832,13 @@ function showScreen(name, extra){
  document.querySelector('.brand').hidden = !['packages','connected','maintenance'].includes(name);
  const el = screensEl();
  if(name==='noEntry') el.innerHTML = tplMessage(lang==='kk'?'Байланыс орнатылмады':'Не удалось подключиться', lang==='kk' ? 'Интернет байланысын тексеріп, бетті қайта жүктеңіз.' : 'Проверьте интернет-соединение и обновите страницу.', 'err', '⚠️');
+ else if(name==='contactUs'){
+  el.innerHTML = tplMessage(lang==='kk'?'Тапсырыс беру үшін бізге жазыңыз 👇':'Чтобы оформить, напишите нам 👇', lang==='kk' ? 'Telegram немесе WhatsApp-қа жазыңыз — бот бірден жауап беріп, жеке сілтемеңізді жібереді. 10 ГБ — 500 ₸, 20 ГБ — 1000 ₸, 30 күн.' : 'Напишите в Telegram или WhatsApp — бот сразу ответит и пришлёт вашу личную ссылку. 10 ГБ — 500 ₸, 20 ГБ — 1000 ₸, 30 дней.', '', '💬');
+  let src='site';try{ const s=new URLSearchParams(location.search).get('src'); if(s && /^[a-z0-9]{1,24}$/i.test(s)) src=s.toLowerCase(); }catch(_){}
+  const tgBtn=document.createElement('a'); tgBtn.className='btn btn-primary'; tgBtn.style.marginTop='14px'; tgBtn.href='https://t.me/'+TG_BOT+'?start='+src; tgBtn.textContent='✈️ Telegram';
+  const waBtn=document.createElement('a'); waBtn.className='btn btn-wa'; waBtn.style.marginTop='10px'; waBtn.href='https://wa.me/'+BOT_WHATSAPP+'?text='+encodeURIComponent(lang==='ru'?'Привет! Хочу ГБ 🙂':'Сәлем! ГБ керек 🙂'); waBtn.textContent='💬 WhatsApp';
+  el.appendChild(tgBtn); el.appendChild(waBtn);
+ }
  else if(name==='staleTelegram'){
   el.innerHTML = tplMessage(lang==='kk'?'Сілтеме ескірді 🙏':'Ссылка устарела 🙏', lang==='kk' ? 'Ботқа «сілтеме» деп жазыңыз — жаңа батырма жібереміз, тапсырысыңыз сол жерде.' : 'Напишите боту «ссылка» — пришлём новую кнопку, ваш заказ будет там.', '', '🔗');
   const tgw = window.Telegram && window.Telegram.WebApp;
