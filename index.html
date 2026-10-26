@@ -624,7 +624,7 @@ async function initSession(){
  try{
   const r1 = new URLSearchParams(location.search).get('ref');
   // Owner request (2026-10-26): a friend's referral link opens our WhatsApp again, the code already typed in
-  if(r1 && /^ref_[0-9a-f]{10}$/i.test(r1) && !(tg && tg.initData)){ const text = (lang==='ru' ? 'Привет! Хочу подключить интернет 🙂 Код друга: ' : 'Сәлем! Интернет қосқым келеді 🙂 Досымның коды: ') + r1; location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text)); return; }
+  if(r1 && /^ref_[0-9a-f]{10}$/i.test(r1) && !(tg && tg.initData)){ const text = (lang==='ru' ? 'Привет! Хочу подключить интернет Билайн 🙂 Код друга: ' : 'Сәлем! Билайнға интернет қосқым келеді 🙂 Досымның коды: ') + r1; location.replace('https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text)); return; }
  }catch(_){}
  try{
   const linkRef = new URLSearchParams(location.search).get('ref');
@@ -836,7 +836,7 @@ function showScreen(name, extra){
   el.innerHTML = tplMessage(lang==='kk'?'Тапсырыс беру үшін бізге жазыңыз 👇':'Чтобы оформить, напишите нам 👇', lang==='kk' ? 'Telegram немесе WhatsApp-қа жазыңыз — бот бірден жауап беріп, жеке сілтемеңізді жібереді. 10 ГБ — 500 ₸, 20 ГБ — 1000 ₸, 30 күн.' : 'Напишите в Telegram или WhatsApp — бот сразу ответит и пришлёт вашу личную ссылку. 10 ГБ — 500 ₸, 20 ГБ — 1000 ₸, 30 дней.', '', '💬');
   let src='site';try{ const s=new URLSearchParams(location.search).get('src'); if(s && /^[a-z0-9]{1,24}$/i.test(s)) src=s.toLowerCase(); }catch(_){}
   const tgBtn=document.createElement('a'); tgBtn.className='btn btn-primary'; tgBtn.style.marginTop='14px'; tgBtn.href='https://t.me/'+TG_BOT+'?start='+src; tgBtn.textContent='✈️ Telegram';
-  const waBtn=document.createElement('a'); waBtn.className='btn btn-wa'; waBtn.style.marginTop='10px'; waBtn.href='https://wa.me/'+BOT_WHATSAPP+'?text='+encodeURIComponent(lang==='ru'?'Привет! Хочу ГБ 🙂':'Сәлем! ГБ керек 🙂'); waBtn.textContent='💬 WhatsApp';
+  const waBtn=document.createElement('a'); waBtn.className='btn btn-wa'; waBtn.style.marginTop='10px'; waBtn.href='https://wa.me/'+BOT_WHATSAPP+'?text='+encodeURIComponent(lang==='ru'?'Привет! Хочу ГБ на Билайн 🙂':'Сәлем! Билайнға ГБ керек 🙂'); waBtn.textContent='💬 WhatsApp';
   el.appendChild(tgBtn); el.appendChild(waBtn);
  }
  else if(name==='staleTelegram'){
