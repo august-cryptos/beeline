@@ -420,6 +420,7 @@ const STR = {
   otp_title:'Вам выслан код подтверждения', otp_desc:'Мы отправили вам 6-значный код подтверждения.', otp_valid:'Код действителен в течение 10 минут.', otp_secret:'Не передавайте код третьим лицам.', enter_code:'Введите 6-значный код', confirm:'Подтвердить', otp_checking:'Проверяем…', resend_in:'Код можно отправить повторно через', resend:'Запросить новый код', resend_sent:'✓ Новый код отправлен, введите его ниже', resend_failed:'⚠ Не получилось отправить новый код. Попробуйте ещё раз через минуту или измените номер.', otp_expired:'⌛ Срок действия кода истёк — он действует 10 минут. Запросите новый код кнопкой ниже.', otp_rate_limited:'⚠ Слишком частые запросы кода подтверждения. Подождите 15 минут и запросите новый код — кнопка ниже включится сама.', wrong_code:'Код не подошёл', wrong_desc:'Проверьте введённые цифры и попробуйте снова.', attempts_left:'Осталось попыток:',
   gifting:'ГБ будут начислены на ваш номер',
   ref_title:'🎁 Пригласите друга — получите 5 ГБ', ref_desc:'Отправьте другу свою ссылку. Когда он купит пакет и тот подключится, мы сами подключим вам 5 ГБ на ваш номер. 5 ГБ за каждого друга!', ref_copy:'Скопировать ссылку', ref_copied:'Ссылка скопирована ✓', ref_share:'Отправить в WhatsApp', ref_share_text:'Подключаю интернет Beeline через GeoMaster — 10 ГБ за 500 ₸ на 30 дней. Попробуй:',
+  wa_write:'💬 Написать в WhatsApp', wa_write_desc:'Напишите нам — сообщим, как только пакет подключится', wa_fail_desc:'Напишите нам в WhatsApp — сразу скажем, что случилось и что дальше',
   connected_title:'Отлично! Пакет активируется в течение 5 минут', connected_desc:'Можно закрыть страницу — как только всё будет готово, вы получите SMS-уведомление от Beeline.',
   buy_again_title:'Хотите ещё пакет?', buy_again_desc:'Можно подключить дополнительный пакет — себе или на другой номер.', buy_again_btn:'Выбрать ещё пакет',
   order_in_progress:'Один пакет уже подключается', order_in_progress_desc:'Дождитесь завершения текущего подключения (обычно 1–5 минут) — после этого сможете сразу выбрать следующий пакет.',
@@ -455,6 +456,7 @@ const STR = {
   otp_title:'Сізге растау коды жіберілді', otp_desc:'Сізге 6 таңбалы растау кодын жібердік.', otp_valid:'Код 10 минут ішінде жарамды.', otp_secret:'Кодты үшінші тұлғаларға бермеңіз.', enter_code:'6 таңбалы кодты енгізіңіз', confirm:'Растау', otp_checking:'Тексерілуде…', resend_in:'Кодты қайта жіберу мүмкін болады:', resend:'Жаңа код сұрау', resend_sent:'✓ Жаңа код жіберілді, оны төменге енгізіңіз', resend_failed:'⚠ Жаңа кодты жіберу мүмкін болмады. Бір минуттан кейін қайталаңыз немесе нөмірді өзгертіңіз.', otp_expired:'⌛ Кодтың мерзімі өтті — ол 10 минут жарамды. Төмендегі батырма арқылы жаңа код сұраңыз.', otp_rate_limited:'⚠ Растау коды тым жиі сұралды. 15 минут күтіп, жаңа код сұраңыз — төмендегі батырма өзі қосылады.', wrong_code:'Код сәйкес келмеді', wrong_desc:'Енгізілген сандарды тексеріп, қайталап көріңіз.', attempts_left:'Қалған әрекет саны:',
   gifting:'ГБ нөміріңізге есептеледі',
   ref_title:'🎁 Досыңызды шақырыңыз — 5 ГБ алыңыз', ref_desc:'Досыңызға сілтемеңізді жіберіңіз. Ол пакет сатып алып, пакеті қосылғанда, біз сіздің нөміріңізге 5 ГБ өзіміз қосамыз. Әр дос үшін 5 ГБ!', ref_copy:'Сілтемені көшіру', ref_copied:'Сілтеме көшірілді ✓', ref_share:'WhatsApp-қа жіберу', ref_share_text:'Beeline интернетін GeoMaster арқылы қосамын — 10 ГБ 500 ₸, 30 күнге. Байқап көр:',
+  wa_write:'💬 WhatsApp-қа жазу', wa_write_desc:'Бізге жазыңыз — пакет қосылған сәтте хабарлаймыз', wa_fail_desc:'WhatsApp-қа жазыңыз — не болғанын және әрі қарай не істеу керегін бірден айтамыз',
   connected_title:'Керемет! Пакет 5 минут ішінде қосылады', connected_desc:'Бетті жабуға болады — дайын болған кезде Beeline-нан SMS хабарлама аласыз.',
   buy_again_title:'Тағы пакет керек пе?', buy_again_desc:'Қосымша пакет қоса аласыз — өзіңізге немесе басқа нөмірге.', buy_again_btn:'Тағы пакет таңдау',
   order_in_progress:'Бір пакет қазір қосылуда', order_in_progress_desc:'Ағымдағы қосылу аяқталғанша күтіңіз (әдетте 1–5 минут) — содан кейін келесі пакетті бірден таңдай аласыз.',
@@ -694,6 +696,23 @@ document.addEventListener('click', e => { const a = e.target.closest && e.target
 // Owner request (2026-10-19): the bot no longer writes on WhatsApp - this button opens our Telegram bot,
 // which attaches this order to the customer's Telegram, so "пакет подключён" reaches him there. Hidden
 // inside Telegram itself and once the account is linked.
+// Owner request (2026-11-05): customers who bought on the site should write to us on WhatsApp too (they stay in
+// our contacts) - a ready text with their number; the bot answers it from the real order of that number.
+function waPrefillUrl(kind, phone){
+ const ph = '8' + String(phone||'').replace(/D/g,'').slice(-10);
+ const text = kind==='fail'
+  ? (lang==='ru' ? 'Привет! Произошла ошибка подключения — ' + ph : 'Сәлем! Қосу кезінде қате шықты — ' + ph)
+  : (lang==='ru' ? 'Привет! Сделал заказ ✅ ' + ph : 'Сәлем! Тапсырыс жасадым ✅ ' + ph);
+ return 'https://wa.me/' + BOT_WHATSAPP + '?text=' + encodeURIComponent(text);
+}
+function waPrefillBlock(kind, phone){
+ const inTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+ if(inTelegram || !phone) return '';
+ return `<div class="card center">
+   <p class="desc" style="margin-top:0">${esc(t(kind==='fail'?'wa_fail_desc':'wa_write_desc'))}</p>
+   <a class="btn btn-wa" style="text-decoration:none;display:flex;justify-content:center;align-items:center" href="${waPrefillUrl(kind, phone)}" target="_blank" rel="noopener">${esc(t('wa_write'))}</a>
+  </div>`;
+}
 function telegramNotifyBlock(kind){
  const inTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
  if(!telegramStart || inTelegram || (ctx && ctx.telegramLinked)) return '';
@@ -1402,6 +1421,7 @@ function renderConnected(el){
     <div>${gb} ${esc(t('gifting'))}</div>
    </div>
   </div>
+  ${waPrefillBlock('ok', phone)}
   ${telegramNotifyBlock('wait')}
   <div class="card center" id="refCard" style="display:none">
    <h2 class="title" style="font-size:18px">${esc(t('ref_title'))}</h2>
@@ -1809,7 +1829,14 @@ function renderOtp(el, wrong, justResent, resendFailed){
 }
 
 function renderFailed(el){
- el.innerHTML = tplMessage(t('fail_title'), t('fail_desc'), 'err', '📵') + supportBlock() + footBlock();
+ const failPhone = (ctx.lastOrder && ctx.lastOrder.targetPhone) || (ctx.client && ctx.client.phone) || '';
+ el.innerHTML = tplMessage(t('fail_title'), t('fail_desc'), 'err', '📵') + waPrefillBlock('fail', failPhone) + supportBlock() + footBlock();
+ // Owner request (2026-11-05): nothing to wait for on this screen - once per order, our WhatsApp opens by itself
+ try{
+  const inTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+  const key = 'gm_wa_fail_' + ((ctx.lastOrder && (ctx.lastOrder.orderId || ctx.lastOrder.id)) || String(failPhone).slice(-10));
+  if(failPhone && !inTelegram && !localStorage.getItem(key)){ localStorage.setItem(key, '1'); setTimeout(()=>{ location.href = waPrefillUrl('fail', failPhone); }, 3000); }
+ }catch(_){}
  bindSupport();
  api('/support', {}).catch(()=>{});
 }
