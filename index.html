@@ -927,7 +927,7 @@ function nonBeelineGate(digits,noticeEl,onAck){
  const pfx=digits.slice(0,3),op=OTHER_OP[pfx],kk=lang==='kk';
  const head=kk?`Бұл нөмір Билайн емес сияқты${op?` (${pfx} — ${op})`:''}`:`Похоже, это не номер Билайн${op?` (${pfx} — ${op})`:''}`;
  const desc=kk?'Біз тек Билайн нөмірлеріне қосамыз.':'Мы подключаем только номера Билайн.';
- const ack=kk?'Иә, бұл нөмір Билайнға ауысқан. Билайн болмаса — ақша қайтарылмайды, ГБ менің соңғы Билайн нөміріме жіберіледі.':'Да, этот номер перенесён в Билайн. Если он не Билайн — деньги не возвращаются, ГБ отправят на мой последний номер Билайн.';
+ const ack=kk?'Иә, бұл нөмір Билайнға ауысқан. Билайн болмаса — ақша қайтарылмайды, оның орнына пакетті басқа Билайн нөміріне қосып аламын.':'Да, этот номер перенесён в Билайн. Если он не Билайн — деньги не возвращаются, вместо этого я подключу пакет на другой номер Билайн.';
  noticeEl.innerHTML=`<div class="card daily-limit-banner" id="nonBeelineBanner" style="text-align:left;border:1.5px solid var(--danger)"><h2 class="title" style="font-size:17px">⚠️ ${esc(head)}</h2><p class="desc" style="margin:6px 0 12px">${esc(desc)}</p><label style="display:flex;gap:10px;align-items:flex-start;font:600 14px var(--body);cursor:pointer;margin:0"><input type="checkbox" id="nonBeelineAck" style="width:22px;height:22px;flex:none;margin-top:1px"><span>${esc(ack)}</span></label></div>`;
  document.getElementById('nonBeelineAck').addEventListener('change',e=>{if(e.target.checked){nonBeelineAcked.add(digits);onAck();}});
  document.getElementById('nonBeelineBanner').scrollIntoView({behavior:'smooth',block:'center'});
