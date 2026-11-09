@@ -664,6 +664,9 @@ async function initSession(){
   if(res.webId) localStorage.setItem('gm_web_id', res.webId);
   sessionToken = res.sessionToken; ctx = res.context; telegramStart = res.telegramStart || null;
   if(ctx.client && ctx.client.language) { lang = ctx.client.language; localStorage.setItem('gm_lang', lang); applyLang(); }
+  // Owner request (2026-11-09): the Telegram greeting's "10 ГБ" / "20 ГБ" buttons open the site with ?pkg= - that
+  // package is picked straight away (only when the customer is free to choose one; anything in progress shows as before)
+  try{ const pkg0 = new URLSearchParams(location.search).get('pkg'); if(/^(7GB|20GB)$/.test(pkg0||'') && (ctx.allowedActions||[]).includes('SELECT_PACKAGE')) ctx = await api('/package', {packageId: pkg0}); }catch(_){}
   render();
  }catch(e){
   // Owner report (2026-10-22): an old "Пакетті таңдау" button (no personal code) whose Telegram sign-in the
