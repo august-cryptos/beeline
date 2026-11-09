@@ -916,6 +916,23 @@ function phoneInProgressBanner(){ return `<div class="card center daily-limit-ba
 // Owner request (2026-10-14): clients kept typing the shop's own WhatsApp/cashier number (the last number they
 // saw) and paid for a package that landed on our SIM - the server now refuses those numbers (PHONE_NOT_ALLOWED).
 function phoneNotAllowedBanner(){ return `<div class="card center daily-limit-banner" id="dailyLimitBanner"><div class="icon-circle err">⚠️</div><h2 class="title" style="font-size:17px">${esc(t('phone_not_allowed_title'))}</h2><p class="desc">${esc(t('phone_not_allowed_desc'))}</p></div>`; }
+// Owner request (2026-11-09): a number whose prefix isn't Beeline's needs an explicit "it moved to Beeline" tick before
+// payment - ported numbers still buy, and nobody can later say "you never told me / give the money back".
+const BEELINE_PFX=['705','771','776','777'];
+const OTHER_OP={'700':'Altel','708':'Altel','701':'Kcell','702':'Kcell','775':'Activ','778':'Activ','707':'Tele2','747':'Tele2'};
+const nonBeelineAcked=new Set();
+function isNonBeeline(digits){return !BEELINE_PFX.includes(String(digits).slice(0,3));}
+function nonBeelineGate(digits,noticeEl,onAck){
+ if(!isNonBeeline(digits)||nonBeelineAcked.has(digits))return true;
+ const pfx=digits.slice(0,3),op=OTHER_OP[pfx],kk=lang==='kk';
+ const head=kk?`Бұл нөмір Билайн емес сияқты${op?` (${pfx} — ${op})`:''}`:`Похоже, это не номер Билайн${op?` (${pfx} — ${op})`:''}`;
+ const desc=kk?'Біз тек Билайн нөмірлеріне қосамыз.':'Мы подключаем только номера Билайн.';
+ const ack=kk?'Иә, бұл нөмір Билайнға ауысқан. Билайн болмаса — ақша қайтарылмайды, ГБ менің соңғы Билайн нөміріме жіберіледі.':'Да, этот номер перенесён в Билайн. Если он не Билайн — деньги не возвращаются, ГБ отправят на мой последний номер Билайн.';
+ noticeEl.innerHTML=`<div class="card daily-limit-banner" id="nonBeelineBanner" style="text-align:left;border:1.5px solid var(--danger)"><h2 class="title" style="font-size:17px">⚠️ ${esc(head)}</h2><p class="desc" style="margin:6px 0 12px">${esc(desc)}</p><label style="display:flex;gap:10px;align-items:flex-start;font:600 14px var(--body);cursor:pointer;margin:0"><input type="checkbox" id="nonBeelineAck" style="width:22px;height:22px;flex:none;margin-top:1px"><span>${esc(ack)}</span></label></div>`;
+ document.getElementById('nonBeelineAck').addEventListener('change',e=>{if(e.target.checked){nonBeelineAcked.add(digits);onAck();}});
+ document.getElementById('nonBeelineBanner').scrollIntoView({behavior:'smooth',block:'center'});
+ return false;
+}
 function trustBlock(){
  return `<div class="trust"><div>🛡️<span>${esc(t('trust1'))}</span></div><div>⚡<span>${esc(t('trust2'))}</span></div><div>👍<span>${esc(t('trust3'))}</span></div></div>`;
 }
@@ -1052,10 +1069,11 @@ function renderPhone(el){
  document.getElementById('phoneContinue').addEventListener('click', async ()=>{
   const digits = input.value.replace(/\D/g,'');
   if(digits.length<10){ input.style.borderColor='var(--danger)'; return; }
+  if(!nonBeelineGate(digits,document.getElementById('phoneNotice'),()=>document.getElementById('phoneContinue').click())) return;
   document.getElementById('phoneNotice').innerHTML = '';
   const btn = document.getElementById('phoneContinue'); btn.disabled = true;
   const originalLabel = btn.textContent; btn.textContent = t('otp_checking');
-  try{ ctx = await api('/phone', {phone: '7'+digits}); if(ctx.orderId) rememberWatchedOrder(ctx.orderId); render(); }
+  try{ ctx = await api('/phone', {phone: '7'+digits, nonBeelineAck: isNonBeeline(digits)}); if(ctx.orderId) rememberWatchedOrder(ctx.orderId); render(); }
   catch(e){
    btn.disabled=false; btn.textContent = originalLabel;
    // Same class of bug as the OTP screen's fix (2026-09-04): PHONE_NOT_EXPECTED means an earlier
@@ -1592,13 +1610,14 @@ function renderOtp(el, wrong, justResent, resendFailed){
  document.getElementById('changeNumberSubmit').addEventListener('click', async ()=>{
   const digits = newPhoneInput.value.replace(/\D/g,'');
   if(digits.length<10){ newPhoneInput.style.borderColor='var(--danger)'; return; }
+  if(!nonBeelineGate(digits,document.getElementById('changeNumberNotice'),()=>document.getElementById('changeNumberSubmit').click())) return;
   document.getElementById('changeNumberNotice').innerHTML = '';
   const submitBtn = document.getElementById('changeNumberSubmit'); submitBtn.disabled = true;
   const cancelBtn = document.getElementById('changeNumberCancel'); cancelBtn.disabled = true;
   newPhoneInput.disabled = true;
   const originalLabel = submitBtn.textContent;
   try{
-   ctx = await api('/change-phone', {phone: '7'+digits});
+   ctx = await api('/change-phone', {phone: '7'+digits, nonBeelineAck: isNonBeeline(digits)});
    // Live-run forensic fix (2026-09-09, round 16): confirmed live - a customer who corrected their
    // number here had the success screen later show a COMPLETELY UNRELATED earlier order's package
    // (7GB instead of the 20GB they'd actually just bought). Root cause: watchedOrderId stayed pointed
