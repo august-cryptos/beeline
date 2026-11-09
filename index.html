@@ -366,6 +366,28 @@ p.desc{font:600 13px/1.6 var(--body);color:var(--ink-dim)}
  body{padding-left:12px;padding-right:12px}.wrap{max-width:calc(100vw - 24px);gap:15px}.brand{padding-left:68px;padding-right:68px}.brand .mark{width:52px;height:52px}.brand h1{font-size:27px}.home-heading h2{font-size:24px}.home-heading p{font-size:13px}.card{padding:20px}.pkg{min-height:86px;padding:15px;gap:11px}.pkg .icon{width:45px;height:45px}.pkg .gb{font-size:20px}.pkg .price{padding:9px 10px;font-size:14px}.checkout-step{font-size:8px}.support{align-items:flex-start;flex-wrap:wrap}.support-btn{width:100%;justify-content:center;margin-left:0}.otp{gap:5px}.otp input{width:calc((100% - 25px)/6);height:54px;border-radius:12px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}#screens{animation:none}.pkg,.btn,.back{transition:none}}
+
+/* Non-Beeline number window (2026-11-09): centred card, page blurred behind, language switch stays usable */
+.nb-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(21,21,21,.38);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);animation:nbFade .18s ease}
+body.nb-open{overflow:hidden}
+body.nb-open .topbar{position:relative;z-index:1001}
+.nb-card{width:100%;max-width:390px;max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:24px;padding:26px 22px 18px;text-align:center;box-shadow:0 24px 60px rgba(21,21,21,.28);animation:nbPop .22s cubic-bezier(.2,.9,.3,1.2)}
+.nb-icon{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 30px var(--display);color:#fff;background:linear-gradient(145deg,#F07A55,var(--danger));box-shadow:0 8px 20px rgba(228,87,46,.35)}
+.nb-title{font:800 20px/1.25 var(--display);color:var(--ink);margin-bottom:12px}
+.nb-phone{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--danger-bg);font:700 16px var(--display);color:var(--ink);margin-bottom:12px;letter-spacing:.3px}
+.nb-phone b{font:800 11px var(--body);text-transform:uppercase;letter-spacing:.6px;color:#fff;background:var(--danger);padding:4px 8px;border-radius:999px}
+.nb-desc{font:500 14px/1.45 var(--body);color:var(--ink-dim);margin-bottom:16px}
+.nb-ack{display:flex!important;gap:12px;align-items:flex-start;text-align:left;padding:14px;margin:0 0 16px!important;border:1.5px solid var(--line);border-radius:16px;background:#FBF8F2;cursor:pointer;font:600 13.5px/1.45 var(--body)!important;color:var(--ink)!important;text-transform:none!important;letter-spacing:0!important;transition:border-color .15s,background .15s}
+.nb-ack input{position:absolute;opacity:0;pointer-events:none}
+.nb-ack i{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid #cfc8b8;background:#fff;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nb-ack input:checked+i{background:var(--yellow);border-color:var(--yellow-deep)}
+.nb-ack input:checked+i::after{content:'';width:6px;height:11px;border:solid var(--black);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.nb-ack:has(input:checked){border-color:var(--yellow-deep);background:#FFF8E3}
+.nb-go{width:100%;margin:0 0 6px}
+.nb-go:disabled{opacity:.45;cursor:not-allowed}
+.nb-other{background:none;border:none;font:600 14px var(--body);color:var(--ink-dim);padding:10px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+@keyframes nbFade{from{opacity:0}}
+@keyframes nbPop{from{opacity:0;transform:translateY(12px) scale(.97)}}
 </style>
 <link rel="stylesheet" href="./experimental.css">
 <link rel="stylesheet" href="./original-palette.css">
@@ -557,6 +579,7 @@ document.getElementById('langToggle').addEventListener('click', e=>{
  const btn = e.target.closest('button'); if(!btn) return;
  lang = btn.dataset.lang; localStorage.setItem('gm_lang', lang); applyLang();
  api('/language', {language:lang}).catch(()=>{});
+ if(nbModal){drawNonBeelineModal();return;}
  render();
 });
 
@@ -922,15 +945,36 @@ const BEELINE_PFX=['705','771','776','777'];
 const OTHER_OP={'700':'Altel','708':'Altel','701':'Kcell','702':'Kcell','775':'Activ','778':'Activ','707':'Tele2','747':'Tele2'};
 const nonBeelineAcked=new Set();
 function isNonBeeline(digits){return !BEELINE_PFX.includes(String(digits).slice(0,3));}
+let nbModal=null; // {digits,onAck} while the non-Beeline window is open
+const NB_TXT={
+ kk:{title:'Бұл нөмір Билайн емес сияқты',desc:'Біз тек Билайн нөмірлеріне қосамыз. Нөміріңіз басқа операторда болса, пакет қосылмайды.',ack:'Иә, бұл нөмір Билайнға ауысқан. Билайн болмаса — ақша қайтарылмайды, оның орнына пакетті басқа Билайн нөміріне қосып аламын.',go:'Жалғастыру',other:'Басқа нөмір енгізу'},
+ ru:{title:'Похоже, это не номер Билайн',desc:'Мы подключаем только номера Билайн. Если номер у другого оператора, пакет не подключится.',ack:'Да, этот номер перенесён в Билайн. Если он не Билайн — деньги не возвращаются, вместо этого я подключу пакет на другой номер Билайн.',go:'Продолжить',other:'Ввести другой номер'}
+};
+function fmtPhone(d){d=String(d);return `+7 ${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,8)} ${d.slice(8,10)}`;}
+function closeNonBeelineModal(){nbModal=null;document.getElementById('nbOverlay')?.remove();document.body.classList.remove('nb-open');}
+function drawNonBeelineModal(){
+ if(!nbModal)return;
+ const {digits}=nbModal,pfx=digits.slice(0,3),op=OTHER_OP[pfx],T=NB_TXT[lang]||NB_TXT.ru;
+ let ov=document.getElementById('nbOverlay');
+ if(!ov){ov=document.createElement('div');ov.id='nbOverlay';ov.className='nb-overlay';document.body.appendChild(ov);}
+ ov.innerHTML=`<div class="nb-card" role="dialog" aria-modal="true" aria-labelledby="nbTitle">
+  <div class="nb-icon">!</div>
+  <h2 id="nbTitle" class="nb-title">${esc(T.title)}</h2>
+  <div class="nb-phone"><span>${esc(fmtPhone(digits))}</span>${op?`<b>${esc(op)}</b>`:''}</div>
+  <p class="nb-desc">${esc(T.desc)}</p>
+  <label class="nb-ack"><input type="checkbox" id="nbAck"><i></i><span>${esc(T.ack)}</span></label>
+  <button class="btn btn-primary nb-go" id="nbGo" disabled>${esc(T.go)} →</button>
+  <button class="nb-other" id="nbOther">${esc(T.other)}</button>
+ </div>`;
+ document.body.classList.add('nb-open');
+ const ack=document.getElementById('nbAck'),go=document.getElementById('nbGo');
+ ack.checked=!!nbModal.checked;go.disabled=!ack.checked;ack.addEventListener('change',()=>{nbModal.checked=ack.checked;go.disabled=!ack.checked;});
+ go.addEventListener('click',()=>{if(!ack.checked||!nbModal)return;const{digits,onAck}=nbModal;nonBeelineAcked.add(digits);closeNonBeelineModal();onAck();});
+ document.getElementById('nbOther').addEventListener('click',()=>{closeNonBeelineModal();const i=document.getElementById('phoneInput')||document.getElementById('newPhoneInput');if(i){i.value='';i.focus();}});
+}
 function nonBeelineGate(digits,noticeEl,onAck){
  if(!isNonBeeline(digits)||nonBeelineAcked.has(digits))return true;
- const pfx=digits.slice(0,3),op=OTHER_OP[pfx],kk=lang==='kk';
- const head=kk?`Бұл нөмір Билайн емес сияқты${op?` (${pfx} — ${op})`:''}`:`Похоже, это не номер Билайн${op?` (${pfx} — ${op})`:''}`;
- const desc=kk?'Біз тек Билайн нөмірлеріне қосамыз.':'Мы подключаем только номера Билайн.';
- const ack=kk?'Иә, бұл нөмір Билайнға ауысқан. Билайн болмаса — ақша қайтарылмайды, оның орнына пакетті басқа Билайн нөміріне қосып аламын.':'Да, этот номер перенесён в Билайн. Если он не Билайн — деньги не возвращаются, вместо этого я подключу пакет на другой номер Билайн.';
- noticeEl.innerHTML=`<div class="card daily-limit-banner" id="nonBeelineBanner" style="text-align:left;border:1.5px solid var(--danger)"><h2 class="title" style="font-size:17px">⚠️ ${esc(head)}</h2><p class="desc" style="margin:6px 0 12px">${esc(desc)}</p><label style="display:flex;gap:10px;align-items:flex-start;font:600 14px var(--body);cursor:pointer;margin:0"><input type="checkbox" id="nonBeelineAck" style="width:22px;height:22px;flex:none;margin-top:1px"><span>${esc(ack)}</span></label></div>`;
- document.getElementById('nonBeelineAck').addEventListener('change',e=>{if(e.target.checked){nonBeelineAcked.add(digits);onAck();}});
- document.getElementById('nonBeelineBanner').scrollIntoView({behavior:'smooth',block:'center'});
+ nbModal={digits,onAck};drawNonBeelineModal();
  return false;
 }
 function trustBlock(){
