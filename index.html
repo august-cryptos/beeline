@@ -601,6 +601,9 @@ async function api(path, body, method){
    lastErr = e;
    // 2026-10-22: the server restarting for ~15 s answers 502/503/504 - wait a moment and try again too
    const restarting = e.status===502 || e.status===503 || e.status===504 || e.code==='UPSTREAM_UNREACHABLE';
+   // Owner request (2026-11-13): an old tab tried to start over while the invoice is out / the code is awaited -
+   // the server refused (STATE_MOVED_ON); jump straight to the current step instead of showing an error.
+   if(e.code==='STATE_MOVED_ON'){ try{ await refreshContext(); }catch(_){} render(); return new Promise(()=>{}); }
    if(e.code!=='NETWORK_ERROR' && !restarting) throw e; // a real answer from the server - retrying won't change it
    if(restarting) await new Promise(r=>setTimeout(r, 4000*(attempt+1)));
   }
@@ -676,6 +679,18 @@ async function initSession(){
 }
 
 async function refreshContext(){ ctx = await api('/status', undefined, 'GET'); }
+// Owner request (2026-11-13, 87713558700): a tab left on the package/number screen, opened again after the
+// invoice was sent in another tab, jumps to the current step by itself (invoice sent, paid, code awaited).
+let shownScreen = null;
+async function syncStaleTab(){
+ if(!ctx || !sessionToken || document.hidden || !['packages','phone'].includes(shownScreen)) return;
+ try{ await refreshContext(); }catch(_){ return; }
+ const s = ctx.clientState;
+ if(['PAYMENT_CONFIRMED','WAITING_OTP'].includes(s) || (s==='WAITING_PAYMENT' && ctx.paymentMethod)) render();
+}
+document.addEventListener('visibilitychange', syncStaleTab);
+window.addEventListener('focus', syncStaleTab);
+window.addEventListener('pageshow', syncStaleTab);
 
 // Parallel orders on different numbers (2026-09-07): the client is freed back to ACTIVE as soon as an
 // order's training STARTS (not once it finishes - see backend TrainingEventHandler), so client.state
@@ -841,7 +856,7 @@ function startPoll(screenName){
  pollTimer = setInterval(pollTick, 1000);
 }
 
-function showScreen(name, extra){
+function showScreen(name, extra){ shownScreen = name;
  const pollable = ['checking','connected'].includes(name);
  if(!pollable) stopPoll();
  setBack(false);
